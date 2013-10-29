@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,10 @@ namespace _3A_flickr_sync
             InitializeComponent();
 
             FFolderLogic fL = new FFolderLogic();
-            fL.CreateIfNotExist(@"D:\ghostnguyen\Pictures\SGI Photo - Can Gio");
+            var v = fL.CreateIfNotExist(@"D:\ghostnguyen\Pictures\SGI Photo - Can Gio");
+
+            FFileLogic ffL1 = new FFileLogic(v);
+            ffL1.Add(new DirectoryInfo(v.Path));            
         }
     }
 }

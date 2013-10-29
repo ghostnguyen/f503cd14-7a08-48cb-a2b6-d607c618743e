@@ -16,7 +16,7 @@ namespace _3A_flickr_sync.Models
         {
         }
 
-        public DbSet<FFolder> Folders { get; set; }
+        public DbSet<FFolder> FFolders { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

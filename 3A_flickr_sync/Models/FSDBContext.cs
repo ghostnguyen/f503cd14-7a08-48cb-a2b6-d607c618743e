@@ -11,12 +11,7 @@ namespace _3A_flickr_sync.Models
             Database.SetInitializer<FSDBContext>(null);
         }
 
-        public FSDBContext()
-            : base("Name=FSDBContext")
-        {
-        }
-
-        public DbSet<FFile> Files { get; set; }
+        public DbSet<FFile> FFiles { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

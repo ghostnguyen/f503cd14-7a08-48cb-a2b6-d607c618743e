@@ -18,11 +18,11 @@ namespace _3A_flickr_sync.Logic
             }
             else
             {
-                var v = db.Folders.Where(r => r.Path == path).FirstOrDefault();
+                var v = db.FFolders.Where(r => r.Path == path).FirstOrDefault();
                 
-                if (v == null)
+                if (v == null)  
                 {
-                    v = db.Folders.Add(new FFolder() { Path = path });
+                    v = db.FFolders.Add(new FFolder() { Path = path });
                     db.SaveChanges();
                 }
                 
