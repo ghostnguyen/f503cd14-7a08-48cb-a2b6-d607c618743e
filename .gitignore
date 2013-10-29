@@ -156,3 +156,5 @@ $RECYCLE.BIN/
 .DS_Store
 /3A_flickr_sync/3A_Flickr_Sync_Master_DB.mdf
 /3A_flickr_sync/3A_Flickr_Sync_Master_DB_log.ldf
+/3A_flickr_sync/3A_Flickr_Sync_DB.mdf
+/3A_flickr_sync/3A_Flickr_Sync_DB_log.ldf
