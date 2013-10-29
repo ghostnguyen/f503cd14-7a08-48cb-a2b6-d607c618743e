@@ -18,7 +18,7 @@ namespace _3A_flickr_sync
         {
             InitializeComponent();
 
-            FolderLogic fL = new FolderLogic();
+            FFolderLogic fL = new FFolderLogic();
             fL.CreateIfNotExist(@"D:\ghostnguyen\Pictures\SGI Photo - Can Gio");
         }
     }

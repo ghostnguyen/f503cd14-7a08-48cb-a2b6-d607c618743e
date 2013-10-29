@@ -7,10 +7,10 @@ using _3A_flickr_sync.Models;
 
 namespace _3A_flickr_sync.Logic
 {
-    public class FolderLogic
+    public class FFolderLogic
     {
         FSMasterDBContext db = new FSMasterDBContext();
-        public Folder CreateIfNotExist(string path)
+        public FFolder CreateIfNotExist(string path)
         {
             if (string.IsNullOrEmpty(path))
             {
@@ -22,7 +22,7 @@ namespace _3A_flickr_sync.Logic
                 
                 if (v == null)
                 {
-                    v = db.Folders.Add(new Folder() { Path = path });
+                    v = db.Folders.Add(new FFolder() { Path = path });
                     db.SaveChanges();
                 }
                 

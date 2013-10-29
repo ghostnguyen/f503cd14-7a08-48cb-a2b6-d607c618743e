@@ -73,8 +73,8 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Logic\FileLogic.cs" />
-    <Compile Include="Logic\FolderLogic.cs" />
+    <Compile Include="Logic\FFileLogic.cs" />
+    <Compile Include="Logic\FFolderLogic.cs" />
     <Compile Include="Models\FFile.cs" />
     <Compile Include="Models\FFolder.cs" />
     <Compile Include="Models\FSDBContext.cs" />

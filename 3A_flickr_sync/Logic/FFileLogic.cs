@@ -9,11 +9,11 @@ using _3A_flickr_sync.Models;
 
 namespace _3A_flickr_sync.Logic
 {
-    public class FileLogic
+    public class FFileLogic
     {
         
         FSDBContext db = new FSDBContext();
-        public void FileLogic(Folder folder)
+        public void FileLogic(FFolder folder)
         {
             if (folder == null || string.IsNullOrEmpty(folder.Path))
             {
