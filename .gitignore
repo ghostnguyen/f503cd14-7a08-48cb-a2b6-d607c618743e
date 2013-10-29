@@ -154,3 +154,5 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+/3A_flickr_sync/3A_Flickr_Sync_Master_DB.mdf
+/3A_flickr_sync/3A_Flickr_Sync_Master_DB_log.ldf

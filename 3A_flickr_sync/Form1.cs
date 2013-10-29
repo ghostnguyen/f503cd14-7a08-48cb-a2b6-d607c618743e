@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using _3A_flickr_sync.Logic;
 using _3A_flickr_sync.Models;
 
 namespace _3A_flickr_sync
@@ -16,9 +17,9 @@ namespace _3A_flickr_sync
         public Form1()
         {
             InitializeComponent();
-            FSDBContext db = new FSDBContext();
-            db.Folders.Add(new Folder() { Path = "ada"});
-            db.SaveChangesAsync();
+
+            FolderLogic fL = new FolderLogic();
+            fL.CreateIfNotExist(@"D:\ghostnguyen\Pictures\SGI Photo - Can Gio");
         }
     }
 }

@@ -16,13 +16,11 @@ namespace _3A_flickr_sync.Models
         {
         }
 
-        public DbSet<File> Files { get; set; }
-        public DbSet<Folder> Folders { get; set; }
+        public DbSet<FFile> Files { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Configurations.Add(new FileMap());
-            modelBuilder.Configurations.Add(new FolderMap());
+            modelBuilder.Configurations.Add(new FFileMap());
         }
     }
 }
