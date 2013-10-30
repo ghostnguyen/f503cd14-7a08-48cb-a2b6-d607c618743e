@@ -19,9 +19,14 @@ namespace _3A_flickr_sync.Models
 
         }
 
+        public string Path { 
+            get; 
+            private set; }
+
         public FSDBContext(string path)
             : base(GetConnectionString(path))
         {
+            Path = path;
             Database.CreateIfNotExists();
         }
 

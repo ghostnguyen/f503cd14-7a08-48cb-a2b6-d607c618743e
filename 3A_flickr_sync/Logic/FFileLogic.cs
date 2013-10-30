@@ -16,7 +16,7 @@ namespace _3A_flickr_sync.Logic
 
         public FFileLogic(string path)
         {
-            db = new FSDBContext(path);
+            db = new FSDBContext(path);            
         }
 
         public FFileLogic(FFolder folder)
