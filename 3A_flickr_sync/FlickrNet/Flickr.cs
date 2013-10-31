@@ -84,8 +84,8 @@ namespace _3A_flickr_sync.FlickrNet
         /// </summary>
         //public const string UserAgent = "Mozilla/4.0 FlickrNet API (compatible; MSIE 6.0; Windows NT 5.1)";
 
-        private string lastRequest;
-        private string lastResponse;
+        //private string lastRequest;
+        //private string lastResponse;
 
 
         /// <summary>
@@ -140,24 +140,26 @@ namespace _3A_flickr_sync.FlickrNet
         /// Returns the raw XML returned from the last response.
         /// Only set it the response was not returned from cache.
         /// </summary>
-        public string LastResponse
-        {
-            get { return lastResponse; }
-        }
+        //public string LastResponse
+        //{
+        //    get { return lastResponse; }
+        //}
 
         /// <summary>
         /// Returns the last URL requested. Includes API signing.
         /// </summary>
-        public string LastRequest
-        {
-            get { return lastRequest; }
-        }
+        //public string LastRequest
+        //{
+        //    get { return lastRequest; }
+        //}
 
         /// <summary>
         /// Constructor loads configuration settings from app.config or web.config file if they exist.
         /// </summary>
         public Flickr()
         {
+            OAuthAccessToken = "72157637144747383-7edb312576a89e3f";
+            OAuthAccessTokenSecret = "0095950bcad5ee34";
         }
 
         private void CheckRequiresAuthentication()
@@ -175,14 +177,8 @@ namespace _3A_flickr_sync.FlickrNet
         /// <param name="parameters">A Dictionary containing a list of parameters to add to the method call.</param>
         /// <param name="includeSignature">Boolean use to decide whether to generate the api call signature as well.</param>
         /// <returns>The <see cref="Uri"/> for the method call.</returns>
-        public Uri CalculateUri(Dictionary<string, string> parameters, bool includeSignature)
+        public Uri CalculateUri(Dictionary<string, string> parameters)
         {
-            if (includeSignature)
-            {
-                string signature = CalculateAuthSignature(parameters);
-                parameters.Add("api_sig", signature);
-            }
-
             StringBuilder url = new StringBuilder();
             url.Append("?");
             foreach (KeyValuePair<string, string> pair in parameters)
@@ -191,22 +187,6 @@ namespace _3A_flickr_sync.FlickrNet
             }
 
             return new Uri(BaseUri, new Uri(url.ToString(), UriKind.Relative));
-        }
-
-        private string CalculateAuthSignature(Dictionary<string, string> parameters)
-        {
-
-            SortedList<string, string> sorted = new SortedList<string, string>();
-            foreach (KeyValuePair<string, string> pair in parameters) { sorted.Add(pair.Key, pair.Value); }
-
-            StringBuilder sb = new StringBuilder(ApiSecret);
-            foreach (KeyValuePair<string, string> pair in sorted)
-            {
-                sb.Append(pair.Key);
-                sb.Append(pair.Value);
-            }
-            string signature = Helper.MD5Hash(sb.ToString());
-            return signature;
         }
 
         private byte[] ConvertNonSeekableStreamToByteArray(Stream nonSeekableStream)
@@ -243,14 +223,6 @@ namespace _3A_flickr_sync.FlickrNet
                 contentStringBuilder.Append("Content-Disposition: form-data; name=\"" + key + "\"\r\n");
                 contentStringBuilder.Append("\r\n");
                 contentStringBuilder.Append(parameters[key] + "\r\n");
-            }
-
-            if (!oAuth)
-            {
-                contentStringBuilder.Append("--" + boundary + "\r\n");
-                contentStringBuilder.Append("Content-Disposition: form-data; name=\"api_sig\"\r\n");
-                contentStringBuilder.Append("\r\n");
-                contentStringBuilder.Append(Helper.MD5Hash(hashStringBuilder.ToString()) + "\r\n");
             }
 
             // Photo

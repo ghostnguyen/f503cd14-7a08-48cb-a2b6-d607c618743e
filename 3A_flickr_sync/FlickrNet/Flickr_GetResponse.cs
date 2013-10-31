@@ -10,12 +10,6 @@ namespace _3A_flickr_sync.FlickrNet
 {
     public partial class Flickr
     {
-
-        private T GetResponseNoCache<T>(Dictionary<string, string> parameters) where T : IFlickrParsable, new()
-        {
-            return GetResponse<T>(parameters);
-        }
-
         private T GetResponse<T>(Dictionary<string, string> parameters) where T : IFlickrParsable, new()
         {
             // Flow for GetResponse.
@@ -25,29 +19,9 @@ namespace _3A_flickr_sync.FlickrNet
             // 5. Write Cache.
             // 6. Parse Response.
 
-            parameters["api_key"] = ApiKey;
+            OAuthGetBasicParameters(parameters);
 
-            // If OAuth Token exists or no authentication required then use new OAuth
-            if (!String.IsNullOrEmpty(OAuthAccessToken))
-            {
-                parameters.Remove("api_key");
-                OAuthGetBasicParameters(parameters);
-                if (!String.IsNullOrEmpty(OAuthAccessToken)) parameters["oauth_token"] = OAuthAccessToken;
-            }
-
-            var url = CalculateUri(parameters, !String.IsNullOrEmpty(sharedSecret));
-
-            lastRequest = url.AbsoluteUri;
-
-            string responseXml;
-
-
-
-            var urlComplete = url.AbsoluteUri;
-
-            responseXml = FlickrResponder.GetDataResponse(this, BaseUri.AbsoluteUri, parameters);
-
-            lastResponse = responseXml;
+            string responseXml = FlickrResponder.GetDataResponse(this, BaseUri.AbsoluteUri, parameters);
 
             var reader = new XmlTextReader(new StringReader(responseXml))
             {
@@ -74,7 +48,6 @@ namespace _3A_flickr_sync.FlickrNet
             item.Load(reader);
 
             return item;
-
         }
     }
 }

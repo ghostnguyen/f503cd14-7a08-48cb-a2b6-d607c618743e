@@ -23,7 +23,6 @@ namespace _3A_flickr_sync.FlickrNet
         /// <returns></returns>
         public static string OAuthCalculateAuthHeader(Dictionary<string, string> parameters)
         {
-
             StringBuilder sb = new StringBuilder("OAuth ");
             foreach (KeyValuePair<string, string> pair in parameters)
             {
@@ -47,7 +46,6 @@ namespace _3A_flickr_sync.FlickrNet
             string data = String.Empty;
             foreach (KeyValuePair<string, string> pair in parameters)
             {
-
                 if (!pair.Key.StartsWith("oauth"))
                 {
                     data += pair.Key + "=" + Uri.EscapeDataString(pair.Value) + "&";

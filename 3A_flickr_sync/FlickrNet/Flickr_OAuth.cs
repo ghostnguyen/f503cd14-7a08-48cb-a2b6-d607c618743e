@@ -105,30 +105,9 @@ namespace _3A_flickr_sync.FlickrNet
             parameters.Add("oauth_version", "1.0");
             parameters.Add("oauth_signature_method", "HMAC-SHA1");
             parameters.Add("oauth_consumer_key", ApiKey);
+            parameters.Add("oauth_token", OAuthAccessToken);
+            
             return parameters;
-        }
-
-        /// <summary>
-        /// Takes the currently (old) authentication Flickr instance and turns it OAuth authenticated instance.
-        /// </summary>
-        /// <remarks>
-        /// Calling this method will also clear <see cref="Flickr.AuthToken"/> 
-        /// and set <see cref="Flickr.OAuthAccessToken"/> and <see cref="Flickr.OAuthAccessTokenSecret"/>.
-        /// </remarks>
-        /// <returns>A new <see cref="OAuthAccessToken"/> instance.</returns>
-        public OAuthAccessToken AuthOAuthGetAccessToken()
-        {
-            CheckRequiresAuthentication();
-
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("method", "flickr.auth.oauth.getAccessToken");
-
-            OAuthAccessToken token = GetResponseNoCache<OAuthAccessToken>(parameters);
-
-            OAuthAccessToken = token.Token;
-            OAuthAccessTokenSecret = token.TokenSecret;
-
-            return token;
         }
     }
 }
