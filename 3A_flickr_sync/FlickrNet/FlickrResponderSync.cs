@@ -55,9 +55,9 @@ namespace _3A_flickr_sync.FlickrNet
             if (parameters.ContainsKey("api_key")) parameters.Remove("api_key");
             if (parameters.ContainsKey("api_sig")) parameters.Remove("api_sig");
 
-            if (!String.IsNullOrEmpty(flickr.OAuthAccessTokenSecret) && !parameters.ContainsKey("oauth_signature"))
+            if (!String.IsNullOrEmpty(Flickr.OAuthAccessTokenSecret) && !parameters.ContainsKey("oauth_signature"))
             {
-                string sig = flickr.OAuthCalculateSignature(method, baseUrl, parameters, flickr.OAuthAccessTokenSecret);
+                string sig = flickr.OAuthCalculateSignature(method, baseUrl, parameters, Flickr.OAuthAccessTokenSecret);
                 parameters.Add("oauth_signature", sig);
             }
 

@@ -118,7 +118,7 @@ namespace _3A_flickr_sync.FlickrNet
         //    if (justFriends) parameters.Add("just_friends", "1");
         //    if (singlePhoto) parameters.Add("single_photo", "1");
         //    if (includeSelf) parameters.Add("include_self", "1");
-        //    if (extras != PhotoSearchExtras.None) parameters.Add("extras", UtilityMethods.ExtrasToString(extras));
+        //    if (extras != PhotoSearchExtras.None) parameters.Add("extras", Helper.ExtrasToString(extras));
 
         //    return GetResponse<PhotoCollection>(parameters);
         //}
@@ -201,7 +201,7 @@ namespace _3A_flickr_sync.FlickrNet
         //    if (justFriends) parameters.Add("just_friends", "1");
         //    if (singlePhoto) parameters.Add("single_photo", "1");
         //    if (includeSelf) parameters.Add("include_self", "1");
-        //    if (extras != PhotoSearchExtras.None) parameters.Add("extras", UtilityMethods.ExtrasToString(extras));
+        //    if (extras != PhotoSearchExtras.None) parameters.Add("extras", Helper.ExtrasToString(extras));
 
         //    return GetResponse<PhotoCollection>(parameters);
         //}
@@ -270,13 +270,13 @@ namespace _3A_flickr_sync.FlickrNet
         //    if (dates != null && dates.Length > 0)
         //    {
         //        Array.Sort<DateTime>(dates);
-        //        dateString = String.Join(",", new List<DateTime>(dates).ConvertAll<string>(new Converter<DateTime, string>(delegate(DateTime d) { return UtilityMethods.DateToUnixTimestamp(d).ToString(); })).ToArray());
+        //        dateString = String.Join(",", new List<DateTime>(dates).ConvertAll<string>(new Converter<DateTime, string>(delegate(DateTime d) { return Helper.DateToUnixTimestamp(d).ToString(); })).ToArray());
         //    }
 
         //    if (takenDates != null && takenDates.Length > 0)
         //    {
         //        Array.Sort<DateTime>(takenDates);
-        //        takenDateString = String.Join(",", new List<DateTime>(takenDates).ConvertAll<string>(new Converter<DateTime, string>(delegate(DateTime d) { return UtilityMethods.DateToMySql(d).ToString(); })).ToArray());
+        //        takenDateString = String.Join(",", new List<DateTime>(takenDates).ConvertAll<string>(new Converter<DateTime, string>(delegate(DateTime d) { return Helper.DateToMySql(d).ToString(); })).ToArray());
         //    }
 
         //    Dictionary<string, string> parameters = new Dictionary<string, string>();
@@ -398,7 +398,7 @@ namespace _3A_flickr_sync.FlickrNet
         //    parameters.Add("api_key", apiKey);
         //    if (perPage > 0) parameters.Add("per_page", perPage.ToString(System.Globalization.NumberFormatInfo.InvariantInfo));
         //    if (page > 0) parameters.Add("page", page.ToString(System.Globalization.NumberFormatInfo.InvariantInfo));
-        //    if (extras != PhotoSearchExtras.None) parameters.Add("extras", UtilityMethods.ExtrasToString(extras));
+        //    if (extras != PhotoSearchExtras.None) parameters.Add("extras", Helper.ExtrasToString(extras));
 
         //    return GetResponse<PhotoCollection>(parameters);
         //}
@@ -476,7 +476,7 @@ namespace _3A_flickr_sync.FlickrNet
         //    Dictionary<string, string> parameters = new Dictionary<string, string>();
         //    parameters.Add("method", "flickr.photos.getUntagged");
 
-        //    UtilityMethods.PartialOptionsIntoArray(options, parameters);
+        //    Helper.PartialOptionsIntoArray(options, parameters);
 
         //    return GetResponse<PhotoCollection>(parameters);
         //}
@@ -541,7 +541,7 @@ namespace _3A_flickr_sync.FlickrNet
 
         //    Dictionary<string, string> parameters = new Dictionary<string, string>();
         //    parameters.Add("method", "flickr.photos.getNotInSet");
-        //    UtilityMethods.PartialOptionsIntoArray(options, parameters);
+        //    Helper.PartialOptionsIntoArray(options, parameters);
 
         //    return GetResponse<PhotoCollection>(parameters);
         //}
@@ -646,28 +646,28 @@ namespace _3A_flickr_sync.FlickrNet
 
         //    Dictionary<string, string> parameters = new Dictionary<string, string>();
         //    parameters.Add("method", "flickr.photos.recentlyUpdated");
-        //    parameters.Add("min_date", UtilityMethods.DateToUnixTimestamp(minDate));
-        //    if (extras != PhotoSearchExtras.None) parameters.Add("extras", UtilityMethods.ExtrasToString(extras));
+        //    parameters.Add("min_date", Helper.DateToUnixTimestamp(minDate));
+        //    if (extras != PhotoSearchExtras.None) parameters.Add("extras", Helper.ExtrasToString(extras));
         //    if (perPage > 0) parameters.Add("per_page", perPage.ToString(System.Globalization.NumberFormatInfo.InvariantInfo));
         //    if (page > 0) parameters.Add("page", page.ToString(System.Globalization.NumberFormatInfo.InvariantInfo));
 
         //    return GetResponse<PhotoCollection>(parameters);
         //}
 
-        ///// <summary>
-        ///// Search for a set of photos, based on the value of the <see cref="PhotoSearchOptions"/> parameters.
-        ///// </summary>
-        ///// <param name="options">The parameters to search for.</param>
-        ///// <returns>A collection of photos contained within a <see cref="PhotoCollection"/> object.</returns>
-        //public PhotoCollection PhotosSearch(PhotoSearchOptions options)
-        //{
-        //    Dictionary<string, string> parameters = new Dictionary<string, string>();
-        //    parameters.Add("method", "flickr.photos.search");
+        /// <summary>
+        /// Search for a set of photos, based on the value of the <see cref="PhotoSearchOptions"/> parameters.
+        /// </summary>
+        /// <param name="options">The parameters to search for.</param>
+        /// <returns>A collection of photos contained within a <see cref="PhotoCollection"/> object.</returns>
+        public PhotoCollection PhotosSearch(PhotoSearchOptions options)
+        {
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("method", "flickr.photos.search");
 
-        //    options.AddToDictionary(parameters);
+            options.AddToDictionary(parameters);
 
-        //    return GetResponse<PhotoCollection>(parameters);
-        //}
+            return GetResponse<PhotoCollection>(parameters);
+        }
 
         ///// <summary>
         ///// Set the date taken for a photo.
@@ -719,7 +719,7 @@ namespace _3A_flickr_sync.FlickrNet
         //    Dictionary<string, string> parameters = new Dictionary<string, string>();
         //    parameters.Add("method", "flickr.photos.setDates");
         //    parameters.Add("photo_id", photoId);
-        //    if (datePosted != DateTime.MinValue) parameters.Add("date_posted", UtilityMethods.DateToUnixTimestamp(datePosted).ToString());
+        //    if (datePosted != DateTime.MinValue) parameters.Add("date_posted", Helper.DateToUnixTimestamp(datePosted).ToString());
         //    if (dateTaken != DateTime.MinValue)
         //    {
         //        parameters.Add("date_taken", dateTaken.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.DateTimeFormatInfo.InvariantInfo));

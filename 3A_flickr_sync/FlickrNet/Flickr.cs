@@ -9,6 +9,7 @@ using System.Collections.Specialized;
 using System.Threading;
 using System.Collections.Generic;
 using _3A_flickr_sync.Common;
+using _3A_flickr_sync.Logic;
 
 namespace _3A_flickr_sync.FlickrNet
 {
@@ -73,9 +74,9 @@ namespace _3A_flickr_sync.FlickrNet
         //private static string authUrl = "http://www.flickr.com/services/auth/";
         private static string authUrl = "https://www.flickr.com/services/auth/";
 
-        private string apiKey = "5022cacde5b7dee7f9419711f35223b8";
+        public readonly static string ApiKey = "5022cacde5b7dee7f9419711f35223b8";
 
-        private string sharedSecret = "b33e1a569c1f8d2a";
+        public readonly static string ApiSecret = "b33e1a569c1f8d2a";
 
         private int timeout = 100000;
 
@@ -84,37 +85,17 @@ namespace _3A_flickr_sync.FlickrNet
         /// </summary>
         //public const string UserAgent = "Mozilla/4.0 FlickrNet API (compatible; MSIE 6.0; Windows NT 5.1)";
 
-        //private string lastRequest;
-        //private string lastResponse;
-
-
-        /// <summary>
-        /// Get or set the API Key to be used by all calls. API key is mandatory for all 
-        /// calls to Flickr.
-        /// </summary>
-        public string ApiKey
-        {
-            get { return apiKey; }
-        }
-
-        /// <summary>
-        /// API shared secret is required for all calls that require signing, which includes
-        /// all methods that require authentication, as well as the actual flickr.auth.* calls.
-        /// </summary>
-        public string ApiSecret
-        {
-            get { return sharedSecret; }
-        }
-
         /// <summary>
         /// OAuth Access Token. Needed for authenticated access using OAuth to Flickr.
         /// </summary>
-        public string OAuthAccessToken { get; set; }
+        public static string OAuthAccessToken { get; set; }
 
         /// <summary>
         /// OAuth Access Token Secret. Needed for authenticated access using OAuth to Flickr.
         /// </summary>
-        public string OAuthAccessTokenSecret { get; set; }
+        public static string OAuthAccessTokenSecret { get; set; }
+
+        public static string UserId { get; set; }
 
         /// <summary>
         /// The default service to use for new Flickr instances
@@ -158,8 +139,19 @@ namespace _3A_flickr_sync.FlickrNet
         /// </summary>
         public Flickr()
         {
-            OAuthAccessToken = "72157637144747383-7edb312576a89e3f";
-            OAuthAccessTokenSecret = "0095950bcad5ee34";
+            
+        }
+
+        public static void ResetOAuth()
+        {
+            FUserLogic l = new FUserLogic();
+            var v = l.GetFirst();
+            if (v != null)
+            {
+                UserId = v.UserId;
+                OAuthAccessToken = v.OAuthAccessToken;
+                OAuthAccessTokenSecret = v.OAuthAccessTokenSecret;
+            }
         }
 
         private void CheckRequiresAuthentication()
@@ -210,7 +202,7 @@ namespace _3A_flickr_sync.FlickrNet
             parameters.Keys.CopyTo(keys, 0);
             Array.Sort(keys);
 
-            StringBuilder hashStringBuilder = new StringBuilder(sharedSecret, 2 * 1024);
+            StringBuilder hashStringBuilder = new StringBuilder(ApiSecret, 2 * 1024);
             StringBuilder contentStringBuilder = new StringBuilder();
 
             foreach (string key in keys)

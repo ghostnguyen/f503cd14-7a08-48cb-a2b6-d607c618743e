@@ -10,17 +10,10 @@ using _3A_flickr_sync.Models;
 
 namespace _3A_flickr_sync.Logic
 {
-    public class FFileLogic
+    public class FFileLogic : FSDBLogic
     {
-        FSDBContext db = null;
-
-        public FFileLogic(string path)
-        {
-            db = new FSDBContext(path);            
-        }
-
         public FFileLogic(FFolder folder)
-            : this(folder.Path)
+            : base(folder.Path)
         {
         }
 

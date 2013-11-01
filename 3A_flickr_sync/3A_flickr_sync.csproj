@@ -74,38 +74,71 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="FlickrNet\Auth.cs" />
+    <Compile Include="FlickrNet\BoundaryBox.cs" />
+    <Compile Include="FlickrNet\DateGranularity.cs" />
     <Compile Include="FlickrNet\Enums.cs" />
     <Compile Include="FlickrNet\Flickr.cs" />
+    <Compile Include="FlickrNet\FlickrException.cs" />
     <Compile Include="FlickrNet\FlickrResponder.cs" />
     <Compile Include="FlickrNet\FlickrResponderSync.cs" />
     <Compile Include="FlickrNet\Flickr_GetResponse.cs" />
     <Compile Include="FlickrNet\Flickr_OAuth.cs" />
     <Compile Include="FlickrNet\Flickr_OAuthSync.cs" />
     <Compile Include="FlickrNet\Flickr_Photos.cs" />
+    <Compile Include="FlickrNet\Flickr_Photosets.cs" />
     <Compile Include="FlickrNet\Flickr_Test.cs" />
     <Compile Include="FlickrNet\Flickr_Upload.cs" />
+    <Compile Include="FlickrNet\GeoAccuracy.cs" />
+    <Compile Include="FlickrNet\GeoContext.cs" />
+    <Compile Include="FlickrNet\GeoPermissions.cs" />
     <Compile Include="FlickrNet\IFlickrParsable.cs" />
+    <Compile Include="FlickrNet\LicenseType.cs" />
+    <Compile Include="FlickrNet\MediaType.cs" />
     <Compile Include="FlickrNet\NoResponse.cs" />
     <Compile Include="FlickrNet\OAuthAccessToken.cs" />
     <Compile Include="FlickrNet\OAuthException.cs" />
     <Compile Include="FlickrNet\OAuthRequestToken.cs" />
+    <Compile Include="FlickrNet\PagedPhotoCollection.cs" />
+    <Compile Include="FlickrNet\ParsingException.cs" />
+    <Compile Include="FlickrNet\Photo.cs" />
+    <Compile Include="FlickrNet\PhotoCollection.cs" />
+    <Compile Include="FlickrNet\PhotoInfo.cs" />
+    <Compile Include="FlickrNet\PhotoSearchExtras.cs" />
+    <Compile Include="FlickrNet\PhotoSearchOptions.cs" />
+    <Compile Include="FlickrNet\PhotoSearchOrder.cs" />
+    <Compile Include="FlickrNet\Photoset.cs" />
+    <Compile Include="FlickrNet\PhotoSetCollection.cs" />
+    <Compile Include="FlickrNet\Place.cs" />
+    <Compile Include="FlickrNet\PlaceInfo.cs" />
+    <Compile Include="FlickrNet\PlaceType.cs" />
+    <Compile Include="FlickrNet\PopularitySort.cs" />
+    <Compile Include="FlickrNet\ShapeData.cs" />
     <Compile Include="FlickrNet\UnknownResponse.cs" />
     <Compile Include="FlickrNet\UploadProgressEvent.cs" />
     <Compile Include="FlickrNet\User.cs" />
+    <Compile Include="FlickrNet\VideoInfo.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Logic\FSDBLogic.cs" />
+    <Compile Include="Logic\SetLogic.cs" />
+    <Compile Include="Logic\FlickrLogic.cs" />
+    <Compile Include="Logic\FUserLogic.cs" />
     <Compile Include="Logic\FFileLogic.cs" />
     <Compile Include="Logic\FFolderLogic.cs" />
+    <Compile Include="Models\Mapping\SetMap.cs" />
+    <Compile Include="Models\Set.cs" />
+    <Compile Include="Models\FUser.cs" />
     <Compile Include="Models\FFile.partial.cs" />
     <Compile Include="Models\FSDBContext.partial.cs" />
     <Compile Include="Models\FFile.cs" />
     <Compile Include="Models\FFolder.cs" />
     <Compile Include="Models\FSDBContext.cs" />
     <Compile Include="Models\FSMasterDBContext.cs" />
+    <Compile Include="Models\Mapping\FUserMap.cs" />
     <Compile Include="Models\Mapping\FFileMap.cs" />
     <Compile Include="Models\Mapping\FFolderMap.cs" />
     <Compile Include="Program.cs" />

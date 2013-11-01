@@ -7,5 +7,6 @@ namespace _3A_flickr_sync.Models
     {
         public int Id { get; set; }
         public string Path { get; set; }
+        public string UserId { get; set; }
     }
 }

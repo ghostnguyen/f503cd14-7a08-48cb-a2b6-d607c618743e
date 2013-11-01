@@ -17,10 +17,12 @@ namespace _3A_flickr_sync.Models
         }
 
         public DbSet<FFolder> FFolders { get; set; }
+        public DbSet<FUser> FUsers { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Configurations.Add(new FFolderMap());
+            modelBuilder.Configurations.Add(new FUserMap());
         }
     }
 }

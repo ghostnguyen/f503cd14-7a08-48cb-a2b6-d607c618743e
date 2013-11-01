@@ -9,15 +9,9 @@ namespace _3A_flickr_sync.Common
 {
     public class WebClient2 : WebClient
     {
-
         public int Timeout { get; set; }
         public string ContentType { get; set; }
         public long ContentLength { get; set; }
-        //public WebClient2()
-        //    : base()
-        //{
-
-        //}
 
         protected override WebRequest GetWebRequest(Uri address)
         {
