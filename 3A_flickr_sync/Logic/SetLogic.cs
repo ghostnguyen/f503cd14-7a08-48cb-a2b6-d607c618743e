@@ -39,5 +39,17 @@ namespace _3A_flickr_sync.Logic
             }
         }
 
+        public string GetTittleFromPath(string path)
+        {
+            var root = Path.GetPathRoot(path);
+            if (string.IsNullOrEmpty(root))
+            {
+                throw new Exception("");
+            }
+            else
+            {
+                return "";
+            }
+        }
     }
 }

@@ -34,7 +34,10 @@ namespace _3A_flickr_sync
             //var v1 = f.TestLogin();
 
             //f.UploadPicture(@"D:\ghostnguyen\Pictures\SGI Photo - Can Gio\DSC03488.JPG");
-
+            var v = Path.GetPathRoot(@"D:\ghostnguyen\Pictures\SGI Photo - Can Gio\DSC03488.JPG");
+            var v1 = Path.GetPathRoot(@"D:\");
+            var v2 = Path.GetPathRoot(@"D:");
+            var v3 = Path.GetPathRoot(@"\\sda\fss\fsaf.jpg");
             //var s1 = Helper.HashFile(@"D:\ghostnguyen\Pictures\SGI Photo - Can Gio\DSC03488.JPG");
             //var s2 = Helper.HashPhotoNoExif(@"D:\ghostnguyen\Pictures\SGI Photo - Can Gio\DSC03488.JPG");
 
