@@ -13,11 +13,12 @@ namespace _3A_flickr_sync.Logic
 
         public string SyncPath { get { return db == null ? "" : db.Path; } }
 
-        internal FSDBLogic()
-        { }
-
         public FSDBLogic(string path)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                throw new Exception("");
+            }
             db = new FSDBContext(path);
         }
     }

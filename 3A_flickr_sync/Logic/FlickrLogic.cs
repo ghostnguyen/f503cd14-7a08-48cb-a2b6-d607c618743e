@@ -12,6 +12,10 @@ namespace _3A_flickr_sync.Logic
 {
     public class FlickrLogic : FSDBLogic
     {
+        public FlickrLogic(string path)
+            : base(path)
+        { }
+
         public FFile Upload(int fFileID)
         {
             var file = db.FFiles.FirstOrDefault(r => r.Id == fFileID);
@@ -74,14 +78,14 @@ namespace _3A_flickr_sync.Logic
         //    return file;
         //}
 
-        public void DownloadSets()
-        {
-            Flickr flickr = new Flickr();
-            var setList = flickr.PhotosetsGetList();
+        //public void DownloadSets()
+        //{
+        //    Flickr flickr = new Flickr();
+        //    var setList = flickr.PhotosetsGetList();
 
-            SetLogic l = new SetLogic();
-            l.AddOrUpdate(setList);
-        }
+        //    SetLogic l = new SetLogic();
+        //    l.AddOrUpdate(setList);
+        //}
 
         public bool ExistFile(string hashCode)
         {

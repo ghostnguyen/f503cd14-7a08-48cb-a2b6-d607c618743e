@@ -421,7 +421,6 @@ namespace _3A_flickr_sync.Common
                     return String.Empty;
             }
         }
-
     }
 
     public static class dotNetExtension
