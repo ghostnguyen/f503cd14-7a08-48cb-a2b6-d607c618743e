@@ -16,20 +16,16 @@ using _3A_flickr_sync.Models;
 
 namespace _3A_flickr_sync
 {
-    public partial class Form1 : Form
+    public partial class Main : Form
     {
-        public Form1()
+        public Main()
         {
             InitializeComponent();
 
-            FFolderLogic fL = new FFolderLogic();
-            var v = fL.CreateIfNotExist(@"D:\ghostnguyen\Pictures\SGI Photo - Can Gio");
 
-            FFileLogic ffL1 = new FFileLogic(v);
-            ffL1.Add(new DirectoryInfo(v.Path));
 
-            FlickrLogic fLg = new FlickrLogic(v.Path);
-            fLg.Upload();
+            //FlickrLogic fLg = new FlickrLogic(v.Path);
+            //fLg.Upload();
         }
 
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)
@@ -40,7 +36,7 @@ namespace _3A_flickr_sync
             //Token = "72157637144674393-a524ed4dd4f6fe99"
             //TokenSecret = "a7f980526e160420"
             //Go to: http://www.flickr.com/services/oauth/authorize?oauth_token=72157637144674393-a524ed4dd4f6fe99
-            
+
             string url = @"http://www.flickr.com/services/oauth/authorize?oauth_token=" + r.Token;
             ProcessStartInfo sInfo = new ProcessStartInfo(url);
             Process.Start(sInfo);
@@ -67,9 +63,28 @@ namespace _3A_flickr_sync
             }
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void selectFoldersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog di = new FolderBrowserDialog();
+
+            var r = di.ShowDialog();
+            if (r == System.Windows.Forms.DialogResult.OK)
+            {
+                FFolderLogic fL = new FFolderLogic();
+                var v = fL.CreateIfNotExist(di.SelectedPath);
+
+                FFileLogic ffL1 = new FFileLogic(v);
+                var c = ffL1.Add(new DirectoryInfo(v.Path));
+                rtbLog.AppendText(v.Path);
+                rtbLog.AppendText(c.ToString() + " found.");
+            }
+        }
+
+        private void Main_Load(object sender, EventArgs e)
         {
 
         }
+
+
     }
 }

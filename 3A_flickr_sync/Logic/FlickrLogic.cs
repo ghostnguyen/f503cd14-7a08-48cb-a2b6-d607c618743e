@@ -18,6 +18,9 @@ namespace _3A_flickr_sync.Logic
 
         public void Upload()
         {
+            SetLogic setL = new SetLogic(db.Path);
+            setL.DownloadPhotsets();
+
             var fL = db.FFiles.Where(r => r.Status == FFileStatus.New && r.Path.Contains(db.Path));
             foreach (var item in fL)
             {

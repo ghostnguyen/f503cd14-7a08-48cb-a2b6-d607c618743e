@@ -33,8 +33,9 @@ namespace _3A_flickr_sync.Logic
             return v;
         }
 
-        public void Add(DirectoryInfo folder)
+        public int Add(DirectoryInfo folder)
         {
+            int c = 0;
             if (folder.Exists)
             {
                 var ext = AppSetting.Extension;
@@ -48,7 +49,9 @@ namespace _3A_flickr_sync.Logic
                         Add(f);
                     }
                 }
+                c = f1.Count();
             }
+            return c;
         }
     }
 }
