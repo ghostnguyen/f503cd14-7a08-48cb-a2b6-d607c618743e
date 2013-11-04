@@ -22,7 +22,7 @@ namespace _3A_flickr_sync.FlickrNet
             string baseString = "";
             string key = ApiSecret + "&" + oAuthAccessTokenSecret;
             byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
-            
+
             SortedList<string, string> sorted = parameters.ToSortedList();
 
             StringBuilder sb = new StringBuilder();
@@ -94,7 +94,7 @@ namespace _3A_flickr_sync.FlickrNet
         /// Returns a new dictionary containing the basic OAuth parameters.
         /// </summary>
         /// <returns></returns>
-        private Dictionary<string, string> OAuthGetBasicParameters()
+        private Dictionary<string, string> OAuthGetBasicParameters(bool isNeedOAuthAccessToken = true)
         {
             string oauthtimestamp = Helper.DateToUnixTimestamp(DateTime.UtcNow);
             string oauthnonce = Guid.NewGuid().ToString("N");
@@ -105,8 +105,10 @@ namespace _3A_flickr_sync.FlickrNet
             parameters.Add("oauth_version", "1.0");
             parameters.Add("oauth_signature_method", "HMAC-SHA1");
             parameters.Add("oauth_consumer_key", ApiKey);
-            parameters.Add("oauth_token", OAuthAccessToken);
             
+            if (isNeedOAuthAccessToken)
+                parameters.Add("oauth_token", OAuthAccessToken);
+
             return parameters;
         }
     }

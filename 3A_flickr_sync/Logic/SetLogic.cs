@@ -75,7 +75,12 @@ namespace _3A_flickr_sync.Logic
             return title;
         }
 
-        public void AddPhoto(FFile file)
+        /// <summary>
+        /// return SetID
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns>SetID</returns>
+        public string AddPhoto(FFile file)
         {
             var tittle = GetTittleFromPath(file.Path);
             var set = db.Sets.FirstOrDefault(r => r.UserID == Flickr.UserId && r.Tittle.ToLower() == tittle.ToLower());
@@ -83,14 +88,20 @@ namespace _3A_flickr_sync.Logic
 
             if (set == null)
             {
-                var newSet = f.PhotosetsCreate(tittle, file.PhotoID);
-                db.Sets.Add(new Set() { SetsID = newSet.PhotosetId, UserID = Flickr.UserId, Tittle = tittle });
-                db.SaveChanges();
+                var fSet = f.PhotosetsCreate(tittle, file.PhotoID);
+                if (fSet != null)
+                {
+                    set = db.Sets.Add(new Set() { SetsID = fSet.PhotosetId, UserID = Flickr.UserId, Tittle = tittle });
+                    db.SaveChanges();
+                }
             }
             else
             {
                 f.PhotosetsAddPhoto(set.SetsID, file.PhotoID); 
             }
+
+            
+            return set.SetsID;
         }
     }
 }

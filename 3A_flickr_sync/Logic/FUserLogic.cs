@@ -11,13 +11,13 @@ namespace _3A_flickr_sync.Logic
     public class FUserLogic
     {
         FSMasterDBContext db = new FSMasterDBContext();
-        public FUser CreateOrUpdate(string userID, string oAuthAccessToken, string oAuthAccessTokenSecret)
+        public FUser CreateOrUpdate(string userID, string oAuthAccessToken, string oAuthAccessTokenSecret, string userName, string fullName)
         {
             FUser v = db.FUsers.FirstOrDefault();
 
             if (v == null)
             {
-                
+
             }
             else
             {

@@ -16,6 +16,8 @@ namespace _3A_flickr_sync.Models.Mapping
             this.Property(t => t.UserId).HasColumnName("Path");
             this.Property(t => t.OAuthAccessToken).HasColumnName("OAuthAccessToken");
             this.Property(t => t.OAuthAccessTokenSecret).HasColumnName("OAuthAccessTokenSecret");
+            this.Property(t => t.Username).HasColumnName("Username");
+            this.Property(t => t.FullName).HasColumnName("FullName");
         }
     }
 }

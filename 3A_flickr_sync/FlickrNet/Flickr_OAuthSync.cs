@@ -18,7 +18,7 @@ namespace _3A_flickr_sync.FlickrNet
         {
             string url = "http://www.flickr.com/services/oauth/request_token";
 
-            Dictionary<string, string> parameters = OAuthGetBasicParameters();
+            Dictionary<string, string> parameters = OAuthGetBasicParameters(false);
 
             parameters.Add("oauth_callback", callback);
 
@@ -53,7 +53,7 @@ namespace _3A_flickr_sync.FlickrNet
         {
             string url = "http://www.flickr.com/services/oauth/access_token";
 
-            Dictionary<string, string> parameters = OAuthGetBasicParameters();
+            Dictionary<string, string> parameters = OAuthGetBasicParameters(false);
 
             parameters.Add("oauth_verifier", verifier);
             parameters.Add("oauth_token", requestToken);

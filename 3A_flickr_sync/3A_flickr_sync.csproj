@@ -73,6 +73,12 @@
     <Compile Include="Common\WebClient2.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Enter_Oauth_Verifier.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Enter_Oauth_Verifier.Designer.cs">
+      <DependentUpon>Enter_Oauth_Verifier.cs</DependentUpon>
+    </Compile>
     <Compile Include="FlickrNet\Auth.cs" />
     <Compile Include="FlickrNet\BoundaryBox.cs" />
     <Compile Include="FlickrNet\DateGranularity.cs" />
@@ -143,6 +149,9 @@
     <Compile Include="Models\Mapping\FFolderMap.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Enter_Oauth_Verifier.resx">
+      <DependentUpon>Enter_Oauth_Verifier.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

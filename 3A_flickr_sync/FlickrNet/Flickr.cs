@@ -156,6 +156,16 @@ namespace _3A_flickr_sync.FlickrNet
 
         private void CheckRequiresAuthentication()
         {
+            if (String.IsNullOrEmpty(OAuthAccessToken) || String.IsNullOrEmpty(OAuthAccessTokenSecret))
+            {
+                ResetOAuth();
+                if (String.IsNullOrEmpty(OAuthAccessToken) || String.IsNullOrEmpty(OAuthAccessTokenSecret))
+                {
+                    throw new Exception(ErrMess.Err20);
+                }
+            }
+             
+
             if (!String.IsNullOrEmpty(OAuthAccessToken) && !String.IsNullOrEmpty(OAuthAccessTokenSecret))
                 return;
 
