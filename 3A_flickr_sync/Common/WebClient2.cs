@@ -18,7 +18,8 @@ namespace _3A_flickr_sync.Common
             var objWebRequest = base.GetWebRequest(address);
             objWebRequest.Timeout = Timeout;
             objWebRequest.ContentType = ContentType;
-            objWebRequest.ContentLength = ContentLength;
+            objWebRequest.ContentLength = ContentLength;            
+            
             return objWebRequest;
         }
     }

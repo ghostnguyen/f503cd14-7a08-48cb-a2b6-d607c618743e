@@ -22,10 +22,11 @@ namespace _3A_flickr_sync
         {
             InitializeComponent();
 
+            FFolderLogic fLogic = new FFolderLogic();
+            var v = fLogic.CreateIfNotExist(@"D:\ghostnguyen\Pictures\SGI Photo - Can Gio");
 
-
-            //FlickrLogic fLg = new FlickrLogic(v.Path);
-            //fLg.Upload();
+            FlickrLogic fLg = new FlickrLogic(v.Path);
+            fLg.Upload();
         }
 
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)

@@ -27,7 +27,7 @@ namespace _3A_flickr_sync.FlickrNet
         /// <param name="safetyLevel">The safety level of the photo, i.e. Safe, Moderate or Restricted.</param>
         /// <param name="hiddenFromSearch">Is the photo hidden from public searches.</param>
         /// <returns>The id of the photograph after successful uploading.</returns>
-        public string UploadPicture(string path, string title = "", string description = "", string tags = "", bool isPublic = false, bool isFamily = true, bool isFriend = false, ContentType contentType = ContentType.None, SafetyLevel safetyLevel = SafetyLevel.Restricted, HiddenFromSearch hiddenFromSearch = HiddenFromSearch.Hidden)
+        public async Task<string> UploadPicture(string path, string title = "", string description = "", string tags = "", bool isPublic = false, bool isFamily = true, bool isFriend = false, ContentType contentType = ContentType.None, SafetyLevel safetyLevel = SafetyLevel.Restricted, HiddenFromSearch hiddenFromSearch = HiddenFromSearch.Hidden)
         {
             CheckRequiresAuthentication();
 
@@ -75,37 +75,50 @@ namespace _3A_flickr_sync.FlickrNet
                 string sig = OAuthCalculateSignature("POST", uploadUri.AbsoluteUri, parameters, OAuthAccessTokenSecret);
                 parameters.Add("oauth_signature", sig);
 
-                string responseXml = UploadData(stream, fileName, uploadUri, parameters);
+                //string responseXml = UploadData(stream, fileName, uploadUri, parameters);
+                var task = UploadData(stream, fileName, uploadUri, parameters);
+                
+                string responseXml = await task;
 
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.IgnoreWhitespace = true;
-                XmlReader reader = XmlReader.Create(new StringReader(responseXml), settings);
-
-                if (!reader.ReadToDescendant("rsp"))
+                var r = "";
+                if (string.IsNullOrEmpty(responseXml))
                 {
-                    throw new XmlException("Unable to find response element 'rsp' in Flickr response");
+
                 }
-                while (reader.MoveToNextAttribute())
+                else
                 {
-                    if (reader.LocalName == "stat" && reader.Value == "fail")
-                        throw new Exception();
-                    //TODO:
-                    //throw ExceptionHandler.CreateResponseException(reader);
-                    continue;
+                    XmlReaderSettings settings = new XmlReaderSettings();
+                    settings.IgnoreWhitespace = true;
+                    XmlReader reader = XmlReader.Create(new StringReader(responseXml), settings);
+
+                    if (!reader.ReadToDescendant("rsp"))
+                    {
+                        throw new XmlException("Unable to find response element 'rsp' in Flickr response");
+                    }
+                    while (reader.MoveToNextAttribute())
+                    {
+                        if (reader.LocalName == "stat" && reader.Value == "fail")
+                            throw new Exception();
+                        //TODO:
+                        //throw ExceptionHandler.CreateResponseException(reader);
+                        continue;
+                    }
+
+                    reader.MoveToElement();
+                    reader.Read();
+
+                    UnknownResponse t = new UnknownResponse();
+                    ((IFlickrParsable)t).Load(reader);
+
+                    stream.Close();
+                    r = t.GetElementValue("photoid");
                 }
 
-                reader.MoveToElement();
-                reader.Read();
-
-                UnknownResponse t = new UnknownResponse();
-                ((IFlickrParsable)t).Load(reader);
-
-                stream.Close();
-                return t.GetElementValue("photoid");
+                return r;
             }
         }
 
-        private string UploadData(Stream imageStream, string fileName, Uri uploadUri, Dictionary<string, string> parameters)
+        private async Task<string> UploadData(Stream imageStream, string fileName, Uri uploadUri, Dictionary<string, string> parameters)
         {
             //string boundary = "FLICKR_MIME_" + DateTime.Now.ToString("yyyyMMddhhmmss", System.Globalization.DateTimeFormatInfo.InvariantInfo);
 
@@ -153,9 +166,6 @@ namespace _3A_flickr_sync.FlickrNet
             //sr.Close();
             //return s;
 
-
-
-
             string boundary = "FLICKR_MIME_" + DateTime.Now.ToString("yyyyMMddhhmmss", System.Globalization.DateTimeFormatInfo.InvariantInfo);
 
             string authHeader = FlickrResponder.OAuthCalculateAuthHeader(parameters);
@@ -173,10 +183,24 @@ namespace _3A_flickr_sync.FlickrNet
 
             webClient.ContentLength = dataBuffer.Length;
 
-            var responseArray = webClient.UploadData(uploadUri, dataBuffer);
-            string s = System.Text.Encoding.UTF8.GetString(responseArray);
+            //webClient.UploadDataCompleted += webClient_UploadDataCompleted;
+            //webClient.UploadProgressChanged += webClient_UploadProgressChanged;
 
+            var task = webClient.UploadDataTaskAsync(uploadUri, dataBuffer);
+            var responseArray = await task;
+            string s = System.Text.Encoding.UTF8.GetString(responseArray);
+            
             return s;
+        }
+
+        void webClient_UploadProgressChanged(object sender, UploadProgressChangedEventArgs e)
+        {
+            //throw new NotImplementedException();
+        }
+
+        void webClient_UploadDataCompleted(object sender, UploadDataCompletedEventArgs e)
+        {
+            //throw new NotImplementedException();
         }
 
         /// <summary>
@@ -191,6 +215,7 @@ namespace _3A_flickr_sync.FlickrNet
             try
             {
                 stream = new FileStream(fullFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+                
                 return ReplacePicture(stream, fullFileName, photoId);
             }
             finally
@@ -222,8 +247,10 @@ namespace _3A_flickr_sync.FlickrNet
             string sig = OAuthCalculateSignature("POST", replaceUri.AbsoluteUri, parameters, OAuthAccessTokenSecret);
             parameters.Add("oauth_signature", sig);
 
-            string responseXml = UploadData(stream, fileName, replaceUri, parameters);
-
+            var task = UploadData(stream, fileName, replaceUri, parameters);
+            task.RunSynchronously();
+            var responseXml = task.Result;
+            
             XmlReaderSettings settings = new XmlReaderSettings();
             settings.IgnoreWhitespace = true;
             XmlReader reader = XmlReader.Create(new StringReader(responseXml), settings);

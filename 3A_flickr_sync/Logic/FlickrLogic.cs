@@ -16,20 +16,35 @@ namespace _3A_flickr_sync.Logic
             : base(path)
         { }
 
-        public void Upload()
+        public async Task Upload()
         {
             SetLogic setL = new SetLogic(db.Path);
             setL.DownloadPhotsets();
 
             var fL = db.FFiles.Where(r => r.Status == FFileStatus.New && r.Path.Contains(db.Path));
+            int count = 3;
+            List<Task<FFile>> taskL = new List<Task<FFile>>();
+            int c = 0;
+
             foreach (var item in fL)
             {
-                Upload(item.Id);
+                if (c < count)
+                {
+                    var v1 = Upload(item.Id);
+                    taskL.Add(v1);
+                    c++;
+                }
+                else if (c == count)
+                {
+                    await Task.WhenAll(taskL);
+                    c = 0;
+                    taskL = new List<Task<FFile>>();
+                }
             }
         }
 
 
-        public FFile Upload(int fFileID)
+        public async Task<FFile> Upload(int fFileID)
         {
             var file = db.FFiles.FirstOrDefault(r => r.Id == fFileID);
 
@@ -53,7 +68,9 @@ namespace _3A_flickr_sync.Logic
                         else
                         {
                             var tags = string.Format("MD5:{0} MD5NoExif:{1}", hashCode, hashCodeNoExif);
-                            var photoID = flickr.UploadPicture(file.Path, tags: tags);
+                            var task = flickr.UploadPicture(file.Path, tags: tags);
+
+                            var photoID = await task;
 
                             if (string.IsNullOrEmpty(photoID))
                             { }
