@@ -18,5 +18,8 @@ namespace _3A_flickr_sync.Common
                 return s.Split(';');
             }
         }
+
+        public static string FSMasterDBConnectionStr = @"Data Source=(localdb)\v11.0;AttachDbFilename=3A_Flickr_Sync_Master_DB.mdf;Integrated Security=True;MultipleActiveResultSets=True";
+        public static string FSDBConnectionStr = @"Data Source=(localdb)\v11.0;AttachDbFilename=3A_Flickr_Sync_DB.mdf;Integrated Security=True;MultipleActiveResultSets=True";
     }
 }

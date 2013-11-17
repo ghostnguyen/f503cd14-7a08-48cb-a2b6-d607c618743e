@@ -11,10 +11,10 @@ namespace _3A_flickr_sync.Models
             Database.SetInitializer<FSMasterDBContext>(null);
         }
 
-        public FSMasterDBContext()
-            : base("Name=FSMasterDBContext")
-        {
-        }
+        //public FSMasterDBContext()
+        //    : base("Name=FSMasterDBContext")
+        //{
+        //}
 
         public DbSet<FFolder> FFolders { get; set; }
         public DbSet<FUser> FUsers { get; set; }
