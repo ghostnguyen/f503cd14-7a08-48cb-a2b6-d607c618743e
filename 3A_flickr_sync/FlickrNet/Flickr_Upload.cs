@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using _3A_flickr_sync.Common;
+using System.Reactive.Linq;
+using System.Reactive;
 
 namespace _3A_flickr_sync.FlickrNet
 {
@@ -185,6 +187,9 @@ namespace _3A_flickr_sync.FlickrNet
 
             //webClient.UploadDataCompleted += webClient_UploadDataCompleted;
             //webClient.UploadProgressChanged += webClient_UploadProgressChanged;
+
+            //Observable.FromEvent<UploadProgressChangedEventHandler>(
+            //Observer.Create
 
             var task = webClient.UploadDataTaskAsync(uploadUri, dataBuffer);
             var responseArray = await task;
