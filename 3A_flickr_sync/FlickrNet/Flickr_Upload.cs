@@ -214,14 +214,14 @@ namespace _3A_flickr_sync.FlickrNet
         /// <param name="fullFileName">The full filename of the photo to upload.</param>
         /// <param name="photoId">The ID of the photo to replace.</param>
         /// <returns>The id of the photograph after successful uploading.</returns>
-        public string ReplacePicture(string fullFileName, string photoId)
+        public async Task<string> ReplacePicture(string fullFileName, string photoId)
         {
             FileStream stream = null;
             try
             {
                 stream = new FileStream(fullFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
                 
-                return ReplacePicture(stream, fullFileName, photoId);
+                return await ReplacePicture(stream, fullFileName, photoId);
             }
             finally
             {
@@ -237,9 +237,8 @@ namespace _3A_flickr_sync.FlickrNet
         /// <param name="fileName">The filename of the file to replace the existing item with.</param>
         /// <param name="photoId">The ID of the photo to replace.</param>
         /// <returns>The id of the photograph after successful uploading.</returns>
-        public string ReplacePicture(Stream stream, string fileName, string photoId)
+        public async Task<string> ReplacePicture(Stream stream, string fileName, string photoId)
         {
-
             Uri replaceUri = new Uri(ReplaceUrl);
 
             Dictionary<string, string> parameters = new Dictionary<string, string>();
@@ -252,9 +251,7 @@ namespace _3A_flickr_sync.FlickrNet
             string sig = OAuthCalculateSignature("POST", replaceUri.AbsoluteUri, parameters, OAuthAccessTokenSecret);
             parameters.Add("oauth_signature", sig);
 
-            var task = UploadData(stream, fileName, replaceUri, parameters);
-            task.RunSynchronously();
-            var responseXml = task.Result;
+            var responseXml = await UploadData(stream, fileName, replaceUri, parameters);
             
             XmlReaderSettings settings = new XmlReaderSettings();
             settings.IgnoreWhitespace = true;
