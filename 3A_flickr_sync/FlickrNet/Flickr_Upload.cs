@@ -29,7 +29,7 @@ namespace _3A_flickr_sync.FlickrNet
         /// <param name="safetyLevel">The safety level of the photo, i.e. Safe, Moderate or Restricted.</param>
         /// <param name="hiddenFromSearch">Is the photo hidden from public searches.</param>
         /// <returns>The id of the photograph after successful uploading.</returns>
-        public async Task<string> UploadPicture(string path, string title = "", string description = "", string tags = "", bool isPublic = false, bool isFamily = true, bool isFriend = false, ContentType contentType = ContentType.None, SafetyLevel safetyLevel = SafetyLevel.Restricted, HiddenFromSearch hiddenFromSearch = HiddenFromSearch.Hidden)
+        public async Task<string> UploadPicture(string path, IProgress<UploadProgressChangedEventArgs> progress, string title = "", string description = "", string tags = "", bool isPublic = false, bool isFamily = true, bool isFriend = false, ContentType contentType = ContentType.None, SafetyLevel safetyLevel = SafetyLevel.Restricted, HiddenFromSearch hiddenFromSearch = HiddenFromSearch.Hidden)
         {
             CheckRequiresAuthentication();
 
@@ -78,8 +78,8 @@ namespace _3A_flickr_sync.FlickrNet
                 parameters.Add("oauth_signature", sig);
 
                 //string responseXml = UploadData(stream, fileName, uploadUri, parameters);
-                var task = UploadData(stream, fileName, uploadUri, parameters);
-                
+                var task = UploadData(stream, fileName, uploadUri, parameters, progress);
+
                 string responseXml = await task;
 
                 var r = "";
@@ -120,7 +120,7 @@ namespace _3A_flickr_sync.FlickrNet
             }
         }
 
-        private async Task<string> UploadData(Stream imageStream, string fileName, Uri uploadUri, Dictionary<string, string> parameters)
+        private async Task<string> UploadData(Stream imageStream, string fileName, Uri uploadUri, Dictionary<string, string> parameters, IProgress<UploadProgressChangedEventArgs> progress)
         {
             //string boundary = "FLICKR_MIME_" + DateTime.Now.ToString("yyyyMMddhhmmss", System.Globalization.DateTimeFormatInfo.InvariantInfo);
 
@@ -173,7 +173,10 @@ namespace _3A_flickr_sync.FlickrNet
             string authHeader = FlickrResponder.OAuthCalculateAuthHeader(parameters);
             byte[] dataBuffer = CreateUploadData(imageStream, fileName, parameters, boundary);
 
+            //Observable.FromEvent<UploadProgressChangedEventHandler>(
+            //Observer.Create
             WebClient2 webClient = new WebClient2();
+            webClient.UploadProgressChanged += ((a, b) => { if (progress != null) progress.Report(b); });
 
             webClient.Timeout = HttpTimeout;
             webClient.ContentType = "multipart/form-data; boundary=" + boundary;
@@ -183,29 +186,17 @@ namespace _3A_flickr_sync.FlickrNet
                 webClient.Headers["Authorization"] = authHeader;
             }
 
+
+
             webClient.ContentLength = dataBuffer.Length;
 
-            //webClient.UploadDataCompleted += webClient_UploadDataCompleted;
-            //webClient.UploadProgressChanged += webClient_UploadProgressChanged;
 
-            //Observable.FromEvent<UploadProgressChangedEventHandler>(
-            //Observer.Create
 
             var task = webClient.UploadDataTaskAsync(uploadUri, dataBuffer);
             var responseArray = await task;
             string s = System.Text.Encoding.UTF8.GetString(responseArray);
-            
+
             return s;
-        }
-
-        void webClient_UploadProgressChanged(object sender, UploadProgressChangedEventArgs e)
-        {
-            //throw new NotImplementedException();
-        }
-
-        void webClient_UploadDataCompleted(object sender, UploadDataCompletedEventArgs e)
-        {
-            //throw new NotImplementedException();
         }
 
         /// <summary>
@@ -214,14 +205,14 @@ namespace _3A_flickr_sync.FlickrNet
         /// <param name="fullFileName">The full filename of the photo to upload.</param>
         /// <param name="photoId">The ID of the photo to replace.</param>
         /// <returns>The id of the photograph after successful uploading.</returns>
-        public async Task<string> ReplacePicture(string fullFileName, string photoId)
+        public async Task<string> ReplacePicture(string fullFileName, string photoId, IProgress<UploadProgressChangedEventArgs> progress)
         {
             FileStream stream = null;
             try
             {
                 stream = new FileStream(fullFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-                
-                return await ReplacePicture(stream, fullFileName, photoId);
+
+                return await ReplacePicture(stream, fullFileName, photoId, progress);
             }
             finally
             {
@@ -237,7 +228,7 @@ namespace _3A_flickr_sync.FlickrNet
         /// <param name="fileName">The filename of the file to replace the existing item with.</param>
         /// <param name="photoId">The ID of the photo to replace.</param>
         /// <returns>The id of the photograph after successful uploading.</returns>
-        public async Task<string> ReplacePicture(Stream stream, string fileName, string photoId)
+        public async Task<string> ReplacePicture(Stream stream, string fileName, string photoId, IProgress<UploadProgressChangedEventArgs> progress)
         {
             Uri replaceUri = new Uri(ReplaceUrl);
 
@@ -251,8 +242,8 @@ namespace _3A_flickr_sync.FlickrNet
             string sig = OAuthCalculateSignature("POST", replaceUri.AbsoluteUri, parameters, OAuthAccessTokenSecret);
             parameters.Add("oauth_signature", sig);
 
-            var responseXml = await UploadData(stream, fileName, replaceUri, parameters);
-            
+            var responseXml = await UploadData(stream, fileName, replaceUri, parameters, progress);
+
             XmlReaderSettings settings = new XmlReaderSettings();
             settings.IgnoreWhitespace = true;
             XmlReader reader = XmlReader.Create(new StringReader(responseXml), settings);
