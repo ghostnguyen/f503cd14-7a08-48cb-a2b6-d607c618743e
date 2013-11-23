@@ -30,15 +30,18 @@ namespace _3A_flickr_sync.Logic
 
             var fL1 = new ObservableCollection<FFile>();
             fL1.CollectionChanged += fL1_CollectionChanged;
-
+            int min = 5;
             var v12 = Observable.FromEventPattern
                 <NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
                 h => fL1.CollectionChanged += h,
                 h => fL1.CollectionChanged -= h)
-                //.Where(r => r.
-                ;
+                .Where(r => r.EventArgs.Action == NotifyCollectionChangedAction.Remove
+                && ((ObservableCollection<FFile>)r.Sender).Count < min)
+                .Delay(TimeSpan.FromSeconds(5));
 
-            
+
+
+
 
 
             //db.FFiles.TakeWhile
