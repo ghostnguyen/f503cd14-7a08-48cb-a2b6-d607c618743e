@@ -50,7 +50,7 @@ namespace _3A_flickr_sync.Common
             return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
         }
 
-        public static IObservable<EventPattern<NotifyCollectionChangedEventArgs>> CollectionChangedAsObservable<T>(this ObservableCollection<T> col)
+        public static IObservable<EventPattern<NotifyCollectionChangedEventArgs>> ObservesChanged<T>(this ObservableCollection<T> col)
         {
             return Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>
                 (h => col.CollectionChanged += h,

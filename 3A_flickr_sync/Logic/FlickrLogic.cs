@@ -42,7 +42,7 @@ namespace _3A_flickr_sync.Logic
             MaxUpload = 5;
             Wait = TimeSpan.FromSeconds(5);
 
-            var v12 = fList.CollectionChangedAsObservable()
+            var v12 = fList.ObservesChanged()
                 .Select(r => new { r.EventArgs, List = (ObservableCollection<FFile>)r.Sender })
                 .Where(r => r.EventArgs.Action == NotifyCollectionChangedAction.Remove
                         && r.List.Count < MinBuffer)
@@ -50,13 +50,13 @@ namespace _3A_flickr_sync.Logic
 
             v12.Subscribe(r => fileL.TakeNew(3).ForEach(r1 => r.List.Add(r1)));
 
-            var v13 = uploadTaskList.CollectionChangedAsObservable()
+            var v13 = uploadTaskList.ObservesChanged()
                 .Where(r => r.EventArgs.Action == NotifyCollectionChangedAction.Remove
                 && ((ObservableCollection<FFile>)r.Sender).Count < MaxUpload)
                 .Throttle(TimeSpan.FromSeconds(1));
 
             //NewThreadScheduler.Default.Schedule
-
+            
             //db.FFiles.TakeWhile
             var fL = db.FFiles.Where(r => r.Status == FFileStatus.New && r.Path.Contains(db.Path))
 
