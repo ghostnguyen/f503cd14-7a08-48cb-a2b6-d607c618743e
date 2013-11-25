@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -44,6 +48,14 @@ namespace _3A_flickr_sync.Common
         public static string ToReadableString(this byte[] hashBytes)
         {
             return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+        }
+
+        public static IObservable<EventPattern<NotifyCollectionChangedEventArgs>> CollectionChangedAsObservable<T>(this ObservableCollection<T> col)
+        {
+            return Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>
+                (h => col.CollectionChanged += h,
+                h => col.CollectionChanged -= h)
+                ;
         }
     }
 }

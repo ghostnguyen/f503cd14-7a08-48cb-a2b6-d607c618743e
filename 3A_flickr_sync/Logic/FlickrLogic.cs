@@ -26,6 +26,7 @@ namespace _3A_flickr_sync.Logic
 
         public int MaxUpload { get; set; }
         public TimeSpan Wait { get; set; }
+        public int MinBuffer { get; set; }
 
         public async Task Upload(IProgress<Tuple<int, UploadProgressChangedEventArgs>> progress)
         {
@@ -37,31 +38,24 @@ namespace _3A_flickr_sync.Logic
             var fList = new ObservableCollection<FFile>();
             var uploadTaskList = new ObservableCollection<Task<FFile>>();
 
-            int minBuffer = 5;
+            MinBuffer = 5;
             MaxUpload = 5;
             Wait = TimeSpan.FromSeconds(5);
 
-            var v12 = Observable.FromEventPattern
-                <NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
-                h => fList.CollectionChanged += h,
-                h => fList.CollectionChanged -= h)
+            var v12 = fList.CollectionChangedAsObservable()
                 .Select(r => new { r.EventArgs, List = (ObservableCollection<FFile>)r.Sender })
                 .Where(r => r.EventArgs.Action == NotifyCollectionChangedAction.Remove
-                        && r.List.Count < minBuffer)
+                        && r.List.Count < MinBuffer)
                 .Throttle(Wait);
 
             v12.Subscribe(r => fileL.TakeNew(3).ForEach(r1 => r.List.Add(r1)));
 
-
-
-            var v13 = Observable.FromEventPattern
-                <NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
-                h => uploadTaskList.CollectionChanged += h,
-                h => uploadTaskList.CollectionChanged -= h)
+            var v13 = uploadTaskList.CollectionChangedAsObservable()
                 .Where(r => r.EventArgs.Action == NotifyCollectionChangedAction.Remove
                 && ((ObservableCollection<FFile>)r.Sender).Count < MaxUpload)
                 .Throttle(TimeSpan.FromSeconds(1));
 
+            //NewThreadScheduler.Default.Schedule
 
             //db.FFiles.TakeWhile
             var fL = db.FFiles.Where(r => r.Status == FFileStatus.New && r.Path.Contains(db.Path))
