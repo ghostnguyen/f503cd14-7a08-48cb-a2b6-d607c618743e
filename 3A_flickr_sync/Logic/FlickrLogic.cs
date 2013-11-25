@@ -14,6 +14,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Forms;
 using System.Collections.Specialized;
+using System.Reactive.Concurrency;
 
 namespace _3A_flickr_sync.Logic
 {
@@ -23,25 +24,43 @@ namespace _3A_flickr_sync.Logic
             : base(path)
         { }
 
+        public int MaxUpload { get; set; }
+        public TimeSpan Wait { get; set; }
+
         public async Task Upload(IProgress<Tuple<int, UploadProgressChangedEventArgs>> progress)
         {
-            SetLogic setL = new SetLogic(db.Path);
-            setL.DownloadPhotsets();
+            //SetLogic setL = new SetLogic(db.Path);
+            //setL.DownloadPhotsets();
 
-            var fL1 = new ObservableCollection<FFile>();
-            fL1.CollectionChanged += fL1_CollectionChanged;
-            int min = 5;
+            FFileLogic fileL = new FFileLogic(db.Path);
+
+            var fList = new ObservableCollection<FFile>();
+            var uploadTaskList = new ObservableCollection<Task<FFile>>();
+
+            int minBuffer = 5;
+            MaxUpload = 5;
+            Wait = TimeSpan.FromSeconds(5);
+
             var v12 = Observable.FromEventPattern
                 <NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
-                h => fL1.CollectionChanged += h,
-                h => fL1.CollectionChanged -= h)
+                h => fList.CollectionChanged += h,
+                h => fList.CollectionChanged -= h)
+                .Select(r => new { r.EventArgs, List = (ObservableCollection<FFile>)r.Sender })
                 .Where(r => r.EventArgs.Action == NotifyCollectionChangedAction.Remove
-                && ((ObservableCollection<FFile>)r.Sender).Count < min)
-                .Delay(TimeSpan.FromSeconds(5));
+                        && r.List.Count < minBuffer)
+                .Throttle(Wait);
+
+            v12.Subscribe(r => fileL.TakeNew(3).ForEach(r1 => r.List.Add(r1)));
 
 
 
-
+            var v13 = Observable.FromEventPattern
+                <NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
+                h => uploadTaskList.CollectionChanged += h,
+                h => uploadTaskList.CollectionChanged -= h)
+                .Where(r => r.EventArgs.Action == NotifyCollectionChangedAction.Remove
+                && ((ObservableCollection<FFile>)r.Sender).Count < MaxUpload)
+                .Throttle(TimeSpan.FromSeconds(1));
 
 
             //db.FFiles.TakeWhile
@@ -76,13 +95,33 @@ namespace _3A_flickr_sync.Logic
             //}
         }
 
-        void fL1_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+        //public async Task Upload(IProgress<Tuple<int, UploadProgressChangedEventArgs>> progress)
+        //{
+        //    SetLogic setL = new SetLogic(db.Path);
+        //    setL.DownloadPhotsets();
 
+        //    //db.FFiles.TakeWhile
+        //    var fL = db.FFiles.Where(r => r.Status == FFileStatus.New && r.Path.Contains(db.Path))
+        //        .ToList();
 
+        //    foreach (var item in fL)
+        //    {
+        //        if (c < maxUploadTask)
+        //        {
+        //            var subProgress = new Progress<UploadProgressChangedEventArgs>(r => { progress.Report(new Tuple<int, UploadProgressChangedEventArgs>(item.Id, r)); });
 
+        //            var v1 = Upload(item.Id, subProgress);
+        //            taskL.Add(v1);
+        //            c++;
+        //        }
+        //        else if (c == maxUploadTask)
+        //        {
+        //            await Task.WhenAny(taskL);
+        //            c--;
+        //            taskL = new List<Task<FFile>>();
+        //        }
+        //    }
+        //}
 
         public async Task<FFile> Upload(int fFileID, IProgress<UploadProgressChangedEventArgs> progress)
         {

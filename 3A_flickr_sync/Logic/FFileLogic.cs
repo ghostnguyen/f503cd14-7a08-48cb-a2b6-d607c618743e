@@ -12,6 +12,11 @@ namespace _3A_flickr_sync.Logic
 {
     public class FFileLogic : FSDBLogic
     {
+        public FFileLogic(string path)
+            : base(path)
+        {
+        }
+
         public FFileLogic(FFolder folder)
             : base(folder.Path)
         {
@@ -52,6 +57,14 @@ namespace _3A_flickr_sync.Logic
                 c = f1.Count();
             }
             return c;
+        }
+
+        public List<FFile> TakeNew(int count)
+        {
+            return db.FFiles
+                .Where(r1 => r1.Status == FFileStatus.New && r1.Path.Contains(db.Path))
+                .Take(count)
+                .ToList();
         }
     }
 }

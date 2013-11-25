@@ -79,9 +79,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\dotNetExtension.cs" />
     <Compile Include="Common\ErrMess.cs" />
     <Compile Include="Common\AppSetting.cs" />
-    <Compile Include="Common\EventPublisher.cs" />
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Common\WebClient2.cs">
       <SubType>Component</SubType>
