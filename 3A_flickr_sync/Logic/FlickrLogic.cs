@@ -20,43 +20,25 @@ namespace _3A_flickr_sync.Logic
 {
     public class FlickrLogic : FSDBLogic
     {
-        public FlickrLogic(string path)
-            : base(path)
-        { }
+        static private ObservableCollection<Task<FFile>> uploadTaskList = new ObservableCollection<Task<FFile>>();
+        static private ObservableCollection<IProgress<Tuple<int, UploadProgressChangedEventArgs>>> uploadEventList = new ObservableCollection<IProgress<Tuple<int, UploadProgressChangedEventArgs>>>();
+        static public int MaxUpload { get; set; }
 
-        public int MaxUpload { get; set; }
-        public TimeSpan Wait { get; set; }
-        public int MinBuffer { get; set; }
-
-        public async Task Upload(IProgress<Tuple<int, UploadProgressChangedEventArgs>> progress)
+        static public FlickrLogic()
         {
-            //SetLogic setL = new SetLogic(db.Path);
-            //setL.DownloadPhotsets();
-
-            FFileLogic fileL = new FFileLogic(db.Path);
-
-            var fList = new ObservableCollection<FFile>();
-            var uploadTaskList = new ObservableCollection<Task<FFile>>();
-
-            MinBuffer = 5;
-            MaxUpload = 5;
-            Wait = TimeSpan.FromSeconds(5);
-
-            var v12 = fList.ObservesChanged()
-                .Select(r => new { r.EventArgs, List = (ObservableCollection<FFile>)r.Sender })
-                .Where(r => r.EventArgs.Action == NotifyCollectionChangedAction.Remove
-                        && r.List.Count < MinBuffer)
-                .Throttle(Wait);
-
-            v12.Subscribe(r => fileL.TakeNew(3).ForEach(r1 => r.List.Add(r1)));
-
+            MaxUpload = 3;
             var v13 = uploadTaskList.ObservesChanged()
-                .Where(r => r.EventArgs.Action == NotifyCollectionChangedAction.Remove
-                && ((ObservableCollection<FFile>)r.Sender).Count < MaxUpload)
-                .Throttle(TimeSpan.FromSeconds(1));
+                           .Where(r => ((ObservableCollection<FFile>)r.Sender).Count < MaxUpload)
+                           .Subscribe(r =>
+                           {
+                                
+                           }
+                           )
+                           ;
+                           
 
             //NewThreadScheduler.Default.Schedule
-            
+
             //db.FFiles.TakeWhile
             var fL = db.FFiles.Where(r => r.Status == FFileStatus.New && r.Path.Contains(db.Path))
 
@@ -65,7 +47,7 @@ namespace _3A_flickr_sync.Logic
 
 
 
-            int maxUploadTask = 3;
+            
             List<Task<FFile>> taskL = new List<Task<FFile>>();
             int c = 0;
 
@@ -87,6 +69,22 @@ namespace _3A_flickr_sync.Logic
             //        taskL = new List<Task<FFile>>();
             //    }
             //}
+        }
+
+        public FlickrLogic(string path)
+            : base(path)
+        {
+            MaxUpload = 5;
+        }
+
+        public int MaxUpload { get; set; }
+
+        static public async Task Upload()
+        {
+            //SetLogic setL = new SetLogic(db.Path);
+            //setL.DownloadPhotsets();
+
+            
         }
 
         //public async Task Upload(IProgress<Tuple<int, UploadProgressChangedEventArgs>> progress)

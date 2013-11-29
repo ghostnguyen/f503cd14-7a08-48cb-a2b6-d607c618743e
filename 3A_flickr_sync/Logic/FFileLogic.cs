@@ -7,6 +7,8 @@ using System.Data.SqlClient;
 using System.Threading.Tasks;
 using _3A_flickr_sync.Common;
 using _3A_flickr_sync.Models;
+using System.Collections.Concurrent;
+using System.Reactive.Linq;
 
 namespace _3A_flickr_sync.Logic
 {
@@ -17,10 +19,65 @@ namespace _3A_flickr_sync.Logic
         {
         }
 
+        private static ConcurrentQueue<FFile> fileList = new ConcurrentQueue<FFile>();
+
+        public static int MinBuffer { get; set; }
+        public static int Buffer { get; set; }
+
+
+        public static FFileLogic()
+        {
+            MinBuffer = 5;
+            Buffer = 10;
+        }
+
+        public static FFile DequeueForUpload()
+        {
+            FFile f = null;
+            if (fileList.TryDequeue(out f))
+            { }
+            else
+            { f = null; }
+            return f;
+        }
+
+        public static void EnqueueForUpload(FFile file)
+        {
+            if (file == null)
+            {
+            }
+            else
+            {
+                var f = fileList.FirstOrDefault(r => r.Id == file.Id);
+                if (f == null)
+                {
+                    fileList.Enqueue(file);
+                }
+            }
+        }
+
         public FFileLogic(FFolder folder)
             : base(folder.Path)
         {
         }
+
+        public void StartBuffer()
+        {
+            Observable.Interval(TimeSpan.FromSeconds(5))
+                .Subscribe(r =>
+                {
+                    if (fileList.Count < MinBuffer)
+                    {
+                        var last = fileList.LastOrDefault();
+                        
+                        int fromID = last == null ? 0 : last.Id;
+
+                        TakeNew(Buffer, fromID).ForEach(r1 => fileList.Enqueue(r1));
+                    }
+                }
+                );
+        }
+
 
         public FFile Add(FileInfo file)
         {
@@ -45,12 +102,12 @@ namespace _3A_flickr_sync.Logic
             {
                 var ext = AppSetting.Extension;
                 var f1 = Directory.EnumerateFiles(folder.FullName, "*.*", SearchOption.AllDirectories);
-                
+
                 foreach (var item in f1)
                 {
                     var f = new FileInfo(item);
                     if (ext.Contains(f.Extension.ToLower()))
-                    {                        
+                    {
                         Add(f);
                     }
                 }
@@ -59,10 +116,11 @@ namespace _3A_flickr_sync.Logic
             return c;
         }
 
-        public List<FFile> TakeNew(int count)
+        public List<FFile> TakeNew(int count, int fromID)
         {
             return db.FFiles
-                .Where(r1 => r1.Status == FFileStatus.New && r1.Path.Contains(db.Path))
+                .Where(r1 => r1.Status == FFileStatus.New && r1.Path.Contains(db.Path)
+                && r1.Id > fromID)
                 .Take(count)
                 .ToList();
         }
