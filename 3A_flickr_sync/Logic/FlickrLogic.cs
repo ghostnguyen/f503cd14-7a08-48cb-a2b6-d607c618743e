@@ -31,11 +31,18 @@ namespace _3A_flickr_sync.Logic
                            .Where(r => ((ObservableCollection<FFile>)r.Sender).Count < MaxUpload)
                            .Subscribe(r =>
                            {
-                                
+                               var file = FFileLogic.DequeueForUpload();
+                               if (file == null) { }
+                               else
+                               {
+                                   FlickrLogic logic = new FlickrLogic(file.Item1);
+                                   IProgress<UploadProgressChangedEventHandler>
+                                   logic.Upload(file.Item2.Id,
+                               }
                            }
                            )
                            ;
-                           
+
 
             //NewThreadScheduler.Default.Schedule
 
@@ -47,7 +54,7 @@ namespace _3A_flickr_sync.Logic
 
 
 
-            
+
             List<Task<FFile>> taskL = new List<Task<FFile>>();
             int c = 0;
 
@@ -74,17 +81,14 @@ namespace _3A_flickr_sync.Logic
         public FlickrLogic(string path)
             : base(path)
         {
-            MaxUpload = 5;
         }
-
-        public int MaxUpload { get; set; }
 
         static public async Task Upload()
         {
             //SetLogic setL = new SetLogic(db.Path);
             //setL.DownloadPhotsets();
 
-            
+
         }
 
         //public async Task Upload(IProgress<Tuple<int, UploadProgressChangedEventArgs>> progress)

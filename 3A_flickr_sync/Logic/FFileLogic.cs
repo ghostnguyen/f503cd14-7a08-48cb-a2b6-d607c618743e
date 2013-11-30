@@ -19,7 +19,7 @@ namespace _3A_flickr_sync.Logic
         {
         }
 
-        private static ConcurrentQueue<FFile> fileList = new ConcurrentQueue<FFile>();
+        private static ConcurrentQueue<Tuple<string, FFile>> fileList = new ConcurrentQueue<Tuple<string, FFile>>();
 
         public static int MinBuffer { get; set; }
         public static int Buffer { get; set; }
@@ -31,9 +31,9 @@ namespace _3A_flickr_sync.Logic
             Buffer = 10;
         }
 
-        public static FFile DequeueForUpload()
+        public static Tuple<string, FFile> DequeueForUpload()
         {
-            FFile f = null;
+            Tuple<string, FFile> f = null;
             if (fileList.TryDequeue(out f))
             { }
             else
@@ -41,14 +41,14 @@ namespace _3A_flickr_sync.Logic
             return f;
         }
 
-        public static void EnqueueForUpload(FFile file)
+        public static void EnqueueForUpload(Tuple<string, FFile> file)
         {
             if (file == null)
             {
             }
             else
             {
-                var f = fileList.FirstOrDefault(r => r.Id == file.Id);
+                var f = fileList.FirstOrDefault(r => r.Item1 == file.Item1 && r.Item2.Id == file.Item2.Id);
                 if (f == null)
                 {
                     fileList.Enqueue(file);
@@ -68,11 +68,11 @@ namespace _3A_flickr_sync.Logic
                 {
                     if (fileList.Count < MinBuffer)
                     {
-                        var last = fileList.LastOrDefault();
-                        
-                        int fromID = last == null ? 0 : last.Id;
+                        var last = fileList.LastOrDefault(r1 => r1.Item1 == db.Path);
 
-                        TakeNew(Buffer, fromID).ForEach(r1 => fileList.Enqueue(r1));
+                        int fromID = last == null ? 0 : last.Item2.Id;
+
+                        TakeNew(Buffer, fromID).ForEach(r1 => fileList.Enqueue(new Tuple<string, FFile>(db.Path, r1)));
                     }
                 }
                 );
