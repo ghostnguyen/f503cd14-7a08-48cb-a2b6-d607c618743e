@@ -21,7 +21,7 @@ namespace _3A_flickr_sync.Logic
     public class FlickrLogic : FSDBLogic
     {
         static private ObservableCollection<Task<FFile>> uploadTaskList = new ObservableCollection<Task<FFile>>();
-        static private ObservableCollection<IProgress<Tuple<int, UploadProgressChangedEventArgs>>> uploadEventList = new ObservableCollection<IProgress<Tuple<int, UploadProgressChangedEventArgs>>>();
+        static private ObservableCollection<IProgress<Tuple<string, UploadProgressChangedEventArgs>>> uploadEventList = new ObservableCollection<IProgress<Tuple<string, UploadProgressChangedEventArgs>>>();
         static public int MaxUpload { get; set; }
 
         static public FlickrLogic()
@@ -36,8 +36,11 @@ namespace _3A_flickr_sync.Logic
                                else
                                {
                                    FlickrLogic logic = new FlickrLogic(file.Item1);
-                                   IProgress<UploadProgressChangedEventHandler>
-                                   logic.Upload(file.Item2.Id,
+                                   var progress = new Progress<UploadProgressChangedEventArgs>();
+                                   
+                                   var task = logic.Upload(file.Item2.Id, progress);
+                                   
+                                       
                                }
                            }
                            )
@@ -145,7 +148,7 @@ namespace _3A_flickr_sync.Logic
                             var tags = string.Format("MD5:{0} MD5NoExif:{1}", hashCode, hashCodeNoExif);
 
                             var task = flickr.UploadPicture(file.Path, tags: tags, progress: progress);
-
+                            
                             var photoID = await task;
 
                             if (string.IsNullOrEmpty(photoID))

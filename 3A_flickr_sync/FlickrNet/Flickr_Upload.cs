@@ -177,7 +177,7 @@ namespace _3A_flickr_sync.FlickrNet
             //Observer.Create
             WebClient2 webClient = new WebClient2();
             webClient.UploadProgressChanged += ((a, b) => { if (progress != null) progress.Report(b); });
-
+            
             webClient.Timeout = HttpTimeout;
             webClient.ContentType = "multipart/form-data; boundary=" + boundary;
 
@@ -198,6 +198,8 @@ namespace _3A_flickr_sync.FlickrNet
 
             return s;
         }
+
+
 
         /// <summary>
         /// Replace an existing photo on Flickr.
