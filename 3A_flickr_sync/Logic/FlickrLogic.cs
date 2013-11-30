@@ -15,13 +15,14 @@ using System.Reactive.Linq;
 using System.Windows.Forms;
 using System.Collections.Specialized;
 using System.Reactive.Concurrency;
+using System.Collections.Concurrent;
 
 namespace _3A_flickr_sync.Logic
 {
     public class FlickrLogic : FSDBLogic
     {
         static private ObservableCollection<Task<FFile>> uploadTaskList = new ObservableCollection<Task<FFile>>();
-        static private ObservableCollection<IProgress<Tuple<string, UploadProgressChangedEventArgs>>> uploadEventList = new ObservableCollection<IProgress<Tuple<string, UploadProgressChangedEventArgs>>>();
+        static public ConcurrentQueue<Tuple<string, UploadProgressChangedEventArgs>> UploadEventList = new ConcurrentQueue<Tuple<string, UploadProgressChangedEventArgs>>();
         static public int MaxUpload { get; set; }
 
         static public FlickrLogic()
@@ -37,10 +38,10 @@ namespace _3A_flickr_sync.Logic
                                {
                                    FlickrLogic logic = new FlickrLogic(file.Item1);
                                    var progress = new Progress<UploadProgressChangedEventArgs>();
-                                   
+
                                    var task = logic.Upload(file.Item2.Id, progress);
-                                   
-                                       
+
+
                                }
                            }
                            )
@@ -122,8 +123,9 @@ namespace _3A_flickr_sync.Logic
         //    }
         //}
 
-        public async Task<FFile> Upload(int fFileID, IProgress<UploadProgressChangedEventArgs> progress)
+        public async Task<FFile> Upload(int fFileID)
         {
+            var progress = new Progress<UploadProgressChangedEventArgs>();
             var file = db.FFiles.FirstOrDefault(r => r.Id == fFileID);
 
             if (file != null && file.Status == FFileStatus.New)
@@ -148,8 +150,10 @@ namespace _3A_flickr_sync.Logic
                             var tags = string.Format("MD5:{0} MD5NoExif:{1}", hashCode, hashCodeNoExif);
 
                             var task = flickr.UploadPicture(file.Path, tags: tags, progress: progress);
-                            
+
                             var photoID = await task;
+
+                            progress.ProgressChanged += ((a, b) => { FlickrLogic.UploadEventList.Enqueue(new Tuple<string, UploadProgressChangedEventArgs>("", b)); });
 
                             if (string.IsNullOrEmpty(photoID))
                             { }
