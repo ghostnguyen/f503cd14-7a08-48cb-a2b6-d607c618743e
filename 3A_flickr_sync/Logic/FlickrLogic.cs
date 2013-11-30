@@ -37,11 +37,11 @@ namespace _3A_flickr_sync.Logic
                                else
                                {
                                    FlickrLogic logic = new FlickrLogic(file.Item1);
-                                   var progress = new Progress<UploadProgressChangedEventArgs>();
 
-                                   var task = logic.Upload(file.Item2.Id, progress);
+                                   var task = logic.Upload(file.Item2.Id);
 
-
+                                   uploadTaskList.Add(task);
+                                   task.ContinueWith(r1 => uploadTaskList.Remove(r1));
                                }
                            }
                            )
