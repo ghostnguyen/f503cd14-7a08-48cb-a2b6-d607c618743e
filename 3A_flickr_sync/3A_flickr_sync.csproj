@@ -83,6 +83,7 @@
     <Compile Include="Common\ErrMess.cs" />
     <Compile Include="Common\AppSetting.cs" />
     <Compile Include="Common\Helper.cs" />
+    <Compile Include="Common\Notice.cs" />
     <Compile Include="Common\WebClient2.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -25,7 +25,7 @@ namespace _3A_flickr_sync.Logic
         public static int Buffer { get; set; }
 
 
-        public static FFileLogic()
+        static FFileLogic()
         {
             MinBuffer = 5;
             Buffer = 10;

@@ -22,38 +22,42 @@ namespace _3A_flickr_sync.Logic
     public class FlickrLogic : FSDBLogic
     {
         static private ObservableCollection<Task<FFile>> uploadTaskList = new ObservableCollection<Task<FFile>>();
-        static public ConcurrentQueue<Tuple<string, UploadProgressChangedEventArgs>> UploadEventList = new ConcurrentQueue<Tuple<string, UploadProgressChangedEventArgs>>();
+        static public ConcurrentQueue<Notice> UploadEventList = new ConcurrentQueue<Notice>();
+        static public bool IsNetworkOk { get; set; }
         static public int MaxUpload { get; set; }
 
-        static public FlickrLogic()
+        static FlickrLogic()
         {
             MaxUpload = 3;
+
+
+
             var v13 = uploadTaskList.ObservesChanged()
-                           .Where(r => ((ObservableCollection<FFile>)r.Sender).Count < MaxUpload)
-                           .Subscribe(r =>
-                           {
-                               var file = FFileLogic.DequeueForUpload();
-                               if (file == null) { }
-                               else
-                               {
-                                   FlickrLogic logic = new FlickrLogic(file.Item1);
+                        .Where(r => ((ObservableCollection<FFile>)r.Sender).Count < MaxUpload)
+                        .Subscribe(r =>
+                        {
+                            var file = FFileLogic.DequeueForUpload();
+                            if (file == null) { }
+                            else
+                            {
+                                FlickrLogic logic = new FlickrLogic(file.Item1);
 
-                                   var task = logic.Upload(file.Item2.Id);
+                                var task = logic.Upload(file.Item2.Id);
+                                task.ContinueWith(r1 => uploadTaskList.Remove(r1));
 
-                                   uploadTaskList.Add(task);
-                                   task.ContinueWith(r1 => uploadTaskList.Remove(r1));
-                               }
-                           }
-                           )
-                           ;
+                                uploadTaskList.Add(task);
+                            }
+                        }
+                        )
+                        ;
 
 
             //NewThreadScheduler.Default.Schedule
 
             //db.FFiles.TakeWhile
-            var fL = db.FFiles.Where(r => r.Status == FFileStatus.New && r.Path.Contains(db.Path))
+            //var fL = db.FFiles.Where(r => r.Status == FFileStatus.New && r.Path.Contains(db.Path))
 
-                .ToListAsync();
+            //    .ToListAsync();
 
 
 
@@ -125,7 +129,6 @@ namespace _3A_flickr_sync.Logic
 
         public async Task<FFile> Upload(int fFileID)
         {
-            var progress = new Progress<UploadProgressChangedEventArgs>();
             var file = db.FFiles.FirstOrDefault(r => r.Id == fFileID);
 
             if (file != null && file.Status == FFileStatus.New)
@@ -137,37 +140,45 @@ namespace _3A_flickr_sync.Logic
                     FileInfo fileInfo = new FileInfo(file.Path);
                     if (fileInfo.Exists)
                     {
-                        var hashCode = Helper.HashFile(file.Path);
-                        var hashCodeNoExif = Helper.HashPhotoNoExif(file.Path);
-
-                        if (ExistFile(hashCode))
+                        try
                         {
-                            file.Status = FFileStatus.HashCodeFound;
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            var tags = string.Format("MD5:{0} MD5NoExif:{1}", hashCode, hashCodeNoExif);
+                            var hashCode = Helper.HashFile(file.Path);
+                            var hashCodeNoExif = Helper.HashPhotoNoExif(file.Path);
 
-                            var task = flickr.UploadPicture(file.Path, tags: tags, progress: progress);
-
-                            var photoID = await task;
-
-                            progress.ProgressChanged += ((a, b) => { FlickrLogic.UploadEventList.Enqueue(new Tuple<string, UploadProgressChangedEventArgs>("", b)); });
-
-                            if (string.IsNullOrEmpty(photoID))
-                            { }
+                            if (ExistFile(hashCode))
+                            {
+                                file.Status = FFileStatus.HashCodeFound;
+                                db.SaveChanges();
+                            }
                             else
                             {
-                                file.PhotoID = photoID;
-                                file.HashCode = hashCode;
-                                file.HashCodeNoExif = hashCodeNoExif;
-                                file.Status = FFileStatus.UploadNoSets;
-                                file.UserID = Flickr.UserId;
-                                db.SaveChanges();
+                                var tags = string.Format("MD5:{0} MD5NoExif:{1}", hashCode, hashCodeNoExif);
 
-                                UpdateSets(file.Id);
+                                var progress = new Progress<UploadProgressChangedEventArgs>();
+                                progress.ProgressChanged += ((a, b) => { FlickrLogic.UploadEventList.Enqueue(new Notice() { Id = file.GetPathId(db.Path), UploadProgress = b }); });
+
+                                var task = flickr.UploadPicture(file.Path, tags: tags, progress: progress);
+
+                                var photoID = await task;
+
+                                if (string.IsNullOrEmpty(photoID))
+                                { }
+                                else
+                                {
+                                    file.PhotoID = photoID;
+                                    file.HashCode = hashCode;
+                                    file.HashCodeNoExif = hashCodeNoExif;
+                                    file.Status = FFileStatus.UploadNoSets;
+                                    file.UserID = Flickr.UserId;
+                                    db.SaveChanges();
+
+                                    UpdateSets(file.Id);
+                                }
                             }
+                        }
+                        catch (Exception ex)
+                        {
+                            FlickrLogic.UploadEventList.Enqueue(new Notice() { Id = file.GetPathId(db.Path), Ex = ex });
                         }
                     }
                 }
