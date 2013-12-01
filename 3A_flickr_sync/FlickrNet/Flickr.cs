@@ -152,6 +152,8 @@ namespace _3A_flickr_sync.FlickrNet
                 OAuthAccessToken = v.OAuthAccessToken;
                 OAuthAccessTokenSecret = v.OAuthAccessTokenSecret;
             }
+
+
         }
 
         private void CheckRequiresAuthentication()

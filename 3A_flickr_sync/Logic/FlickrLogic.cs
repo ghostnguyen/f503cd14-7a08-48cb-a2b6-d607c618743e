@@ -29,10 +29,10 @@ namespace _3A_flickr_sync.Logic
         static FlickrLogic()
         {
             MaxUpload = 3;
-            
+
             var networkStatus = Observable.Interval(TimeSpan.FromSeconds(3)).Where(r => IsNetworkOk == false)
                 .Subscribe(r => IsNetworkOk = Helper.CheckForInternetConnection());
-                
+
             var v13 = uploadTaskList.ObservesChanged()
                         .Where(r => ((ObservableCollection<FFile>)r.Sender).Count < MaxUpload)
                         .Subscribe(r =>
@@ -51,40 +51,6 @@ namespace _3A_flickr_sync.Logic
                         }
                         )
                         ;
-
-
-            //NewThreadScheduler.Default.Schedule
-
-            //db.FFiles.TakeWhile
-            //var fL = db.FFiles.Where(r => r.Status == FFileStatus.New && r.Path.Contains(db.Path))
-
-            //    .ToListAsync();
-
-
-
-
-
-            List<Task<FFile>> taskL = new List<Task<FFile>>();
-            int c = 0;
-
-
-            //foreach (var item in fL)
-            //{
-            //    if (c < maxUploadTask)
-            //    {
-            //        var subProgress = new Progress<UploadProgressChangedEventArgs>(r => { progress.Report(new Tuple<int, UploadProgressChangedEventArgs>(item.Id, r)); });
-
-            //        var v1 = Upload(item.Id, subProgress);
-            //        taskL.Add(v1);
-            //        c++;
-            //    }
-            //    else if (c == maxUploadTask)
-            //    {
-            //        await Task.WhenAny(taskL);
-            //        c--;
-            //        taskL = new List<Task<FFile>>();
-            //    }
-            //}
         }
 
         public FlickrLogic(string path)
@@ -96,40 +62,15 @@ namespace _3A_flickr_sync.Logic
         {
             //SetLogic setL = new SetLogic(db.Path);
             //setL.DownloadPhotsets();
-
-
         }
-
-        //public async Task Upload(IProgress<Tuple<int, UploadProgressChangedEventArgs>> progress)
-        //{
-        //    SetLogic setL = new SetLogic(db.Path);
-        //    setL.DownloadPhotsets();
-
-        //    //db.FFiles.TakeWhile
-        //    var fL = db.FFiles.Where(r => r.Status == FFileStatus.New && r.Path.Contains(db.Path))
-        //        .ToList();
-
-        //    foreach (var item in fL)
-        //    {
-        //        if (c < maxUploadTask)
-        //        {
-        //            var subProgress = new Progress<UploadProgressChangedEventArgs>(r => { progress.Report(new Tuple<int, UploadProgressChangedEventArgs>(item.Id, r)); });
-
-        //            var v1 = Upload(item.Id, subProgress);
-        //            taskL.Add(v1);
-        //            c++;
-        //        }
-        //        else if (c == maxUploadTask)
-        //        {
-        //            await Task.WhenAny(taskL);
-        //            c--;
-        //            taskL = new List<Task<FFile>>();
-        //        }
-        //    }
-        //}
 
         public async Task<FFile> Upload(int fFileID)
         {
+            while (IsNetworkOk == false)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+            }
+
             var file = db.FFiles.FirstOrDefault(r => r.Id == fFileID);
 
             if (file != null && file.Status == FFileStatus.New)
