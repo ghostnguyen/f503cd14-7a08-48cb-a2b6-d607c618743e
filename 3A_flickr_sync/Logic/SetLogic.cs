@@ -11,11 +11,9 @@ using _3A_flickr_sync.FlickrNet;
 
 namespace _3A_flickr_sync.Logic
 {
-    public class SetLogic : FSDBLogic
+    public class SetLogic 
     {
-        public SetLogic(string path)
-            : base(path)
-        { }
+        FSMasterDBContext db = new FSMasterDBContext();
 
         public Set AddOrUpdate(Photoset set)
         {

@@ -58,12 +58,6 @@ namespace _3A_flickr_sync.Logic
         {
         }
 
-        static public async Task Upload()
-        {
-            //SetLogic setL = new SetLogic(db.Path);
-            //setL.DownloadPhotsets();
-        }
-
         public async Task<FFile> Upload(int fFileID)
         {
             while (IsNetworkOk == false)
@@ -138,7 +132,7 @@ namespace _3A_flickr_sync.Logic
             var file = db.FFiles.FirstOrDefault(r => r.Id == fileID);
             if (file != null && file.Status == FFileStatus.UploadNoSets)
             {
-                SetLogic l = new SetLogic(db.Path);
+                SetLogic l = new SetLogic();
                 string setID = l.AddPhoto(file);
 
                 file.SetsID = setID;

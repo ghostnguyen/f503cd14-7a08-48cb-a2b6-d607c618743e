@@ -12,12 +12,11 @@ namespace _3A_flickr_sync.Models
         }
 
         public DbSet<FFile> FFiles { get; set; }
-        public DbSet<Set> Sets { get; set; }
+        
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Configurations.Add(new FFileMap());
-            modelBuilder.Configurations.Add(new SetMap());
         }
     }
 }
