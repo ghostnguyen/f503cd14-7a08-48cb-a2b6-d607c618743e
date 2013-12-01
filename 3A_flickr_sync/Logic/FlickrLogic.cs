@@ -29,9 +29,10 @@ namespace _3A_flickr_sync.Logic
         static FlickrLogic()
         {
             MaxUpload = 3;
-
-
-
+            
+            var networkStatus = Observable.Interval(TimeSpan.FromSeconds(3)).Where(r => IsNetworkOk == false)
+                .Subscribe(r => IsNetworkOk = Helper.CheckForInternetConnection());
+                
             var v13 = uploadTaskList.ObservesChanged()
                         .Where(r => ((ObservableCollection<FFile>)r.Sender).Count < MaxUpload)
                         .Subscribe(r =>
@@ -175,6 +176,10 @@ namespace _3A_flickr_sync.Logic
                                     UpdateSets(file.Id);
                                 }
                             }
+                        }
+                        catch (WebException ex)
+                        {
+                            FlickrLogic.UploadEventList.Enqueue(new Notice() { Id = file.GetPathId(db.Path), Ex = ex });
                         }
                         catch (Exception ex)
                         {

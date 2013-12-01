@@ -178,7 +178,7 @@ namespace _3A_flickr_sync.FlickrNet
             WebClient2 webClient = new WebClient2();
             webClient.UploadProgressChanged += ((a, b) => { if (progress != null) progress.Report(b); });
             
-            webClient.Timeout = HttpTimeout;
+            //webClient.Timeout = HttpTimeout;
             webClient.ContentType = "multipart/form-data; boundary=" + boundary;
 
             if (!String.IsNullOrEmpty(authHeader))
@@ -191,6 +191,7 @@ namespace _3A_flickr_sync.FlickrNet
             webClient.ContentLength = dataBuffer.Length;
 
 
+            
 
             var task = webClient.UploadDataTaskAsync(uploadUri, dataBuffer);
             var responseArray = await task;

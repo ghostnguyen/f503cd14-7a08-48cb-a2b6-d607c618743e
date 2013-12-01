@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using _3A_flickr_sync.FlickrNet;
+using System.Net;
 
 namespace _3A_flickr_sync.Common
 {
@@ -419,6 +420,22 @@ namespace _3A_flickr_sync.Common
                     return "videos";
                 default:
                     return String.Empty;
+            }
+        }
+
+        public static bool CheckForInternetConnection()
+        {
+            try
+            {
+                using (var client = new WebClient())
+                using (var stream = client.OpenRead("http://www.google.com"))
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
             }
         }
     }
