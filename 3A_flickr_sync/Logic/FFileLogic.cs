@@ -61,10 +61,12 @@ namespace _3A_flickr_sync.Logic
         {
         }
 
-        public void StartBuffer()
+        async public Task<bool> StartBuffer()
         {
-            Observable.Interval(TimeSpan.FromSeconds(5))
-                .Subscribe(r =>
+            bool hasPhoto = true;
+            var re = Observable.Interval(TimeSpan.FromSeconds(5)).TakeWhile(r => hasPhoto);
+
+            re.Subscribe(r =>
                 {
                     if (fileList.Count < MinBuffer)
                     {
@@ -72,10 +74,23 @@ namespace _3A_flickr_sync.Logic
 
                         int fromID = last == null ? 0 : last.Item2.Id;
 
-                        TakeNew(Buffer, fromID).ForEach(r1 => fileList.Enqueue(new Tuple<string, FFile>(db.Path, r1)));
+                        var l = TakeNew(Buffer, fromID);
+                        
+                        if (l.Count == 0)
+                        {
+                            hasPhoto = false;
+                        }
+                        else
+                        {
+                            l.ForEach(r1 => fileList.Enqueue(new Tuple<string, FFile>(db.Path, r1)));
+                        }
                     }
                 }
                 );
+
+            await re;
+
+            return hasPhoto;
         }
 
 
@@ -116,7 +131,7 @@ namespace _3A_flickr_sync.Logic
             return c;
         }
 
-        public List<FFile> TakeNew(int count, int fromID)
+        public List<FFile> TakeNew(int count, int fromID = 0)
         {
             return db.FFiles
                 .Where(r1 => r1.Status == FFileStatus.New && r1.Path.Contains(db.Path)
