@@ -15,10 +15,10 @@ namespace _3A_flickr_sync.Models
     {
         public Nullable<FFileStatus> Status { get; set; }
 
-        public string GetPathId(string folderPath)
-        {
-            return string.Format("{0}\\{1}", folderPath, Id);
-        }
+        //public string GetPathId(string folderPath)
+        //{
+        //    return string.Format("{0}\\{1}", folderPath, Id);
+        //}
     }
 
 

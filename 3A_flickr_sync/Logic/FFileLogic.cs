@@ -9,6 +9,7 @@ using _3A_flickr_sync.Common;
 using _3A_flickr_sync.Models;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
+using System.Threading;
 
 namespace _3A_flickr_sync.Logic
 {
@@ -61,7 +62,7 @@ namespace _3A_flickr_sync.Logic
         {
         }
 
-        async public Task<bool> StartBuffer()
+        async public Task<bool> StartBuffer(CancellationToken cancellationToken)
         {
             bool hasPhoto = true;
             var re = Observable.Interval(TimeSpan.FromSeconds(5)).TakeWhile(r => hasPhoto);
@@ -75,7 +76,7 @@ namespace _3A_flickr_sync.Logic
                         int fromID = last == null ? 0 : last.Item2.Id;
 
                         var l = TakeNew(Buffer, fromID);
-                        
+
                         if (l.Count == 0)
                         {
                             hasPhoto = false;
@@ -85,7 +86,7 @@ namespace _3A_flickr_sync.Logic
                             l.ForEach(r1 => fileList.Enqueue(new Tuple<string, FFile>(db.Path, r1)));
                         }
                     }
-                }
+                }, cancellationToken
                 );
 
             await re;

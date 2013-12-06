@@ -13,11 +13,16 @@ using _3A_flickr_sync.Common;
 using _3A_flickr_sync.FlickrNet;
 using _3A_flickr_sync.Logic;
 using _3A_flickr_sync.Models;
+using System.Threading;
+using System.Reactive.Linq;
 
 namespace _3A_flickr_sync
 {
     public partial class Main : Form
     {
+        CancellationTokenSource source;
+        CancellationToken token;
+
         public Main()
         {
             InitializeComponent();
@@ -27,7 +32,21 @@ namespace _3A_flickr_sync
 
             //FlickrLogic fLg = new FlickrLogic(v.Path);
             //fLg.Upload();
+
+            source = new CancellationTokenSource();
+            token = source.Token;
+
+            Observable.Interval(TimeSpan.FromSeconds(1))
+                .SubscribeOn(this)
+                .Subscribe(r =>
+                {
+                    //FlickrLogic.UploadEventList. 
+                }
+                )
+                ;
         }
+
+        
 
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -84,6 +103,16 @@ namespace _3A_flickr_sync
         private void Main_Load(object sender, EventArgs e)
         {
 
+        }
+
+        async private void startUploadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            await FlickrLogic.StartUpload(token);
+        }
+
+        private void stopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            source.Cancel();
         }
 
 

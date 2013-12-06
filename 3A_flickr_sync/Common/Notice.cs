@@ -10,7 +10,8 @@ namespace _3A_flickr_sync.Common
     public class Notice
     {
         public DateTime Datetime { get; private set; }
-        public string Id { get; set; }
+        public int Id { get; set; }
+        public string DbPath { get; set; }
         public Exception Ex { get; set; }
         public UploadProgressChangedEventArgs UploadProgress { get; set; }
 

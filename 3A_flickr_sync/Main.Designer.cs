@@ -32,6 +32,8 @@
             this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectFoldersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rtbLog = new System.Windows.Forms.RichTextBox();
+            this.startUploadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -39,44 +41,63 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loginToolStripMenuItem,
-            this.selectFoldersToolStripMenuItem});
+            this.selectFoldersToolStripMenuItem,
+            this.startUploadToolStripMenuItem,
+            this.stopToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(443, 24);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(591, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // loginToolStripMenuItem
             // 
             this.loginToolStripMenuItem.Name = "loginToolStripMenuItem";
-            this.loginToolStripMenuItem.Size = new System.Drawing.Size(49, 20);
+            this.loginToolStripMenuItem.Size = new System.Drawing.Size(58, 24);
             this.loginToolStripMenuItem.Text = "Login";
             this.loginToolStripMenuItem.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
             // 
             // selectFoldersToolStripMenuItem
             // 
             this.selectFoldersToolStripMenuItem.Name = "selectFoldersToolStripMenuItem";
-            this.selectFoldersToolStripMenuItem.Size = new System.Drawing.Size(91, 20);
+            this.selectFoldersToolStripMenuItem.Size = new System.Drawing.Size(113, 24);
             this.selectFoldersToolStripMenuItem.Text = "Select Folders";
             this.selectFoldersToolStripMenuItem.Click += new System.EventHandler(this.selectFoldersToolStripMenuItem_Click);
             // 
             // rtbLog
             // 
             this.rtbLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtbLog.Location = new System.Drawing.Point(0, 24);
+            this.rtbLog.Location = new System.Drawing.Point(0, 28);
+            this.rtbLog.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.rtbLog.Name = "rtbLog";
-            this.rtbLog.Size = new System.Drawing.Size(443, 269);
+            this.rtbLog.Size = new System.Drawing.Size(591, 333);
             this.rtbLog.TabIndex = 1;
             this.rtbLog.Text = "";
             // 
+            // startUploadToolStripMenuItem
+            // 
+            this.startUploadToolStripMenuItem.Name = "startUploadToolStripMenuItem";
+            this.startUploadToolStripMenuItem.Size = new System.Drawing.Size(105, 24);
+            this.startUploadToolStripMenuItem.Text = "Start Upload";
+            this.startUploadToolStripMenuItem.Click += new System.EventHandler(this.startUploadToolStripMenuItem_Click);
+            // 
+            // stopToolStripMenuItem
+            // 
+            this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
+            this.stopToolStripMenuItem.Size = new System.Drawing.Size(52, 24);
+            this.stopToolStripMenuItem.Text = "Stop";
+            this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
+            // 
             // Main
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(443, 293);
+            this.ClientSize = new System.Drawing.Size(591, 361);
             this.Controls.Add(this.rtbLog);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "Main";
             this.Text = "3A Flickr Sync";
             this.Load += new System.EventHandler(this.Main_Load);
@@ -93,6 +114,8 @@
         private System.Windows.Forms.ToolStripMenuItem loginToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectFoldersToolStripMenuItem;
         private System.Windows.Forms.RichTextBox rtbLog;
+        private System.Windows.Forms.ToolStripMenuItem startUploadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
     }
 }
 
