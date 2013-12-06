@@ -27,12 +27,6 @@ namespace _3A_flickr_sync
         {
             InitializeComponent();
 
-            //FFolderLogic fLogic = new FFolderLogic();
-            //var v = fLogic.CreateIfNotExist(@"D:\ghostnguyen\Pictures\SGI Photo - Can Gio");
-
-            //FlickrLogic fLg = new FlickrLogic(v.Path);
-            //fLg.Upload();
-
             source = new CancellationTokenSource();
             token = source.Token;
 
@@ -43,8 +37,7 @@ namespace _3A_flickr_sync
                     Notice n;
                     if (FlickrLogic.UploadEventList.TryDequeue(out n))
                     {
-                        string s = string.Format("\n {0}: {1}% ", n.FullPath,n.UploadProgress.ProgressPercentage.ToString());
-                        rtbLog.AppendText(s);
+                        rtbLog.AppendText(n.GetNote());
                     }
                 }
                 )
@@ -112,6 +105,7 @@ namespace _3A_flickr_sync
 
         async private void startUploadToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
             await FlickrLogic.StartUpload(token);
         }
 
@@ -119,7 +113,5 @@ namespace _3A_flickr_sync
         {
             source.Cancel();
         }
-
-
     }
 }

@@ -20,5 +20,11 @@ namespace _3A_flickr_sync.Common
         {
             Datetime = DateTime.Now;
         }
+
+        public string GetNote()
+        {
+            string s = string.Format("\n {0}: {1}% ", FullPath, UploadProgress.ProgressPercentage.ToString());
+            return s;
+        }
     }
 }
