@@ -40,13 +40,18 @@ namespace _3A_flickr_sync
                 .SubscribeOn(this)
                 .Subscribe(r =>
                 {
-                    //FlickrLogic.UploadEventList. 
+                    Notice n;
+                    if (FlickrLogic.UploadEventList.TryDequeue(out n))
+                    {
+                        string s = string.Format("\n {0}: {1}% ", n.FullPath,n.UploadProgress.ProgressPercentage.ToString());
+                        rtbLog.AppendText(s);
+                    }
                 }
                 )
                 ;
         }
 
-        
+
 
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)
         {

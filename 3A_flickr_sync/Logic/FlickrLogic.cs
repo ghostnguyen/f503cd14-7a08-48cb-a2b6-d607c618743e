@@ -92,7 +92,7 @@ namespace _3A_flickr_sync.Logic
                                 var tags = string.Format("MD5:{0} MD5NoExif:{1}", hashCode, hashCodeNoExif);
 
                                 var progress = new Progress<UploadProgressChangedEventArgs>();
-                                progress.ProgressChanged += ((a, b) => { FlickrLogic.UploadEventList.Enqueue(new Notice() { Id = file.Id, DbPath = db.Path, UploadProgress = b }); });
+                                progress.ProgressChanged += ((a, b) => { FlickrLogic.UploadEventList.Enqueue(new Notice() { Id = file.Id, DbPath = db.Path, UploadProgress = b,FullPath = file.Path }); });
 
                                 var task = flickr.UploadPicture(file.Path, tags: tags, progress: progress);
 
@@ -115,11 +115,11 @@ namespace _3A_flickr_sync.Logic
                         }
                         catch (WebException ex)
                         {
-                            FlickrLogic.UploadEventList.Enqueue(new Notice() { Id = file.Id, DbPath = db.Path, Ex = ex });
+                            FlickrLogic.UploadEventList.Enqueue(new Notice() { Id = file.Id, DbPath = db.Path, Ex = ex,FullPath = file.Path });
                         }
                         catch (Exception ex)
                         {
-                            FlickrLogic.UploadEventList.Enqueue(new Notice() { Id = file.Id, DbPath = db.Path, Ex = ex });
+                            FlickrLogic.UploadEventList.Enqueue(new Notice() { Id = file.Id, DbPath = db.Path, Ex = ex, FullPath = file.Path });
                         }
                     }
                 }
