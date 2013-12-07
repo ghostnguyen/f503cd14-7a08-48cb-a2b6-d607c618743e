@@ -37,7 +37,49 @@ namespace _3A_flickr_sync
                     Notice n;
                     if (FlickrLogic.UploadEventList.TryDequeue(out n))
                     {
-                        rtbLog.AppendText(n.GetNote());
+                        var l = rtbProgress.Lines.ToList();
+                        var index = l.IndexOf(n.FullPath);
+
+                        if (n.Ex == null)
+                        {
+                            if (n.UploadProgress.ProgressPercentage == 100)
+                            {
+                                if (index == -1)
+                                { }
+                                else
+                                {
+                                    l.RemoveAt(index);
+                                    rtbProgress.Lines = l.ToArray();
+                                }
+
+                                rtbLog.Text.Insert(0, n.FullPath + ": Completed \n");
+                            }
+                            else
+                            {
+                                string log = string.Format("{0}: {1}% ({2}/{3}) \n", n.FullPath, n.UploadProgress.ProgressPercentage, n.UploadProgress.BytesSent / 1024, n.UploadProgress.TotalBytesToSend / 1024);
+                                if (index == -1)
+                                {
+                                    rtbProgress.AppendText(log);
+                                }
+                                else
+                                {
+                                    l[index] = log;
+                                    rtbProgress.Lines = l.ToArray();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (index == -1)
+                            { }
+                            else
+                            {
+                                l.RemoveAt(index);
+                                rtbProgress.Lines = l.ToArray();
+                            }
+
+                            rtbLog.Text.Insert(0, string.Format("{0}: {1} \n", n.FullPath, n.Ex.Message));
+                        }
                     }
                 }
                 )
@@ -112,6 +154,12 @@ namespace _3A_flickr_sync
         private void stopToolStripMenuItem_Click(object sender, EventArgs e)
         {
             source.Cancel();
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            rtbLog.Clear();
+            rtbProgress.Clear();
         }
     }
 }
