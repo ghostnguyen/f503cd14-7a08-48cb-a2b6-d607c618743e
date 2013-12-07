@@ -67,24 +67,22 @@ namespace _3A_flickr_sync.Logic
             bool hasPhoto = true;
             var re = Observable.Interval(TimeSpan.FromSeconds(5)).TakeWhile(r => hasPhoto);
 
-            re.Subscribe(r =>
+            re.Where(r => fileList.Count < MinBuffer)
+                .Subscribe(r =>
                 {
-                    if (fileList.Count < MinBuffer)
+                    var last = fileList.LastOrDefault(r1 => r1.Item1 == db.Path);
+
+                    int fromID = last == null ? 0 : last.Item2.Id;
+
+                    var l = TakeNew(Buffer, fromID);
+
+                    if (l.Count == 0)
                     {
-                        var last = fileList.LastOrDefault(r1 => r1.Item1 == db.Path);
-
-                        int fromID = last == null ? 0 : last.Item2.Id;
-
-                        var l = TakeNew(Buffer, fromID);
-
-                        if (l.Count == 0)
-                        {
-                            hasPhoto = false;
-                        }
-                        else
-                        {
-                            l.ForEach(r1 => fileList.Enqueue(new Tuple<string, FFile>(db.Path, r1)));
-                        }
+                        hasPhoto = false;
+                    }
+                    else
+                    {
+                        l.ForEach(r1 => fileList.Enqueue(new Tuple<string, FFile>(db.Path, r1)));
                     }
                 }, cancellationToken
                 );
@@ -93,7 +91,6 @@ namespace _3A_flickr_sync.Logic
 
             return hasPhoto;
         }
-
 
         public FFile Add(FileInfo file)
         {
