@@ -25,7 +25,7 @@
     <InstallUrl>https://f503cd14-7a08-48cb-a2b6-d607c618743e.googlecode.com/git/3A_flickr_sync/publish/</InstallUrl>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>4</ApplicationRevision>
+    <ApplicationRevision>5</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -54,10 +54,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>36D31AF684A06229660E316C02A5C7D31FFCAA44</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>72F38692449F2B24E1B87191B87FD3A911BA4392</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>3A_flickr_sync_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>3A_flickr_sync_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -214,6 +214,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="3A_flickr_sync_1_TemporaryKey.pfx" />
     <None Include="3A_flickr_sync_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
