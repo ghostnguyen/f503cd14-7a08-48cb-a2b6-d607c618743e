@@ -226,29 +226,29 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Publish\3A_flickr_sync.application" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_1\3A_flickr_sync.application" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_1\3A_flickr_sync.exe.config.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_1\3A_flickr_sync.exe.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_1\3A_flickr_sync.exe.manifest" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_1\EntityFramework.dll.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_1\EntityFramework.SqlServer.dll.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_1\System.Reactive.Core.dll.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_1\System.Reactive.Interfaces.dll.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_1\System.Reactive.Linq.dll.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_1\System.Reactive.PlatformServices.dll.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_1\System.Reactive.Windows.Forms.dll.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_2\3A_flickr_sync.application" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_2\3A_flickr_sync.exe.config.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_2\3A_flickr_sync.exe.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_2\3A_flickr_sync.exe.manifest" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_2\EntityFramework.dll.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_2\EntityFramework.SqlServer.dll.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_2\System.Reactive.Core.dll.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_2\System.Reactive.Interfaces.dll.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_2\System.Reactive.Linq.dll.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_2\System.Reactive.PlatformServices.dll.deploy" />
-    <None Include="Publish\Application Files\3A_flickr_sync_1_0_0_2\System.Reactive.Windows.Forms.dll.deploy" />
+    <None Include="publish\3A_flickr_sync.application" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_1\3A_flickr_sync.application" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_1\3A_flickr_sync.exe.config.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_1\3A_flickr_sync.exe.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_1\3A_flickr_sync.exe.manifest" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_1\EntityFramework.dll.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_1\EntityFramework.SqlServer.dll.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_1\System.Reactive.Core.dll.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_1\System.Reactive.Interfaces.dll.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_1\System.Reactive.Linq.dll.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_1\System.Reactive.PlatformServices.dll.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_1\System.Reactive.Windows.Forms.dll.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_2\3A_flickr_sync.application" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_2\3A_flickr_sync.exe.config.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_2\3A_flickr_sync.exe.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_2\3A_flickr_sync.exe.manifest" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_2\EntityFramework.dll.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_2\EntityFramework.SqlServer.dll.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_2\System.Reactive.Core.dll.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_2\System.Reactive.Interfaces.dll.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_2\System.Reactive.Linq.dll.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_2\System.Reactive.PlatformServices.dll.deploy" />
+    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_2\System.Reactive.Windows.Forms.dll.deploy" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -273,8 +273,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Publish\publish.htm" />
-    <Content Include="Publish\setup.exe" />
+    <Content Include="publish\publish.htm" />
+    <Content Include="publish\setup.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
