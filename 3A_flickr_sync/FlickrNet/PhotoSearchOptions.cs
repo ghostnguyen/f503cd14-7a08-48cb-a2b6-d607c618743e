@@ -333,7 +333,7 @@ namespace _3A_flickr_sync.FlickrNet
         {
             if (string.IsNullOrEmpty(UserId))
             {
-                UserId = Flickr.UserId;
+                UserId = Flickr.User.UserId;
             }
             parameters.Add("user_id", UserId);
 

@@ -17,11 +17,11 @@ namespace _3A_flickr_sync.Logic
 
         public Set AddOrUpdate(Photoset set)
         {
-            var v = db.Sets.FirstOrDefault(r => r.UserID == Flickr.UserId && r.SetsID == set.PhotosetId);
+            var v = db.Sets.FirstOrDefault(r => r.UserID == Flickr.User.UserId && r.SetsID == set.PhotosetId);
 
             if (v == null)
             {
-                db.Sets.Add(new Set() { UserID = Flickr.UserId, SetsID = set.PhotosetId, Tittle = set.Title });
+                db.Sets.Add(new Set() { UserID = Flickr.User.UserId, SetsID = set.PhotosetId, Tittle = set.Title });
             }
             else
             {
@@ -81,7 +81,7 @@ namespace _3A_flickr_sync.Logic
         public string AddPhoto(FFile file)
         {
             var tittle = GetTittleFromPath(file.Path);
-            var set = db.Sets.FirstOrDefault(r => r.UserID == Flickr.UserId && r.Tittle.ToLower() == tittle.ToLower());
+            var set = db.Sets.FirstOrDefault(r => r.UserID == Flickr.User.UserId && r.Tittle.ToLower() == tittle.ToLower());
             Flickr f = new Flickr();
 
             if (set == null)
@@ -89,7 +89,7 @@ namespace _3A_flickr_sync.Logic
                 var fSet = f.PhotosetsCreate(tittle, file.PhotoID);
                 if (fSet != null)
                 {
-                    set = db.Sets.Add(new Set() { SetsID = fSet.PhotosetId, UserID = Flickr.UserId, Tittle = tittle });
+                    set = db.Sets.Add(new Set() { SetsID = fSet.PhotosetId, UserID = Flickr.User.UserId, Tittle = tittle });
                     db.SaveChanges();
                 }
             }

@@ -95,8 +95,8 @@ namespace _3A_flickr_sync.FlickrNet
         /// </summary>
         public static string OAuthAccessTokenSecret { get; set; }
 
-        public static string UserId { get; set; }
-
+        //public static string UserId { get; set; }
+        public static FoundUser User { get; set; }
         /// <summary>
         /// The default service to use for new Flickr instances
         /// </summary>
@@ -148,17 +148,15 @@ namespace _3A_flickr_sync.FlickrNet
             var v = l.GetFirst();
             if (v != null)
             {
-                UserId = v.UserId;
                 OAuthAccessToken = v.OAuthAccessToken;
                 OAuthAccessTokenSecret = v.OAuthAccessTokenSecret;
 
                 SetLogic setL = new SetLogic();
                 setL.DownloadPhotsets();
+
+                Flickr flickr = new Flickr();
+                User = flickr.TestLogin();
             }
-
-            
-
-
         }
 
         private void CheckRequiresAuthentication()

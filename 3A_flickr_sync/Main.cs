@@ -30,7 +30,28 @@ namespace _3A_flickr_sync
             source = new CancellationTokenSource();
             token = source.Token;
 
-            
+        }
+
+        void LoadGUIByUser()
+        {
+            bool hasUser = Flickr.User != null;
+
+            selectFoldersToolStripMenuItem.Visible = hasUser;
+            startUploadToolStripMenuItem.Visible = hasUser;
+            stopToolStripMenuItem.Visible = hasUser;
+            clearLogToolStripMenuItem.Visible = hasUser;
+
+            rtbLog.Clear();
+            rtbProgress.Clear();
+
+            if (hasUser)
+            {
+                loginToolStripMenuItem.Text = string.Format("Current user: {0}. Click to login to other account.", Flickr.User.UserName);
+            }
+            else
+            {
+                loginToolStripMenuItem.Text = "Login";
+            }
         }
 
 
@@ -66,29 +87,26 @@ namespace _3A_flickr_sync
                 {
                     FUserLogic lo = new FUserLogic();
                     lo.CreateOrUpdate(v.UserId, v.Token, v.TokenSecret, v.Username, v.FullName);
+
+                    //cancel any uploading process
+                    source.Cancel();
+
+                    Flickr.ResetOAuth();
+                    LoadGUIByUser();
                 }
             }
         }
 
         private void selectFoldersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog di = new FolderBrowserDialog();
-
-            var r = di.ShowDialog();
-            if (r == System.Windows.Forms.DialogResult.OK)
-            {
-                FFolderLogic fL = new FFolderLogic();
-                var v = fL.CreateIfNotExist(di.SelectedPath);
-
-                FFileLogic ffL1 = new FFileLogic(v);
-                var c = ffL1.Add(new DirectoryInfo(v.Path));
-                rtbLog.AppendText(v.Path);
-                rtbLog.AppendText(c.ToString() + " found.");
-            }
+            FolderSelect form = new FolderSelect();
+            form.ShowDialog();
         }
 
         private void Main_Load(object sender, EventArgs e)
         {
+            LoadGUIByUser();
+
             Observable.Interval(TimeSpan.FromSeconds(1))
                 .SubscribeOn(this)
                 .Where(r => FlickrLogic.UploadEventList.IsEmpty == false)

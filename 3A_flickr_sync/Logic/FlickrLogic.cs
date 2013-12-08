@@ -106,7 +106,7 @@ namespace _3A_flickr_sync.Logic
                                     file.HashCode = hashCode;
                                     file.HashCodeNoExif = hashCodeNoExif;
                                     file.Status = FFileStatus.UploadNoSets;
-                                    file.UserID = Flickr.UserId;
+                                    file.UserID = Flickr.User.UserId;
                                     db.SaveChanges();
 
                                     UpdateSets(file.Id);

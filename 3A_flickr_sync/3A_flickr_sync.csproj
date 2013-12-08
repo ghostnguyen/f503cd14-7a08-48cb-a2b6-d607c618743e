@@ -103,6 +103,7 @@
     <Reference Include="System.Reactive.Windows.Forms">
       <HintPath>..\packages\Rx-WinForms.2.2.1\lib\net45\System.Reactive.Windows.Forms.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -171,6 +172,12 @@
     <Compile Include="FlickrNet\UploadProgressEvent.cs" />
     <Compile Include="FlickrNet\User.cs" />
     <Compile Include="FlickrNet\VideoInfo.cs" />
+    <Compile Include="FolderSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FolderSelect.Designer.cs">
+      <DependentUpon>FolderSelect.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -200,6 +207,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Enter_Oauth_Verifier.resx">
       <DependentUpon>Enter_Oauth_Verifier.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FolderSelect.resx">
+      <DependentUpon>FolderSelect.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>

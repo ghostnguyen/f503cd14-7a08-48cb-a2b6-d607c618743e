@@ -40,9 +40,7 @@ namespace _3A_flickr_sync.Models
             {
                 if (Directory.Exists(path))
                 {                    
-                    ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings["FSDBContext"];
-
-                    var connStr = settings.ConnectionString;
+                    var connStr = AppSetting.FSDBConnectionStr;
                     SqlConnectionStringBuilder connStrBuilder = new SqlConnectionStringBuilder(connStr);
 
                     FileInfo fileInfo = new FileInfo(connStrBuilder.AttachDBFilename);
