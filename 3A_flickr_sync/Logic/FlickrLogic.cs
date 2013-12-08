@@ -158,14 +158,14 @@ namespace _3A_flickr_sync.Logic
 
         async static public Task StartUpload(CancellationToken cancellationToken)
         {
-            var currentId = 0;
+            var currentFolderId = 0;
             while (true)
             {
                 if (cancellationToken != null)
                     cancellationToken.ThrowIfCancellationRequested();
 
                 FSMasterDBContext masterDB = new FSMasterDBContext();
-                var folder = masterDB.FFolders.FirstOrDefault(r => r.Id != currentId);
+                var folder = masterDB.FFolders.FirstOrDefault(r => r.Id != currentFolderId);
                 if (folder == null)
                 {
                     await Task.Delay(TimeSpan.FromSeconds(5));

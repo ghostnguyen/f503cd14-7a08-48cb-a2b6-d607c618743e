@@ -164,10 +164,9 @@ namespace _3A_flickr_sync
                 ;
         }
 
-        async private void startUploadToolStripMenuItem_Click(object sender, EventArgs e)
+        private void startUploadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            await FlickrLogic.StartUpload(token);
+            FlickrLogic.StartUpload(token);
         }
 
         private void stopToolStripMenuItem_Click(object sender, EventArgs e)
