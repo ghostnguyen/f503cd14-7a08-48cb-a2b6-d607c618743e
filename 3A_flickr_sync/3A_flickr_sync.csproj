@@ -51,7 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>72F38692449F2B24E1B87191B87FD3A911BA4392</ManifestCertificateThumbprint>
@@ -60,10 +60,11 @@
     <ManifestKeyFile>3A_flickr_sync_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>3A_flickr_sync_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -71,9 +72,7 @@
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.0.1\lib\net45\EntityFramework.dll</HintPath>
@@ -214,8 +213,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="3A_flickr_sync_1_TemporaryKey.pfx" />
-    <None Include="3A_flickr_sync_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -227,18 +224,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="publish\3A_flickr_sync.application" />
-    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_3\3A_flickr_sync.application" />
-    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_3\3A_flickr_sync.exe.config.deploy" />
-    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_3\3A_flickr_sync.exe.deploy" />
-    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_3\3A_flickr_sync.exe.manifest" />
-    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_3\EntityFramework.dll.deploy" />
-    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_3\EntityFramework.SqlServer.dll.deploy" />
-    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_3\System.Reactive.Core.dll.deploy" />
-    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_3\System.Reactive.Interfaces.dll.deploy" />
-    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_3\System.Reactive.Linq.dll.deploy" />
-    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_3\System.Reactive.PlatformServices.dll.deploy" />
-    <None Include="publish\Application Files\3A_flickr_sync_1_0_0_3\System.Reactive.Windows.Forms.dll.deploy" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -261,10 +246,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="publish\publish.htm" />
-    <Content Include="publish\setup.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
