@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectFoldersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,7 +102,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 24);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -121,7 +122,7 @@
             // 
             this.rtbProgress.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtbProgress.Location = new System.Drawing.Point(0, 0);
-            this.rtbProgress.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.rtbProgress.Margin = new System.Windows.Forms.Padding(2);
             this.rtbProgress.Name = "rtbProgress";
             this.rtbProgress.ReadOnly = true;
             this.rtbProgress.Size = new System.Drawing.Size(726, 187);
@@ -132,7 +133,7 @@
             // 
             this.rtbLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtbLog.Location = new System.Drawing.Point(0, 0);
-            this.rtbLog.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.rtbLog.Margin = new System.Windows.Forms.Padding(2);
             this.rtbLog.Name = "rtbLog";
             this.rtbLog.ReadOnly = true;
             this.rtbLog.Size = new System.Drawing.Size(726, 185);
@@ -146,6 +147,7 @@
             this.ClientSize = new System.Drawing.Size(726, 399);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Main";
             this.Text = "3A Flickr Sync";

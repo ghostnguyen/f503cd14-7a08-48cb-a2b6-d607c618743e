@@ -26,32 +26,52 @@ namespace _3A_flickr_sync.Logic
         static public ConcurrentQueue<Notice> UploadEventList = new ConcurrentQueue<Notice>();
         static public bool IsNetworkOk { get; set; }
         static public int MaxUpload { get; set; }
+        static public bool IsUpload { get; set; }
+        static public CancellationTokenSource CancellationTokenSrc;
+        static public CancellationToken CancellationToken;
 
         static FlickrLogic()
         {
+            IsUpload = false;
+            CancellationTokenSrc = new CancellationTokenSource();
+            CancellationToken = CancellationTokenSrc.Token;
+
+
             MaxUpload = 3;
 
-            var networkStatus = Observable.Interval(TimeSpan.FromSeconds(3)).Where(r => IsNetworkOk == false)
+            var networkStatus = Observable.Interval(TimeSpan.FromSeconds(3)).Where(r => IsNetworkOk == false && IsUpload)
                 .Subscribe(r => IsNetworkOk = Helper.CheckForInternetConnection());
 
+            var interval = Observable.Interval(TimeSpan.FromSeconds(1));
+
             var v13 = uploadTaskList.ObservesChanged()
-                        .Where(r => ((ObservableCollection<FFile>)r.Sender).Count < MaxUpload)
-                        .Subscribe(r =>
+                .Select(r => (long)-1)
+                .Merge(interval)
+                .Where(r => IsUpload && uploadTaskList.Count < MaxUpload
+                )
+                .Subscribe(r =>
+                {
+                    if (r > 0 && uploadTaskList.Count != 0)
+                    {
+                        //Do not proceess event come from Interval  
+                        //if uploadTaskList has already run.
+                    }
+                    else
+                    {
+                        var file = FFileLogic.DequeueForUpload();
+                        if (file == null) { }
+                        else
                         {
-                            var file = FFileLogic.DequeueForUpload();
-                            if (file == null) { }
-                            else
-                            {
-                                FlickrLogic logic = new FlickrLogic(file.Item1);
+                            FlickrLogic logic = new FlickrLogic(file.Item1);
 
-                                var task = logic.Upload(file.Item2.Id);
-                                task.ContinueWith(r1 => uploadTaskList.Remove(r1));
+                            var task = logic.Upload(file.Item2.Id);
+                            task.ContinueWith(r1 => uploadTaskList.Remove(r1));
 
-                                uploadTaskList.Add(task);
-                            }
+                            uploadTaskList.Add(task);
                         }
-                        )
-                        ;
+                    }
+                }
+                );
         }
 
         public FlickrLogic(string path)
@@ -158,22 +178,31 @@ namespace _3A_flickr_sync.Logic
 
         async static public Task StartUpload(CancellationToken cancellationToken)
         {
-            var currentFolderId = 0;
-            while (true)
+            if (FlickrLogic.IsUpload)
             {
-                if (cancellationToken != null)
-                    cancellationToken.ThrowIfCancellationRequested();
 
-                FSMasterDBContext masterDB = new FSMasterDBContext();
-                var folder = masterDB.FFolders.FirstOrDefault(r => r.Id != currentFolderId);
-                if (folder == null)
+            }
+            else
+            {
+                FlickrLogic.IsUpload = true;
+
+                var currentFolderId = 0;
+                while (true)
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(5));
-                }
-                else
-                {
-                    FFileLogic fLogic = new FFileLogic(folder);
-                    await fLogic.StartBuffer(cancellationToken);
+                    if (cancellationToken != null)
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                    FSMasterDBContext masterDB = new FSMasterDBContext();
+                    var folder = masterDB.FFolders.FirstOrDefault(r => r.Id != currentFolderId);
+                    if (folder == null)
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(5));
+                    }
+                    else
+                    {
+                        FFileLogic fLogic = new FFileLogic(folder);
+                        await fLogic.StartBuffer(cancellationToken);
+                    }
                 }
             }
         }

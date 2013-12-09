@@ -20,15 +20,13 @@ namespace _3A_flickr_sync
 {
     public partial class Main : Form
     {
-        CancellationTokenSource source;
-        CancellationToken token;
+        
 
         public Main()
         {
             InitializeComponent();
 
-            source = new CancellationTokenSource();
-            token = source.Token;
+            
 
         }
 
@@ -89,7 +87,7 @@ namespace _3A_flickr_sync
                     lo.CreateOrUpdate(v.UserId, v.Token, v.TokenSecret, v.Username, v.FullName);
 
                     //cancel any uploading process
-                    source.Cancel();
+                    FlickrLogic.CancellationTokenSrc.Cancel();
 
                     Flickr.ResetOAuth();
                     LoadGUIByUser();
@@ -166,12 +164,13 @@ namespace _3A_flickr_sync
 
         private void startUploadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FlickrLogic.StartUpload(token);
+            FlickrLogic.StartUpload(FlickrLogic.CancellationToken);
         }
 
         private void stopToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            source.Cancel();
+            FlickrLogic.IsUpload = false;
+            FlickrLogic.CancellationTokenSrc.Cancel();
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
