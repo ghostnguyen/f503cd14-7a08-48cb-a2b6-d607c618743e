@@ -30,12 +30,22 @@ namespace _3A_flickr_sync.Logic
         static public CancellationTokenSource CancellationTokenSrc;
         static public CancellationToken CancellationToken;
 
-        static FlickrLogic()
+        static public void ResetCancellationToken()
         {
             IsUpload = false;
             CancellationTokenSrc = new CancellationTokenSource();
             CancellationToken = CancellationTokenSrc.Token;
+        }
 
+        static public void StopUpload()
+        {
+            FlickrLogic.IsUpload = false;
+            FlickrLogic.CancellationTokenSrc.Cancel();
+        }
+
+        static FlickrLogic()
+        {
+            ResetCancellationToken();
 
             MaxUpload = 3;
 
@@ -176,8 +186,10 @@ namespace _3A_flickr_sync.Logic
             return l.Count() > 0;
         }
 
-        async static public Task StartUpload(CancellationToken cancellationToken)
+        async static public Task StartUpload()
         {
+            ResetCancellationToken();
+
             if (FlickrLogic.IsUpload)
             {
 
@@ -189,11 +201,10 @@ namespace _3A_flickr_sync.Logic
                 var currentFolderId = 0;
                 while (true)
                 {
-                    if (cancellationToken != null)
-                        cancellationToken.ThrowIfCancellationRequested();
+                    if (CancellationToken != null)
+                        CancellationToken.ThrowIfCancellationRequested();
 
-                    FSMasterDBContext masterDB = new FSMasterDBContext();
-                    var folder = masterDB.FFolders.FirstOrDefault(r => r.Id != currentFolderId);
+                    var folder = FFolderLogic.GetForCurrentUser(currentFolderId);
                     if (folder == null)
                     {
                         await Task.Delay(TimeSpan.FromSeconds(5));
@@ -201,7 +212,7 @@ namespace _3A_flickr_sync.Logic
                     else
                     {
                         FFileLogic fLogic = new FFileLogic(folder);
-                        await fLogic.StartBuffer(cancellationToken);
+                        await fLogic.StartBuffer(CancellationToken);
                     }
                 }
             }

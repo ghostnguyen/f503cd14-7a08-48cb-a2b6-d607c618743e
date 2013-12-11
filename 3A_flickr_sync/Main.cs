@@ -164,13 +164,12 @@ namespace _3A_flickr_sync
 
         private void startUploadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FlickrLogic.StartUpload(FlickrLogic.CancellationToken);
+            Task.Run(() => FlickrLogic.StartUpload());
         }
 
         private void stopToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FlickrLogic.IsUpload = false;
-            FlickrLogic.CancellationTokenSrc.Cancel();
+            FlickrLogic.StopUpload();
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)

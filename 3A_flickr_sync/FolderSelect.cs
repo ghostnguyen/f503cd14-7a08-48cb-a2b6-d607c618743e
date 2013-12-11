@@ -62,13 +62,18 @@ namespace _3A_flickr_sync
 
         private void dataGridViewFolder_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == 0) //Assuming the button column as second column, if not can change the index
-            {
-                var Id = (int)dataGridViewFolder.Rows[e.RowIndex].Cells[1].Value;
-                FFolderLogic fFolderLogic = new FFolderLogic();
-                fFolderLogic.Delete(Id);
+            var r = MessageBox.Show("Delete! Sure?", "", MessageBoxButtons.OKCancel);
 
-                DataGridViewFolder_LoadData();
+            if (r == System.Windows.Forms.DialogResult.OK)
+            {
+                if (e.ColumnIndex == 0) //Assuming the button column as second column, if not can change the index
+                {
+                    var Id = (int)dataGridViewFolder.Rows[e.RowIndex].Cells[1].Value;
+                    FFolderLogic fFolderLogic = new FFolderLogic();
+                    fFolderLogic.Delete(Id);
+
+                    DataGridViewFolder_LoadData();
+                }
             }
         }
     }

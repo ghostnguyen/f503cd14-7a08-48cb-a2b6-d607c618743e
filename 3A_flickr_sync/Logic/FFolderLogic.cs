@@ -11,7 +11,8 @@ namespace _3A_flickr_sync.Logic
 {
     public class FFolderLogic
     {
-        FSMasterDBContext db = new FSMasterDBContext();
+        //FSMasterDBContext db = new FSMasterDBContext();
+        static FSMasterDBContext db = new FSMasterDBContext();
         public FFolder CreateIfNotExist(string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -45,6 +46,9 @@ namespace _3A_flickr_sync.Logic
             db.SaveChanges();
         }
 
-
+        public static FFolder GetForCurrentUser(int excludeID)
+        {
+            return db.FFolders.FirstOrDefault(r => r.Id != excludeID && r.UserId == Flickr.User.UserId);
+        }
     }
 }
