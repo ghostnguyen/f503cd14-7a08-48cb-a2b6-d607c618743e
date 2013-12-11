@@ -47,10 +47,14 @@ namespace _3A_flickr_sync.Logic
         {
             ResetCancellationToken();
 
-            MaxUpload = 3;
+            MaxUpload = 1;
 
             var networkStatus = Observable.Interval(TimeSpan.FromSeconds(3)).Where(r => IsNetworkOk == false && IsUpload)
-                .Subscribe(r => IsNetworkOk = Helper.CheckForInternetConnection());
+                .Subscribe(r =>
+                    {
+                        IsNetworkOk = Helper.CheckForInternetConnection();
+                    }
+                    );
 
             var interval = Observable.Interval(TimeSpan.FromSeconds(1));
 
@@ -75,7 +79,7 @@ namespace _3A_flickr_sync.Logic
                             FlickrLogic logic = new FlickrLogic(file.Item1);
 
                             var task = logic.Upload(file.Item2.Id);
-                            task.ContinueWith(r1 => 
+                            task.ContinueWith(r1 =>
                                 {
                                     uploadTaskList.Remove(r1);
                                 }

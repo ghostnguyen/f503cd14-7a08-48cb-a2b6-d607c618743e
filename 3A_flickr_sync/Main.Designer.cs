@@ -33,7 +33,6 @@
             this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectFoldersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.startUploadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.rtbProgress = new System.Windows.Forms.RichTextBox();
@@ -51,7 +50,6 @@
             this.loginToolStripMenuItem,
             this.selectFoldersToolStripMenuItem,
             this.startUploadToolStripMenuItem,
-            this.stopToolStripMenuItem,
             this.clearLogToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -77,19 +75,12 @@
             // 
             // startUploadToolStripMenuItem
             // 
+            this.startUploadToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.startUploadToolStripMenuItem.Name = "startUploadToolStripMenuItem";
             this.startUploadToolStripMenuItem.Size = new System.Drawing.Size(84, 20);
             this.startUploadToolStripMenuItem.Text = "Start Upload";
             this.startUploadToolStripMenuItem.Visible = false;
             this.startUploadToolStripMenuItem.Click += new System.EventHandler(this.startUploadToolStripMenuItem_Click);
-            // 
-            // stopToolStripMenuItem
-            // 
-            this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-            this.stopToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
-            this.stopToolStripMenuItem.Text = "Stop";
-            this.stopToolStripMenuItem.Visible = false;
-            this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
             // 
             // clearLogToolStripMenuItem
             // 
@@ -169,7 +160,6 @@
         private System.Windows.Forms.ToolStripMenuItem loginToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectFoldersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem startUploadToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearLogToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.RichTextBox rtbProgress;

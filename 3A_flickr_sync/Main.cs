@@ -15,6 +15,7 @@ using _3A_flickr_sync.Logic;
 using _3A_flickr_sync.Models;
 using System.Threading;
 using System.Reactive.Linq;
+using _3A_flickr_sync.Properties;
 
 namespace _3A_flickr_sync
 {
@@ -36,7 +37,6 @@ namespace _3A_flickr_sync
 
             selectFoldersToolStripMenuItem.Visible = hasUser;
             startUploadToolStripMenuItem.Visible = hasUser;
-            stopToolStripMenuItem.Visible = hasUser;
             clearLogToolStripMenuItem.Visible = hasUser;
 
             rtbLog.Clear();
@@ -134,7 +134,7 @@ namespace _3A_flickr_sync
                             }
                             else
                             {
-                                string log = string.Format("{0}: {1}% ({2}/{3}) \n", n.FullPath, n.UploadProgress.ProgressPercentage, n.UploadProgress.BytesSent / 1024, n.UploadProgress.TotalBytesToSend / 1024);
+                                string log = string.Format("{0}: {1}% ({2}/{3})", n.FullPath, n.UploadProgress.ProgressPercentage, n.UploadProgress.BytesSent / 1024, n.UploadProgress.TotalBytesToSend / 1024);
                                 if (index == -1)
                                 {
                                     rtbProgress.AppendText(log);
@@ -166,12 +166,20 @@ namespace _3A_flickr_sync
 
         private void startUploadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Task.Run(() => FlickrLogic.StartUpload());
-        }
+            var menu = sender as ToolStripMenuItem;
 
-        private void stopToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            FlickrLogic.StopUpload();
+            if (FlickrLogic.IsUpload)
+            {
+                menu.Image = null;
+                menu.Text = "Start upload";
+                FlickrLogic.StopUpload();
+            }
+            else
+            {
+                menu.Image = Resources.Uploading;
+                menu.Text = "Stop";
+                Task.Run(() => FlickrLogic.StartUpload());
+            }
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
