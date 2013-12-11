@@ -8,6 +8,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace _3A_flickr_sync.Common
 {
@@ -56,6 +57,13 @@ namespace _3A_flickr_sync.Common
                 (h => col.CollectionChanged += h,
                 h => col.CollectionChanged -= h)
                 ;
+        }
+
+        public static void InsertAtFirst(this RichTextBox rtb, string s)
+        {
+            rtb.SelectionStart = 0;
+            rtb.SelectionLength = 0;
+            rtb.SelectedText = s;
         }
     }
 }

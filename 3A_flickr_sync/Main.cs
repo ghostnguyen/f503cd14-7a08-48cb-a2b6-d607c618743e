@@ -21,13 +21,13 @@ namespace _3A_flickr_sync
 {
     public partial class Main : Form
     {
-        
+
 
         public Main()
         {
             InitializeComponent();
 
-            
+
 
         }
 
@@ -105,7 +105,7 @@ namespace _3A_flickr_sync
         {
             LoadGUIByUser();
 
-            Observable.Interval(TimeSpan.FromSeconds(1))
+            Observable.Interval(TimeSpan.FromMilliseconds(10))
                 .Where(r => FlickrLogic.UploadEventList.IsEmpty == false)
                 .ObserveOn(rtbProgress)
                 .Subscribe(r =>
@@ -129,12 +129,13 @@ namespace _3A_flickr_sync
                                     l.RemoveAt(index);
                                     rtbProgress.Lines = l.ToArray();
                                 }
-
-                                rtbLog.Text.Insert(0, n.FullPath + ": Completed \n");
+                                
+                                rtbLog.InsertAtFirst(n.FullPath + ": Completed \n");
                             }
                             else
                             {
-                                string log = string.Format("{0}: {1}% ({2}/{3})", n.FullPath, n.UploadProgress.ProgressPercentage, n.UploadProgress.BytesSent / 1024, n.UploadProgress.TotalBytesToSend / 1024);
+                                var percent = (decimal)(((decimal)n.UploadProgress.BytesSent / (decimal)n.UploadProgress.TotalBytesToSend) * 100);
+                                string log = string.Format("{0}: {1}% ({2}/{3})", n.FullPath, percent.ToString("F2"), n.UploadProgress.BytesSent / 1024, n.UploadProgress.TotalBytesToSend / 1024);
                                 if (index == -1)
                                 {
                                     rtbProgress.AppendText(log);
@@ -157,7 +158,7 @@ namespace _3A_flickr_sync
                                 rtbProgress.Lines = l.ToArray();
                             }
 
-                            rtbLog.Text.Insert(0, string.Format("{0}: {1} \n", n.FullPath, n.Ex.Message));
+                            rtbLog.InsertAtFirst(string.Format("{0}: {1} \n", n.FullPath, n.Ex.Message));
                         }
                     }
                 }
