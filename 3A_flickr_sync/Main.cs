@@ -106,15 +106,17 @@ namespace _3A_flickr_sync
             LoadGUIByUser();
 
             Observable.Interval(TimeSpan.FromSeconds(1))
-                .SubscribeOn(this)
                 .Where(r => FlickrLogic.UploadEventList.IsEmpty == false)
+                .ObserveOn(rtbProgress)
                 .Subscribe(r =>
                 {
                     Notice n;
                     if (FlickrLogic.UploadEventList.TryDequeue(out n))
                     {
                         var l = rtbProgress.Lines.ToList();
-                        var index = l.IndexOf(n.FullPath);
+                        var currentLine = l.Find(r1 => r1.Contains(n.FullPath));
+
+                        var index = l.IndexOf(currentLine);
 
                         if (n.Ex == null)
                         {
@@ -140,7 +142,8 @@ namespace _3A_flickr_sync
                                 else
                                 {
                                     l[index] = log;
-                                    rtbProgress.Lines = l.ToArray();
+                                    var la = l.ToArray();
+                                    rtbProgress.Lines = la;
                                 }
                             }
                         }
@@ -158,8 +161,7 @@ namespace _3A_flickr_sync
                         }
                     }
                 }
-                )
-                ;
+            );
         }
 
         private void startUploadToolStripMenuItem_Click(object sender, EventArgs e)

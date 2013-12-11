@@ -75,7 +75,11 @@ namespace _3A_flickr_sync.Logic
                             FlickrLogic logic = new FlickrLogic(file.Item1);
 
                             var task = logic.Upload(file.Item2.Id);
-                            task.ContinueWith(r1 => uploadTaskList.Remove(r1));
+                            task.ContinueWith(r1 => 
+                                {
+                                    uploadTaskList.Remove(r1);
+                                }
+                                );
 
                             uploadTaskList.Add(task);
                         }
