@@ -111,56 +111,56 @@ namespace _3A_flickr_sync
                 .Subscribe(r =>
                 {
                     Notice n;
-                    if (FlickrLogic.UploadEventList.TryDequeue(out n))
-                    {
-                        var l = rtbProgress.Lines.ToList();
-                        var currentLine = l.Find(r1 => r1.Contains(n.FullPath));
+                    //if (FlickrLogic.UploadEventList.TryDequeue(out n))
+                    //{
+                    //    var l = rtbProgress.Lines.ToList();
+                    //    var currentLine = l.Find(r1 => r1.Contains(n.FullPath));
 
-                        var index = l.IndexOf(currentLine);
+                    //    var index = l.IndexOf(currentLine);
 
-                        if (n.Ex == null)
-                        {
-                            if (n.UploadProgress.ProgressPercentage == 100)
-                            {
-                                if (index == -1)
-                                { }
-                                else
-                                {
-                                    l.RemoveAt(index);
-                                    rtbProgress.Lines = l.ToArray();
-                                }
+                    //    if (n.Ex == null)
+                    //    {
+                    //        if (n.UploadProgress.ProgressPercentage == 100)
+                    //        {
+                    //            if (index == -1)
+                    //            { }
+                    //            else
+                    //            {
+                    //                l.RemoveAt(index);
+                    //                rtbProgress.Lines = l.ToArray();
+                    //            }
                                 
-                                rtbLog.InsertAtFirst(n.FullPath + ": Completed \n");
-                            }
-                            else
-                            {
-                                var percent = (decimal)(((decimal)n.UploadProgress.BytesSent / (decimal)n.UploadProgress.TotalBytesToSend) * 100);
-                                string log = string.Format("{0}: {1}% ({2}/{3})", n.FullPath, percent.ToString("F2"), n.UploadProgress.BytesSent / 1024, n.UploadProgress.TotalBytesToSend / 1024);
-                                if (index == -1)
-                                {
-                                    rtbProgress.AppendText(log);
-                                }
-                                else
-                                {
-                                    l[index] = log;
-                                    var la = l.ToArray();
-                                    rtbProgress.Lines = la;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (index == -1)
-                            { }
-                            else
-                            {
-                                l.RemoveAt(index);
-                                rtbProgress.Lines = l.ToArray();
-                            }
+                    //            rtbLog.InsertAtFirst(n.FullPath + ": Completed \n");
+                    //        }
+                    //        else
+                    //        {
+                    //            var percent = (decimal)(((decimal)n.UploadProgress.BytesSent / (decimal)n.UploadProgress.TotalBytesToSend) * 100);
+                    //            string log = string.Format("{0}: {1}% ({2}/{3})", n.FullPath, percent.ToString("F2"), n.UploadProgress.BytesSent / 1024, n.UploadProgress.TotalBytesToSend / 1024);
+                    //            if (index == -1)
+                    //            {
+                    //                rtbProgress.AppendText(log);
+                    //            }
+                    //            else
+                    //            {
+                    //                l[index] = log;
+                    //                var la = l.ToArray();
+                    //                rtbProgress.Lines = la;
+                    //            }
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        if (index == -1)
+                    //        { }
+                    //        else
+                    //        {
+                    //            l.RemoveAt(index);
+                    //            rtbProgress.Lines = l.ToArray();
+                    //        }
 
-                            rtbLog.InsertAtFirst(string.Format("{0}: {1} \n", n.FullPath, n.Ex.Message));
-                        }
-                    }
+                    //        rtbLog.InsertAtFirst(string.Format("{0}: {1} \n", n.FullPath, n.Ex.Message));
+                    //    }
+                    //}
                 }
             );
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Net;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
@@ -56,6 +57,14 @@ namespace _3A_flickr_sync.Common
             return Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>
                 (h => col.CollectionChanged += h,
                 h => col.CollectionChanged -= h)
+                ;
+        }
+
+        public static IObservable<EventPattern<T>> ToObservable<T>(this Progress<T> col)
+        {
+            return Observable.FromEventPattern<EventHandler<T>, T>
+                (h => col.ProgressChanged += h,
+                h => col.ProgressChanged -= h)
                 ;
         }
 

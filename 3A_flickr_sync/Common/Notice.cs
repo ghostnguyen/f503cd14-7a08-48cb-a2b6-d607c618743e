@@ -7,15 +7,23 @@ using System.Threading.Tasks;
 
 namespace _3A_flickr_sync.Common
 {
+    public enum NoticeType
+    {
+        Upload,
+        AddFile,
+        UploadException,
+        Exception,
+    }
+
     public class Notice
     {
         public DateTime Datetime { get; private set; }
         //public int Id { get; set; }
         //public string DbPath { get; set; }
 
-
+        public NoticeType Type { get; set; }
         public string FullPath { get; set; }
-        public Exception Ex { get; set; }
+        public string Note { get; set; }
         public UploadProgressChangedEventArgs UploadProgress { get; set; }
 
         public Notice()
@@ -23,10 +31,10 @@ namespace _3A_flickr_sync.Common
             Datetime = DateTime.Now;
         }
 
-        public string GetNote()
-        {
-            string s = string.Format("\n {0}: {1}% ", FullPath, UploadProgress.ProgressPercentage.ToString());
-            return s;
-        }
+        //public string GetNote()
+        //{
+        //    string s = string.Format("\n {0}: {1}% ", FullPath, UploadProgress.ProgressPercentage.ToString());
+        //    return s;
+        //}
     }
 }
