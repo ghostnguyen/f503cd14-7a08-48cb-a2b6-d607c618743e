@@ -23,7 +23,7 @@ namespace _3A_flickr_sync.Logic
     public class FlickrLogic : FSDBLogic
     {
         static private ObservableCollection<Task<FFile>> uploadTaskList = new ObservableCollection<Task<FFile>>();
-        static public ConcurrentQueue<Notice> UploadEventList = new ConcurrentQueue<Notice>();
+        static public ObservableCollection<Notice> UploadEventList = new ObservableCollection<Notice>();
         static public bool IsNetworkOk { get; set; }
         static public int MaxUpload { get; set; }
         static public bool IsUpload { get; set; }
@@ -134,7 +134,7 @@ namespace _3A_flickr_sync.Logic
                                 progress.ToObservable()
                                     .DistinctUntilChanged(r => r.EventArgs.ProgressPercentage / 5)
                                     .Subscribe(r => {
-                                        FlickrLogic.UploadEventList.Enqueue(new Notice() { Type = NoticeType.Upload, UploadProgress = r.EventArgs, FullPath = file.Path });
+                                        FlickrLogic.UploadEventList.Add(new Notice() { Type = NoticeType.Upload, UploadProgress = r.EventArgs, FullPath = file.Path });
                                     })
                                 ;
                                     
@@ -165,11 +165,11 @@ namespace _3A_flickr_sync.Logic
                         }
                         catch (WebException ex)
                         {
-                            FlickrLogic.UploadEventList.Enqueue(new Notice() { Type = NoticeType.UploadException, Note = ex.Message, FullPath = file.Path });
+                            FlickrLogic.UploadEventList.Add(new Notice() { Type = NoticeType.UploadException, Note = ex.Message, FullPath = file.Path });
                         }
                         catch (Exception ex)
                         {
-                            FlickrLogic.UploadEventList.Enqueue(new Notice() { Type = NoticeType.Exception, Note = ex.Message, FullPath = file.Path });
+                            FlickrLogic.UploadEventList.Add(new Notice() { Type = NoticeType.Exception, Note = ex.Message, FullPath = file.Path });
                         }
                     }
                 }
