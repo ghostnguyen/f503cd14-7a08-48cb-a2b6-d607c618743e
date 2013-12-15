@@ -34,14 +34,17 @@
             this.selectFoldersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.startUploadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.rtbLog = new System.Windows.Forms.RichTextBox();
-            this.listBoxNote = new System.Windows.Forms.ListBox();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.dataGridViewNote = new System.Windows.Forms.DataGridView();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewNote)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -50,14 +53,14 @@
             this.loginToolStripMenuItem,
             this.selectFoldersToolStripMenuItem,
             this.startUploadToolStripMenuItem,
-            this.clearLogToolStripMenuItem});
+            this.clearLogToolStripMenuItem,
+            this.addToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
             this.menuStrip1.Size = new System.Drawing.Size(992, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
-            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             // 
             // loginToolStripMenuItem
             // 
@@ -89,6 +92,14 @@
             this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(84, 24);
             this.clearLogToolStripMenuItem.Text = "Clear Log";
             this.clearLogToolStripMenuItem.Visible = false;
+            this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
+            // 
+            // addToolStripMenuItem
+            // 
+            this.addToolStripMenuItem.Name = "addToolStripMenuItem";
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(47, 24);
+            this.addToolStripMenuItem.Text = "add";
+            this.addToolStripMenuItem.Click += new System.EventHandler(this.addToolStripMenuItem_Click);
             // 
             // splitContainer1
             // 
@@ -100,13 +111,13 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.listBoxNote);
+            this.splitContainer1.Panel1.Controls.Add(this.dataGridViewNote);
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.rtbLog);
             this.splitContainer1.Size = new System.Drawing.Size(992, 493);
-            this.splitContainer1.SplitterDistance = 245;
+            this.splitContainer1.SplitterDistance = 243;
             this.splitContainer1.TabIndex = 3;
             // 
             // rtbLog
@@ -116,19 +127,19 @@
             this.rtbLog.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.rtbLog.Name = "rtbLog";
             this.rtbLog.ReadOnly = true;
-            this.rtbLog.Size = new System.Drawing.Size(992, 244);
+            this.rtbLog.Size = new System.Drawing.Size(992, 246);
             this.rtbLog.TabIndex = 0;
             this.rtbLog.Text = "";
             // 
-            // listBoxNote
+            // dataGridViewNote
             // 
-            this.listBoxNote.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBoxNote.FormattingEnabled = true;
-            this.listBoxNote.ItemHeight = 16;
-            this.listBoxNote.Location = new System.Drawing.Point(0, 0);
-            this.listBoxNote.Name = "listBoxNote";
-            this.listBoxNote.Size = new System.Drawing.Size(992, 245);
-            this.listBoxNote.TabIndex = 1;
+            this.dataGridViewNote.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewNote.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridViewNote.Location = new System.Drawing.Point(0, 0);
+            this.dataGridViewNote.Name = "dataGridViewNote";
+            this.dataGridViewNote.RowTemplate.Height = 24;
+            this.dataGridViewNote.Size = new System.Drawing.Size(992, 243);
+            this.dataGridViewNote.TabIndex = 0;
             // 
             // Main
             // 
@@ -139,7 +150,7 @@
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Main";
             this.Text = "3A Flickr Sync";
             this.Load += new System.EventHandler(this.Main_Load);
@@ -149,6 +160,7 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewNote)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -163,7 +175,9 @@
         private System.Windows.Forms.ToolStripMenuItem clearLogToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.RichTextBox rtbLog;
-        private System.Windows.Forms.ListBox listBoxNote;
+        private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
+        private System.Windows.Forms.DataGridView dataGridViewNote;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
 

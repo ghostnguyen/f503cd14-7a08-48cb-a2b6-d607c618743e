@@ -16,19 +16,66 @@ using _3A_flickr_sync.Models;
 using System.Threading;
 using System.Reactive.Linq;
 using _3A_flickr_sync.Properties;
+using System.Collections.Specialized;
 
 namespace _3A_flickr_sync
 {
     public partial class Main : Form
     {
-
+        List<Notice> noteToDisplay = new List<Notice>();
 
         public Main()
         {
             InitializeComponent();
+        }
 
+        private void Main_Load(object sender, EventArgs e)
+        {
 
+            LoadGUIByUser();
 
+            var noticeObserable = FlickrLogic.UploadEventList.ObservesChanged()
+                .Where(r => r.EventArgs.Action == NotifyCollectionChangedAction.Add)
+                .Select(r => r.EventArgs.NewItems.Cast<Notice>().ToList())
+                .Buffer(TimeSpan.FromSeconds(1))
+                .Select(r => r.SelectMany(r1 => r1))
+                .ObserveOn(this);
+
+            noticeObserable.Subscribe(r =>
+                {
+                    FlickrLogic.UploadEventList.Clear();
+
+                    r.Where(r1 => r1.Type == NoticeType.Upload || r1.Type == NoticeType.AddFile)
+                        .GroupBy(r1 => new { r1.Type, r1.FullPath })
+                        .Select(r1 => r1.OrderByDescending(r2 => r2.Datetime).First())
+                        .ToList()
+                        .ForEach(r1 =>
+                            {
+                                var n = noteToDisplay.Find(r2 => r2.Type == r1.Type && r2.FullPath == r1.FullPath);
+                                if (n == null)
+                                {
+                                    noteToDisplay.Add(r1);
+                                }
+                                else
+                                {
+                                    n.Percentage = r1.Percentage;
+                                    n.JobDone = r1.JobDone;
+                                    n.JobTotal = r1.JobTotal;
+                                }
+                            }
+                        )
+                    ;
+
+                    dataGridViewNote_ShowNote();
+
+                    r.Where(r1 => r1.Type != NoticeType.Upload && r1.Type != NoticeType.AddFile)
+                        .ToList()
+                        .ForEach(r1 =>
+                        {
+                            rtbLog.InsertAtFirst(r1.GetNote());
+                        });
+                 })
+                ;
         }
 
         void LoadGUIByUser()
@@ -39,8 +86,7 @@ namespace _3A_flickr_sync
             startUploadToolStripMenuItem.Visible = hasUser;
             clearLogToolStripMenuItem.Visible = hasUser;
 
-            rtbLog.Clear();
-            listBoxNote.Items.Clear();
+            Clear();
 
             if (hasUser)
             {
@@ -101,76 +147,7 @@ namespace _3A_flickr_sync
             form.ShowDialog();
         }
 
-        private void Main_Load(object sender, EventArgs e)
-        {
-            LoadGUIByUser();
 
-            FlickrLogic.UploadEventList.ObservesChanged()
-                .Where(r => r.EventArgs.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
-                .ObserveOn(listBoxNote)
-                .Subscribe(r =>
-                {
-                    Notice n = FlickrLogic.UploadEventList[0];
-                    
-                    if (n == null)
-                    { }
-                    else
-                    {
-                        FlickrLogic.UploadEventList.Remove(n);
-
-                        if(n.Type == NoticeType.Upload)
-
-                        var l = rtbProgress.Lines.ToList();
-                        var currentLine = l.Find(r1 => r1.Contains(n.FullPath));
-
-                        var index = l.IndexOf(currentLine);
-
-                        if (n.Ex == null)
-                        {
-                            if (n.UploadProgress.ProgressPercentage == 100)
-                            {
-                                if (index == -1)
-                                { }
-                                else
-                                {
-                                    l.RemoveAt(index);
-                                    rtbProgress.Lines = l.ToArray();
-                                }
-
-                                rtbLog.InsertAtFirst(n.FullPath + ": Completed \n");
-                            }
-                            else
-                            {
-                                var percent = (decimal)(((decimal)n.UploadProgress.BytesSent / (decimal)n.UploadProgress.TotalBytesToSend) * 100);
-                                string log = string.Format("{0}: {1}% ({2}/{3})", n.FullPath, percent.ToString("F2"), n.UploadProgress.BytesSent / 1024, n.UploadProgress.TotalBytesToSend / 1024);
-                                if (index == -1)
-                                {
-                                    rtbProgress.AppendText(log);
-                                }
-                                else
-                                {
-                                    l[index] = log;
-                                    var la = l.ToArray();
-                                    rtbProgress.Lines = la;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (index == -1)
-                            { }
-                            else
-                            {
-                                l.RemoveAt(index);
-                                rtbProgress.Lines = l.ToArray();
-                            }
-
-                            rtbLog.InsertAtFirst(string.Format("{0}: {1} \n", n.FullPath, n.Ex.Message));
-                        }
-                    }
-                }
-            );
-        }
 
         private void startUploadToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -190,10 +167,39 @@ namespace _3A_flickr_sync
             }
         }
 
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void addToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FlickrLogic.UploadEventList.Add(new Notice() { FullPath = DateTime.Now.ToString() });
+        }
+
+        private void clearLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Clear();
+        }
+
+        void Clear()
         {
             rtbLog.Clear();
-            listBoxNote.Items.Clear();
+            noteToDisplay = new List<Notice>();
+            dataGridViewNote.DataSource = noteToDisplay;
+        }
+        void dataGridViewNote_ShowNote()
+        {
+            if (noteToDisplay == null)
+            {
+            }
+            else
+            {
+                noteToDisplay.Where(r => r.Percentage == 100f)
+                    .ToList()
+                    .ForEach(r =>
+                        rtbLog.InsertAtFirst(r.GetNote())
+                    );
+
+                noteToDisplay.RemoveAll(r => r.Percentage == 100f);
+            }
+
+            dataGridViewNote.DataSource = noteToDisplay;
         }
     }
 }

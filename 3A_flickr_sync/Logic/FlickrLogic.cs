@@ -24,11 +24,27 @@ namespace _3A_flickr_sync.Logic
     {
         static private ObservableCollection<Task<FFile>> uploadTaskList = new ObservableCollection<Task<FFile>>();
         static public ObservableCollection<Notice> UploadEventList = new ObservableCollection<Notice>();
+        //static public ConcurrentQueue<Notice> UploadEventList = new ConcurrentQueue<Notice>();
+        static public IObservable<Notice> EventList;
+
         static public bool IsNetworkOk { get; set; }
         static public int MaxUpload { get; set; }
         static public bool IsUpload { get; set; }
         static public CancellationTokenSource CancellationTokenSrc;
         static public CancellationToken CancellationToken;
+
+        //static IEnumerable<Notice> EndlessNotices()
+        //{
+        //    while (true)
+        //    {
+        //        Notice n = null;
+        //        if (UploadEventList.TryDequeue(out n))
+        //        {
+        //            yield return n;
+        //        }
+        //    }
+        //}
+
 
         static public void ResetCancellationToken()
         {
@@ -90,6 +106,8 @@ namespace _3A_flickr_sync.Logic
                     }
                 }
                 );
+
+            //EventList = EndlessNotices().ToObservable(System.Reactive.Concurrency.NewThreadScheduler.Default);
         }
 
         public FlickrLogic(string path)
@@ -133,17 +151,18 @@ namespace _3A_flickr_sync.Logic
 
                                 progress.ToObservable()
                                     .DistinctUntilChanged(r => r.EventArgs.ProgressPercentage / 5)
-                                    .Subscribe(r => {
-                                        FlickrLogic.UploadEventList.Add(new Notice() { Type = NoticeType.Upload, UploadProgress = r.EventArgs, FullPath = file.Path });
+                                    .Subscribe(r =>
+                                    {
+                                        FlickrLogic.UploadEventList.Add(new Notice() { Type = NoticeType.Upload, JobDone = r.EventArgs.BytesSent, JobTotal = r.EventArgs.TotalBytesToSend, Percentage = r.EventArgs.ProgressPercentage, FullPath = file.Path });
                                     })
                                 ;
-                                    
+
                                 //progress.ProgressChanged += ((a, b) =>
                                 //{
                                 //    FlickrLogic.UploadEventList.Enqueue(new Notice() { Type = NoticeType.Upload, UploadProgress = b, FullPath = file.Path });
                                 //});
-                                
-                                
+
+
                                 var task = flickr.UploadPicture(file.Path, tags: tags, progress: progress);
 
                                 var photoID = await task;

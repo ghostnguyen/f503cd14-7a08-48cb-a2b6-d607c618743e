@@ -18,23 +18,34 @@ namespace _3A_flickr_sync.Common
     public class Notice
     {
         public DateTime Datetime { get; private set; }
-        //public int Id { get; set; }
-        //public string DbPath { get; set; }
 
         public NoticeType Type { get; set; }
         public string FullPath { get; set; }
         public string Note { get; set; }
-        public UploadProgressChangedEventArgs UploadProgress { get; set; }
+        public long JobDone { get; set; }
+        public long JobTotal { get; set; }
+        public float Percentage { get; set; }
+
+        //public UploadProgressChangedEventArgs UploadProgress { get; set; }
 
         public Notice()
         {
             Datetime = DateTime.Now;
         }
 
-        //public string GetNote()
-        //{
-        //    string s = string.Format("\n {0}: {1}% ", FullPath, UploadProgress.ProgressPercentage.ToString());
-        //    return s;
-        //}
+        public string GetNote()
+        {
+            string s = "";
+            if (Type == NoticeType.Upload)
+            {
+                s = string.Format("\n {0}: {1}% ", FullPath, Percentage.ToString());
+            }
+            if (Type == NoticeType.UploadException || Type == NoticeType.Exception)
+            {
+                s = string.Format("\n {0}: {1}% ", FullPath, Note);
+            }
+
+            return s;
+        }
     }
 }
