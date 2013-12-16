@@ -68,11 +68,11 @@ namespace _3A_flickr_sync.Common
                 ;
         }
 
-        public static void InsertAtFirst(this RichTextBox rtb, string s)
+        public static void InsertLineAtFirst(this RichTextBox rtb, string s)
         {
             rtb.SelectionStart = 0;
             rtb.SelectionLength = 0;
-            rtb.SelectedText = s;
+            rtb.SelectedText = s + "\n";
         }
     }
 }

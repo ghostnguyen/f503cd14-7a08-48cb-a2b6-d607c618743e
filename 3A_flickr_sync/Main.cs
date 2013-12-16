@@ -72,7 +72,7 @@ namespace _3A_flickr_sync
                         .ToList()
                         .ForEach(r1 =>
                         {
-                            rtbLog.InsertAtFirst(r1.GetNote());
+                            rtbLog.InsertLineAtFirst(r1.GetNote());
                         });
                 })
                 ;
@@ -81,7 +81,6 @@ namespace _3A_flickr_sync
             //noteToDisplay.Add(new Notice());
             //noteToDisplay.Add(new Notice());
             //dataGridViewNote_ShowNote();
-
         }
 
         void LoadGUIByUser()
@@ -187,6 +186,8 @@ namespace _3A_flickr_sync
         {
             rtbLog.Clear();
             noteToDisplay = new List<Notice>() { };
+
+            //Can not set datasource has zero item to dataGridView. It should to be set to null
             dataGridViewNote.DataSource = null;
         }
         void dataGridViewNote_ShowNote()
@@ -199,13 +200,22 @@ namespace _3A_flickr_sync
                 noteToDisplay.Where(r => r.Percentage == 100f)
                     .ToList()
                     .ForEach(r =>
-                        rtbLog.InsertAtFirst(r.GetNote())
+                        rtbLog.InsertLineAtFirst(r.GetNote())
                     );
 
                 noteToDisplay.RemoveAll(r => r.Percentage == 100f);
             }
 
-            dataGridViewNote.DataSource = noteToDisplay;
+            if (noteToDisplay.Count == 0)
+            {
+                //Can not set datasource has zero item to dataGridView. It should to be set to null
+                dataGridViewNote.DataSource = null;
+            }
+            else
+            {
+                dataGridViewNote.DataSource = noteToDisplay;
+            }
+            
         }
 
     }

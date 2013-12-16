@@ -38,11 +38,15 @@ namespace _3A_flickr_sync.Common
             string s = "";
             if (Type == NoticeType.Upload)
             {
-                s = string.Format("\n {0}: {1}% ", FullPath, Percentage.ToString());
+                s = string.Format("{0}", FullPath);
+            }
+            if (Type == NoticeType.AddFile)
+            {
+                s = string.Format("{0}: {1} files added.", FullPath, JobDone.ToString());
             }
             if (Type == NoticeType.UploadException || Type == NoticeType.Exception)
             {
-                s = string.Format("\n {0}: {1}% ", FullPath, Note);
+                s = string.Format("{0}: {1}", FullPath, Note);
             }
 
             return s;
