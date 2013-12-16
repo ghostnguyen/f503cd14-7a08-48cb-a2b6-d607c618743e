@@ -151,11 +151,11 @@ namespace _3A_flickr_sync.FlickrNet
                 OAuthAccessToken = v.OAuthAccessToken;
                 OAuthAccessTokenSecret = v.OAuthAccessTokenSecret;
 
-                SetLogic setL = new SetLogic();
-                setL.DownloadPhotsets();
-
                 Flickr flickr = new Flickr();
                 User = flickr.TestLogin();
+
+                SetLogic setL = new SetLogic();
+                setL.DownloadPhotsets();
             }
         }
 

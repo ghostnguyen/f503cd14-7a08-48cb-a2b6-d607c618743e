@@ -11,7 +11,7 @@ using _3A_flickr_sync.FlickrNet;
 
 namespace _3A_flickr_sync.Logic
 {
-    public class SetLogic 
+    public class SetLogic
     {
         FSMasterDBContext db = new FSMasterDBContext();
 
@@ -25,7 +25,8 @@ namespace _3A_flickr_sync.Logic
             }
             else
             {
-                v.Tittle = set.Title;
+                if (v.Tittle != set.Title)
+                    v.Tittle = set.Title;
             }
 
             db.SaveChanges();
@@ -95,10 +96,10 @@ namespace _3A_flickr_sync.Logic
             }
             else
             {
-                f.PhotosetsAddPhoto(set.SetsID, file.PhotoID); 
+                f.PhotosetsAddPhoto(set.SetsID, file.PhotoID);
             }
 
-            
+
             return set.SetsID;
         }
     }
