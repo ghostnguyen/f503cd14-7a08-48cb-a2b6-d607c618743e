@@ -31,7 +31,6 @@ namespace _3A_flickr_sync
 
         private void Main_Load(object sender, EventArgs e)
         {
-
             LoadGUIByUser();
 
             var noticeObserable = FlickrLogic.UploadEventList.ObservesChanged()
@@ -39,6 +38,7 @@ namespace _3A_flickr_sync
                 .Select(r => r.EventArgs.NewItems.Cast<Notice>().ToList())
                 .Buffer(TimeSpan.FromSeconds(1))
                 .Select(r => r.SelectMany(r1 => r1))
+                .Where(r => r.Count() > 0)
                 .ObserveOn(this);
 
             noticeObserable.Subscribe(r =>
@@ -74,8 +74,14 @@ namespace _3A_flickr_sync
                         {
                             rtbLog.InsertAtFirst(r1.GetNote());
                         });
-                 })
+                })
                 ;
+
+            //noteToDisplay.Add(new Notice());
+            //noteToDisplay.Add(new Notice());
+            //noteToDisplay.Add(new Notice());
+            //dataGridViewNote_ShowNote();
+
         }
 
         void LoadGUIByUser()
@@ -180,8 +186,8 @@ namespace _3A_flickr_sync
         void Clear()
         {
             rtbLog.Clear();
-            noteToDisplay = new List<Notice>();
-            dataGridViewNote.DataSource = noteToDisplay;
+            noteToDisplay = new List<Notice>() { };
+            dataGridViewNote.DataSource = null;
         }
         void dataGridViewNote_ShowNote()
         {
@@ -201,5 +207,6 @@ namespace _3A_flickr_sync
 
             dataGridViewNote.DataSource = noteToDisplay;
         }
+
     }
 }

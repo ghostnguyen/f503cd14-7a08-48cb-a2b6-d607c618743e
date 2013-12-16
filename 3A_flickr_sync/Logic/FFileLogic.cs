@@ -108,25 +108,35 @@ namespace _3A_flickr_sync.Logic
             return v;
         }
 
-        public int Add(DirectoryInfo folder)
+        public void Add(DirectoryInfo folder)
         {
-            int c = 0;
             if (folder.Exists)
             {
-                var ext = AppSetting.Extension;
-                var f1 = Directory.EnumerateFiles(folder.FullName, "*.*", SearchOption.AllDirectories);
-
-                foreach (var item in f1)
-                {
-                    var f = new FileInfo(item);
-                    if (ext.Contains(f.Extension.ToLower()))
+                Task.Run(() =>
                     {
-                        Add(f);
-                    }
-                }
-                c = f1.Count();
+                        var ext = AppSetting.Extension;
+                        int c = 0;
+                        var f1 = Directory.EnumerateFiles(folder.FullName, "*.*", SearchOption.AllDirectories);
+
+                        f1.ToObservable()
+                            .Subscribe(r =>
+                            {
+                                var f = new FileInfo(r);
+                                if (ext.Contains(f.Extension.ToLower()))
+                                {
+                                    Add(f);
+                                    c++;
+                                    FlickrLogic.UploadEventList.Add(new Notice() { Type = NoticeType.AddFile, JobDone = c, FullPath = folder.FullName });
+                                }
+
+                            },
+                            r =>
+                            {
+                                FlickrLogic.UploadEventList.Add(new Notice() { Type = NoticeType.AddFile, JobDone = c, FullPath = folder.FullName, Percentage = 100f });
+                            })
+                            ;
+                    });
             }
-            return c;
         }
 
         public List<FFile> TakeNew(int count, int fromID = 0)

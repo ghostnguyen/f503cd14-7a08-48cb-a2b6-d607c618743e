@@ -9,6 +9,7 @@ using System.Xml;
 using _3A_flickr_sync.Common;
 using System.Reactive.Linq;
 using System.Reactive;
+using _3A_flickr_sync.Logic;
 
 namespace _3A_flickr_sync.FlickrNet
 {
@@ -176,8 +177,12 @@ namespace _3A_flickr_sync.FlickrNet
             //Observable.FromEvent<UploadProgressChangedEventHandler>(
             //Observer.Create
             WebClient2 webClient = new WebClient2();
-            webClient.UploadProgressChanged += ((a, b) => { if (progress != null) progress.Report(b); });
+            webClient.UploadProgressChanged += ((a, b) => { 
             
+                if (progress != null) progress.Report(b);
+                if (FlickrLogic.CancellationToken.IsCancellationRequested)
+                    ((WebClient2)a).CancelAsync();
+            });
             
             //webClient.Timeout = HttpTimeout;
             webClient.ContentType = "multipart/form-data; boundary=" + boundary;
@@ -187,15 +192,12 @@ namespace _3A_flickr_sync.FlickrNet
                 webClient.Headers["Authorization"] = authHeader;
             }
 
-
-
             webClient.ContentLength = dataBuffer.Length;
 
-
-            
-
             var task = webClient.UploadDataTaskAsync(uploadUri, dataBuffer);
+            
             var responseArray = await task;
+
             string s = System.Text.Encoding.UTF8.GetString(responseArray);
 
             return s;
