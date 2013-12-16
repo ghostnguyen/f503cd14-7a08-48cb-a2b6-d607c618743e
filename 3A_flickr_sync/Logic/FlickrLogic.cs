@@ -48,7 +48,7 @@ namespace _3A_flickr_sync.Logic
         {
             ResetCancellationToken();
 
-            MaxUpload = 3;
+            MaxUpload = 5;
 
             var networkStatus = Observable.Interval(TimeSpan.FromSeconds(3)).Where(r => IsNetworkOk == false && IsUpload)
                 .Subscribe(r =>
@@ -57,7 +57,7 @@ namespace _3A_flickr_sync.Logic
                     }
                     );
 
-            var interval = Observable.Interval(TimeSpan.FromSeconds(1));
+            var interval = Observable.Interval(TimeSpan.FromSeconds(0.1));
 
             var v13 = uploadTaskList.ObservesChanged()
                 .Select(r => (long)-1)
@@ -77,16 +77,20 @@ namespace _3A_flickr_sync.Logic
                         if (file == null) { }
                         else
                         {
-                            FlickrLogic logic = new FlickrLogic(file.Item1);
-
-                            var task = logic.Upload(file.Item2.Id);
-                            task.ContinueWith(r1 =>
+                            Task.Run(() =>
                                 {
-                                    uploadTaskList.Remove(r1);
-                                }
-                                );
+                                    FlickrLogic logic = new FlickrLogic(file.Item1);
 
-                            uploadTaskList.Add(task);
+                                    var task = logic.Upload(file.Item2.Id);
+                                    task.ContinueWith(r1 =>
+                                        {
+                                            uploadTaskList.Remove(r1);
+                                        }
+                                        );
+
+                                    uploadTaskList.Add(task);
+                                }
+                            );
                         }
                     }
                 }
