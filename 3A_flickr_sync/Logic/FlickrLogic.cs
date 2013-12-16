@@ -136,15 +136,16 @@ namespace _3A_flickr_sync.Logic
                                     .DistinctUntilChanged(r => r.EventArgs.ProgressPercentage / 5)
                                     .Subscribe(r =>
                                     {
-                                        FlickrLogic.UploadEventList.Add(new Notice() { Type = NoticeType.Upload, JobDone = r.EventArgs.BytesSent, JobTotal = r.EventArgs.TotalBytesToSend, Percentage = r.EventArgs.ProgressPercentage, FullPath = file.Path });
+                                        FlickrLogic.UploadEventList.Add(new Notice()
+                                        {
+                                            Type = NoticeType.Upload,
+                                            JobDone = r.EventArgs.BytesSent,
+                                            JobTotal = r.EventArgs.TotalBytesToSend,
+                                            Percentage = r.EventArgs.ProgressPercentage,
+                                            FullPath = file.Path
+                                        });
                                     })
                                 ;
-
-                                //progress.ProgressChanged += ((a, b) =>
-                                //{
-                                //    FlickrLogic.UploadEventList.Enqueue(new Notice() { Type = NoticeType.Upload, UploadProgress = b, FullPath = file.Path });
-                                //});
-
 
                                 var task = flickr.UploadPicture(file.Path, tags: tags, progress: progress);
 

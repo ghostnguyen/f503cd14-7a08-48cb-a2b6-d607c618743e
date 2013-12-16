@@ -174,8 +174,6 @@ namespace _3A_flickr_sync.FlickrNet
             string authHeader = FlickrResponder.OAuthCalculateAuthHeader(parameters);
             byte[] dataBuffer = CreateUploadData(imageStream, fileName, parameters, boundary);
 
-            //Observable.FromEvent<UploadProgressChangedEventHandler>(
-            //Observer.Create
             WebClient2 webClient = new WebClient2();
             webClient.UploadProgressChanged += ((a, b) => { 
             
@@ -184,7 +182,6 @@ namespace _3A_flickr_sync.FlickrNet
                     ((WebClient2)a).CancelAsync();
             });
             
-            //webClient.Timeout = HttpTimeout;
             webClient.ContentType = "multipart/form-data; boundary=" + boundary;
 
             if (!String.IsNullOrEmpty(authHeader))
