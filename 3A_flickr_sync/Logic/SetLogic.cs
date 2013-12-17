@@ -13,6 +13,8 @@ namespace _3A_flickr_sync.Logic
 {
     public class SetLogic
     {
+        static readonly object lockForCreateFlickrSets = new object();
+
         FSMasterDBContext db = new FSMasterDBContext();
 
         public Set AddOrUpdate(Photoset set)
@@ -44,7 +46,7 @@ namespace _3A_flickr_sync.Logic
 
         public void RemoveNonExisting(PhotosetCollection setL)
         {
-            var d = db.Sets.ToList().Where(r => (setL.Select(r1 => r1.PhotosetId).Contains(r.SetsID) == false) 
+            var d = db.Sets.ToList().Where(r => (setL.Select(r1 => r1.PhotosetId).Contains(r.SetsID) == false)
                 && r.UserID == Flickr.User.UserId);
             db.Sets.RemoveRange(d);
             db.SaveChanges();
@@ -54,7 +56,7 @@ namespace _3A_flickr_sync.Logic
         {
             Flickr f = new Flickr();
             var l = f.PhotosetsGetList();
-            
+
             RemoveNonExisting(l);
             AddOrUpdate(l);
         }
@@ -84,6 +86,32 @@ namespace _3A_flickr_sync.Logic
             return title;
         }
 
+        public Set GetOrCreateThenAssign(string tittle, string photoID)
+        {
+            Set set;
+            lock (lockForCreateFlickrSets)
+            {
+                set = db.Sets.FirstOrDefault(r => r.UserID == Flickr.User.UserId && r.Tittle.ToLower() == tittle.ToLower());
+                if (set == null)
+                {
+                    Flickr f = new Flickr();
+
+                    var fSet = f.PhotosetsCreate(tittle, photoID);
+                    if (fSet == null)
+                    {
+
+                    }
+                    else
+                    {
+                        set = db.Sets.Add(new Set() { SetsID = fSet.PhotosetId, UserID = Flickr.User.UserId, Tittle = tittle });
+                        db.SaveChanges();
+                    }
+                }
+
+            }
+            return set;
+        }
+
         /// <summary>
         /// return SetID
         /// </summary>
@@ -93,22 +121,16 @@ namespace _3A_flickr_sync.Logic
         {
             var tittle = GetTittleFromPath(file.Path);
             var set = db.Sets.FirstOrDefault(r => r.UserID == Flickr.User.UserId && r.Tittle.ToLower() == tittle.ToLower());
-            Flickr f = new Flickr();
 
             if (set == null)
             {
-                var fSet = f.PhotosetsCreate(tittle, file.PhotoID);
-                if (fSet != null)
-                {
-                    set = db.Sets.Add(new Set() { SetsID = fSet.PhotosetId, UserID = Flickr.User.UserId, Tittle = tittle });
-                    db.SaveChanges();
-                }
+                set = GetOrCreateThenAssign(tittle, file.PhotoID);
             }
             else
             {
+                Flickr f = new Flickr();
                 f.PhotosetsAddPhoto(set.SetsID, file.PhotoID);
             }
-
 
             return set.SetsID;
         }

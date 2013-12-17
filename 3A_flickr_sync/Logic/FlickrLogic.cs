@@ -72,6 +72,13 @@ namespace _3A_flickr_sync.Logic
                         if (file == null) { }
                         else
                         {
+                            FlickrLogic.UploadEventList.Add(new Notice()
+                            {
+                                Type = NoticeType.UploadDone,
+                                FullPath = file.Item2.Path,
+                                Note = "Waiting",
+                            });
+
                             FlickrLogic logic = new FlickrLogic(file.Item1);
                             await logic.Upload(file.Item2.Id);
                         }

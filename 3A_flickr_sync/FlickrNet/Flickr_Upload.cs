@@ -191,6 +191,13 @@ namespace _3A_flickr_sync.FlickrNet
 
             webClient.ContentLength = dataBuffer.Length;
 
+            FlickrLogic.UploadEventList.Add(new Notice()
+            {
+                Type = NoticeType.UploadDone,
+                FullPath = fileName,
+                Note = "Ready to upload.",
+            });
+
             var task = webClient.UploadDataTaskAsync(uploadUri, dataBuffer);
             
             var responseArray = await task;
