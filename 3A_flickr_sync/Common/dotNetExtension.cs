@@ -74,5 +74,15 @@ namespace _3A_flickr_sync.Common
             rtb.SelectionLength = 0;
             rtb.SelectedText = s + "\n";
         }
+
+        public static float UploadPercentage(this UploadProgressChangedEventArgs arg)
+        {
+            float per = 0;
+            if (arg != null && arg.TotalBytesToSend > 0)
+            {
+                per = (float)((double)arg.BytesSent / (double)arg.TotalBytesToSend) * 100;
+            }
+            return per;
+        }
     }
 }
