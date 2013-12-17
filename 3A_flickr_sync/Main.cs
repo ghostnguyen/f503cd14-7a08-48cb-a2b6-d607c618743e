@@ -206,15 +206,19 @@ namespace _3A_flickr_sync
                 noteToDisplay.RemoveAll(r => r.Percentage == 100f);
             }
 
-            dataGridViewNote.ClearSelection();
+            
             if (noteToDisplay.Count == 0)
             {
                 //Can not set datasource has zero item to dataGridView. It should to be set to null
-                dataGridViewNote.DataSource = null;
+                dataGridViewNote.ClearSelection();
+                dataGridViewNote.DataSource = new List<Notice>();
+                dataGridViewNote.Refresh();
             }
             else
             {
+                dataGridViewNote.ClearSelection();
                 dataGridViewNote.DataSource = noteToDisplay;
+                dataGridViewNote.Refresh();
             }
             
         }

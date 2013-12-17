@@ -49,7 +49,7 @@ namespace _3A_flickr_sync.Logic
         {
             ResetCancellationToken();
 
-            MaxUpload = 1;
+            MaxUpload = 10;
 
             var networkStatus = Observable.Interval(TimeSpan.FromSeconds(3)).Where(r => IsNetworkOk == false && IsUpload)
                 .Subscribe(r =>
@@ -159,7 +159,7 @@ namespace _3A_flickr_sync.Logic
                                 var progress = new Progress<UploadProgressChangedEventArgs>();
 
                                 progress.ToObservable()
-                                    //.DistinctUntilChanged(r => r.EventArgs.UploadPercentage() / 5)
+                                    .DistinctUntilChanged(r => r.EventArgs.UploadPercentage() / 5)
                                     .Subscribe(r =>
                                     {
                                         FlickrLogic.UploadEventList.Add(new Notice()
