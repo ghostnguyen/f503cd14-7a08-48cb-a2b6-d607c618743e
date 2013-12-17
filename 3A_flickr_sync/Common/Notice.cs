@@ -10,7 +10,9 @@ namespace _3A_flickr_sync.Common
     public enum NoticeType
     {
         Upload,
+        UploadDone,
         AddFile,
+        AddFileDone,
         UploadException,
         Exception,
     }
@@ -36,11 +38,11 @@ namespace _3A_flickr_sync.Common
         public string GetNote()
         {
             string s = "";
-            if (Type == NoticeType.Upload)
+            if (Type == NoticeType.UploadDone)
             {
-                s = string.Format("{0}", FullPath);
+                s = string.Format("{0} Uploaded.", FullPath);
             }
-            if (Type == NoticeType.AddFile)
+            if (Type == NoticeType.AddFileDone)
             {
                 s = string.Format("{0}: {1} files added.", FullPath, JobDone.ToString());
             }

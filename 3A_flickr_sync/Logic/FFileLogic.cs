@@ -132,7 +132,7 @@ namespace _3A_flickr_sync.Logic
                             },
                             () =>
                             {
-                                FlickrLogic.UploadEventList.Add(new Notice() { Type = NoticeType.AddFile, JobDone = c, FullPath = folder.FullName, Percentage = 100f });
+                                FlickrLogic.UploadEventList.Add(new Notice() { Type = NoticeType.AddFileDone, JobDone = c, FullPath = folder.FullName });
                             })
                             ;
                     });

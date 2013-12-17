@@ -36,7 +36,7 @@ namespace _3A_flickr_sync
             var noticeObserable = FlickrLogic.UploadEventList.ObservesChanged()
                 .Where(r => r.EventArgs.Action == NotifyCollectionChangedAction.Add)
                 .Select(r => r.EventArgs.NewItems.Cast<Notice>().ToList())
-                .Buffer(TimeSpan.FromSeconds(1))
+                .Buffer(TimeSpan.FromSeconds(0.5))
                 .Select(r => r.SelectMany(r1 => r1))
                 .Where(r => r.Count() > 0)
                 .ObserveOn(this);
@@ -61,12 +61,11 @@ namespace _3A_flickr_sync
                                     n.Percentage = r1.Percentage;
                                     n.JobDone = r1.JobDone;
                                     n.JobTotal = r1.JobTotal;
+                                    n.Note = r1.Note;
                                 }
                             }
                         )
                     ;
-
-                    dataGridViewNote_ShowNote();
 
                     r.Where(r1 => r1.Type != NoticeType.Upload && r1.Type != NoticeType.AddFile)
                         .ToList()
@@ -74,6 +73,15 @@ namespace _3A_flickr_sync
                         {
                             rtbLog.InsertLineAtFirst(r1.GetNote());
                         });
+
+                    r.Where(r1 => r1.Type == NoticeType.UploadDone || r1.Type == NoticeType.AddFileDone)
+                        .ToList()
+                        .ForEach(r1 =>
+                        {
+                            noteToDisplay.RemoveAll(r2 => r2.FullPath == r1.FullPath);
+                        });
+
+                    dataGridViewNote_ShowNote();
                 })
                 ;
 
@@ -197,13 +205,13 @@ namespace _3A_flickr_sync
             }
             else
             {
-                noteToDisplay.Where(r => r.Percentage == 100f)
-                    .ToList()
-                    .ForEach(r =>
-                        rtbLog.InsertLineAtFirst(r.GetNote())
-                    );
+                //noteToDisplay.Where(r => r.Percentage == 100f)
+                //    .ToList()
+                //    .ForEach(r =>
+                //        rtbLog.InsertLineAtFirst(r.GetNote())
+                //    );
 
-                noteToDisplay.RemoveAll(r => r.Percentage == 100f);
+                //noteToDisplay.RemoveAll(r => r.Percentage == 100f);
             }
 
             
@@ -211,13 +219,15 @@ namespace _3A_flickr_sync
             {
                 //Can not set datasource has zero item to dataGridView. It should to be set to null
                 dataGridViewNote.ClearSelection();
-                dataGridViewNote.DataSource = new List<Notice>();
+                //dataGridViewNote.DataSource = new List<Notice>();
+                dataGridViewNote.DataSource = null;
                 dataGridViewNote.Refresh();
             }
             else
             {
                 dataGridViewNote.ClearSelection();
                 dataGridViewNote.DataSource = noteToDisplay;
+                dataGridViewNote.AutoResizeColumns();
                 dataGridViewNote.Refresh();
             }
             

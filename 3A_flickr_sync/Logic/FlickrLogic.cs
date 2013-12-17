@@ -49,7 +49,7 @@ namespace _3A_flickr_sync.Logic
         {
             ResetCancellationToken();
 
-            MaxUpload = 10;
+            MaxUpload = 3;
 
             var networkStatus = Observable.Interval(TimeSpan.FromSeconds(3)).Where(r => IsNetworkOk == false && IsUpload)
                 .Subscribe(r =>
@@ -147,10 +147,24 @@ namespace _3A_flickr_sync.Logic
                             var hashCode = Helper.HashFile(file.Path);
                             var hashCodeNoExif = Helper.HashPhotoNoExif(file.Path);
 
+                            FlickrLogic.UploadEventList.Add(new Notice()
+                            {
+                                Type = NoticeType.Upload,
+                                FullPath = file.Path,
+                                Note = "Check existing",
+                            });
+
                             if (ExistFile(hashCode))
                             {
                                 file.Status = FFileStatus.HashCodeFound;
                                 db.SaveChanges();
+
+                                FlickrLogic.UploadEventList.Add(new Notice()
+                                {
+                                    Type = NoticeType.UploadDone,
+                                    FullPath = file.Path,
+                                    Note = "Existed",
+                                });
                             }
                             else
                             {
@@ -159,7 +173,7 @@ namespace _3A_flickr_sync.Logic
                                 var progress = new Progress<UploadProgressChangedEventArgs>();
 
                                 progress.ToObservable()
-                                    .DistinctUntilChanged(r => r.EventArgs.UploadPercentage() / 5)
+                                    .DistinctUntilChanged(r => (int)r.EventArgs.UploadPercentage() / 5)
                                     .Subscribe(r =>
                                     {
                                         FlickrLogic.UploadEventList.Add(new Notice()
@@ -168,7 +182,8 @@ namespace _3A_flickr_sync.Logic
                                             JobDone = r.EventArgs.BytesSent,
                                             JobTotal = r.EventArgs.TotalBytesToSend,
                                             Percentage = r.EventArgs.UploadPercentage(),
-                                            FullPath = file.Path
+                                            FullPath = file.Path,
+                                            Note = "Uploading",
                                         });
                                     })
                                 ;
@@ -188,7 +203,21 @@ namespace _3A_flickr_sync.Logic
                                     file.UserID = Flickr.User.UserId;
                                     db.SaveChanges();
 
+                                    FlickrLogic.UploadEventList.Add(new Notice()
+                                    {
+                                        Type = NoticeType.Upload,
+                                        FullPath = file.Path,
+                                        Note = "Add to photo sets",
+                                    });
+
                                     UpdateSets(file.Id);
+
+                                    FlickrLogic.UploadEventList.Add(new Notice()
+                                    {
+                                        Type = NoticeType.UploadDone,
+                                        FullPath = file.Path,
+                                        Note = "Uploaded",
+                                    });
                                 }
                             }
                         }
