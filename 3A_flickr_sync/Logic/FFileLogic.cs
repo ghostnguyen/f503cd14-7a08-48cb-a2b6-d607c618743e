@@ -65,7 +65,7 @@ namespace _3A_flickr_sync.Logic
         async public Task<bool> StartBuffer(CancellationToken cancellationToken)
         {
             bool hasPhoto = true;
-            var re = Observable.Interval(TimeSpan.FromSeconds(5)).TakeWhile(r => hasPhoto);
+            var re = Observable.Interval(TimeSpan.FromSeconds(2)).TakeWhile(r => hasPhoto);
 
             re.Where(r => fileList.Count < MinBuffer)
                 .Subscribe(r =>

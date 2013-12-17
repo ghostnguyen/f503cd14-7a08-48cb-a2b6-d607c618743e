@@ -22,7 +22,6 @@ namespace _3A_flickr_sync.Logic
 {
     public class FlickrLogic : FSDBLogic
     {
-        //static private ObservableCollection<Task<FFile>> uploadTaskList = new ObservableCollection<Task<FFile>>();
         static public ObservableCollection<Notice> UploadEventList = new ObservableCollection<Notice>();
 
         static public bool IsNetworkOk { get; set; }
@@ -49,7 +48,7 @@ namespace _3A_flickr_sync.Logic
         {
             ResetCancellationToken();
 
-            MaxUpload = 3;
+            MaxUpload = 1;
 
             var networkStatus = Observable.Interval(TimeSpan.FromSeconds(3)).Where(r => IsNetworkOk == false && IsUpload)
                 .Subscribe(r =>
@@ -58,44 +57,7 @@ namespace _3A_flickr_sync.Logic
                     }
                     );
 
-            var interval = Observable.Interval(TimeSpan.FromSeconds(0.1));
-
-            //var v13 = uploadTaskList.ObservesChanged()
-            //    .Select(r => (long)-1)
-            //    .Merge(interval)
-            //    .Where(r => IsUpload && uploadTaskList.Count < MaxUpload
-            //    )
-            //    .Subscribe(r =>
-            //    {
-            //        if (r > 0 && uploadTaskList.Count != 0)
-            //        {
-            //            //Do not proceess event come from Interval  
-            //            //if uploadTaskList has already run.
-            //        }
-            //        else
-            //        {
-            //            var file = FFileLogic.DequeueForUpload();
-            //            if (file == null) { }
-            //            else
-            //            {
-            //                Task.Run(() =>
-            //                    {
-            //                        FlickrLogic logic = new FlickrLogic(file.Item1);
-
-            //                        var task = logic.Upload(file.Item2.Id);
-            //                        task.ContinueWith(r1 =>
-            //                            {
-            //                                uploadTaskList.Remove(r1);
-            //                            }
-            //                            );
-
-            //                        uploadTaskList.Add(task);
-            //                    }
-            //                );
-            //            }
-            //        }
-            //    }
-            //    );
+            var interval = Observable.Interval(TimeSpan.FromSeconds(0.5));
 
             var v13 =
                 interval

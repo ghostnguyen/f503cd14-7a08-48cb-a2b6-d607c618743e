@@ -200,21 +200,6 @@ namespace _3A_flickr_sync
         }
         void dataGridViewNote_ShowNote()
         {
-            if (noteToDisplay == null)
-            {
-            }
-            else
-            {
-                //noteToDisplay.Where(r => r.Percentage == 100f)
-                //    .ToList()
-                //    .ForEach(r =>
-                //        rtbLog.InsertLineAtFirst(r.GetNote())
-                //    );
-
-                //noteToDisplay.RemoveAll(r => r.Percentage == 100f);
-            }
-
-            
             if (noteToDisplay.Count == 0)
             {
                 //Can not set datasource has zero item to dataGridView. It should to be set to null
