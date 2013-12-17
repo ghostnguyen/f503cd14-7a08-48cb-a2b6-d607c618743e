@@ -180,11 +180,6 @@ namespace _3A_flickr_sync
             }
         }
 
-        private void addToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            FlickrLogic.UploadEventList.Add(new Notice() { FullPath = DateTime.Now.ToString() });
-        }
-
         private void clearLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Clear();

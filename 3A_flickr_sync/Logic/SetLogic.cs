@@ -42,10 +42,20 @@ namespace _3A_flickr_sync.Logic
             }
         }
 
+        public void RemoveNonExisting(PhotosetCollection setL)
+        {
+            var d = db.Sets.ToList().Where(r => (setL.Select(r1 => r1.PhotosetId).Contains(r.SetsID) == false) 
+                && r.UserID == Flickr.User.UserId);
+            db.Sets.RemoveRange(d);
+            db.SaveChanges();
+        }
+
         public void DownloadPhotsets()
         {
             Flickr f = new Flickr();
             var l = f.PhotosetsGetList();
+            
+            RemoveNonExisting(l);
             AddOrUpdate(l);
         }
 

@@ -50,7 +50,7 @@ namespace _3A_flickr_sync.Common
             {
                 s = string.Format("{0}: {1}", FullPath, Note);
             }
-
+            s = Datetime.ToString() + " " + s;
             return s;
         }
     }
