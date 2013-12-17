@@ -22,11 +22,12 @@ namespace _3A_flickr_sync.Logic
 {
     public class FlickrLogic : FSDBLogic
     {
-        static private ObservableCollection<Task<FFile>> uploadTaskList = new ObservableCollection<Task<FFile>>();
+        //static private ObservableCollection<Task<FFile>> uploadTaskList = new ObservableCollection<Task<FFile>>();
         static public ObservableCollection<Notice> UploadEventList = new ObservableCollection<Notice>();
 
         static public bool IsNetworkOk { get; set; }
         static public int MaxUpload { get; set; }
+        static public int TotalUpload { get; set; }
         static public bool IsUpload { get; set; }
         static public CancellationTokenSource CancellationTokenSrc;
         static public CancellationToken CancellationToken;
@@ -48,7 +49,7 @@ namespace _3A_flickr_sync.Logic
         {
             ResetCancellationToken();
 
-            MaxUpload = 5;
+            MaxUpload = 1;
 
             var networkStatus = Observable.Interval(TimeSpan.FromSeconds(3)).Where(r => IsNetworkOk == false && IsUpload)
                 .Subscribe(r =>
@@ -59,42 +60,63 @@ namespace _3A_flickr_sync.Logic
 
             var interval = Observable.Interval(TimeSpan.FromSeconds(0.1));
 
-            var v13 = uploadTaskList.ObservesChanged()
-                .Select(r => (long)-1)
-                .Merge(interval)
-                .Where(r => IsUpload && uploadTaskList.Count < MaxUpload
+            //var v13 = uploadTaskList.ObservesChanged()
+            //    .Select(r => (long)-1)
+            //    .Merge(interval)
+            //    .Where(r => IsUpload && uploadTaskList.Count < MaxUpload
+            //    )
+            //    .Subscribe(r =>
+            //    {
+            //        if (r > 0 && uploadTaskList.Count != 0)
+            //        {
+            //            //Do not proceess event come from Interval  
+            //            //if uploadTaskList has already run.
+            //        }
+            //        else
+            //        {
+            //            var file = FFileLogic.DequeueForUpload();
+            //            if (file == null) { }
+            //            else
+            //            {
+            //                Task.Run(() =>
+            //                    {
+            //                        FlickrLogic logic = new FlickrLogic(file.Item1);
+
+            //                        var task = logic.Upload(file.Item2.Id);
+            //                        task.ContinueWith(r1 =>
+            //                            {
+            //                                uploadTaskList.Remove(r1);
+            //                            }
+            //                            );
+
+            //                        uploadTaskList.Add(task);
+            //                    }
+            //                );
+            //            }
+            //        }
+            //    }
+            //    );
+
+            var v13 =
+                interval
+                .Where(r => IsUpload && TotalUpload < MaxUpload
                 )
                 .Subscribe(r =>
                 {
-                    if (r > 0 && uploadTaskList.Count != 0)
+                    Task.Run(async () =>
                     {
-                        //Do not proceess event come from Interval  
-                        //if uploadTaskList has already run.
-                    }
-                    else
-                    {
+                        TotalUpload++;
                         var file = FFileLogic.DequeueForUpload();
                         if (file == null) { }
                         else
                         {
-                            Task.Run(() =>
-                                {
-                                    FlickrLogic logic = new FlickrLogic(file.Item1);
-
-                                    var task = logic.Upload(file.Item2.Id);
-                                    task.ContinueWith(r1 =>
-                                        {
-                                            uploadTaskList.Remove(r1);
-                                        }
-                                        );
-
-                                    uploadTaskList.Add(task);
-                                }
-                            );
+                            FlickrLogic logic = new FlickrLogic(file.Item1);
+                            await logic.Upload(file.Item2.Id);
                         }
-                    }
-                }
-                );
+
+                        TotalUpload--;
+                    });
+                });
         }
 
         public FlickrLogic(string path)

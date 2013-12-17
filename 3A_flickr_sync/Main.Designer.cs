@@ -95,7 +95,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 24);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -115,14 +115,18 @@
             // 
             this.dataGridViewNote.AllowUserToAddRows = false;
             this.dataGridViewNote.AllowUserToDeleteRows = false;
+            this.dataGridViewNote.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dataGridViewNote.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewNote.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewNote.Location = new System.Drawing.Point(0, 0);
-            this.dataGridViewNote.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.dataGridViewNote.Margin = new System.Windows.Forms.Padding(2);
             this.dataGridViewNote.MultiSelect = false;
             this.dataGridViewNote.Name = "dataGridViewNote";
             this.dataGridViewNote.ReadOnly = true;
             this.dataGridViewNote.RowTemplate.Height = 24;
+            this.dataGridViewNote.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+            this.dataGridViewNote.ShowCellErrors = false;
+            this.dataGridViewNote.ShowRowErrors = false;
             this.dataGridViewNote.Size = new System.Drawing.Size(744, 196);
             this.dataGridViewNote.TabIndex = 0;
             // 
@@ -130,7 +134,7 @@
             // 
             this.rtbLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtbLog.Location = new System.Drawing.Point(0, 0);
-            this.rtbLog.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.rtbLog.Margin = new System.Windows.Forms.Padding(2);
             this.rtbLog.Name = "rtbLog";
             this.rtbLog.ReadOnly = true;
             this.rtbLog.Size = new System.Drawing.Size(744, 200);
