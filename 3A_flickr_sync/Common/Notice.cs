@@ -44,12 +44,23 @@ namespace _3A_flickr_sync.Common
             }
             if (Type == NoticeType.AddFileDone)
             {
-                s = string.Format("{0}: {1} files added.", FullPath, JobDone.ToString());
+                s = string.Format("{0}: {1} files added.", FullPath, JobDone);
             }
             if (Type == NoticeType.UploadException || Type == NoticeType.Exception)
             {
                 s = string.Format("{0}: {1}", FullPath, Note);
             }
+
+            if (Type == NoticeType.Upload)
+            {
+                s = string.Format("{0}: {1} {2}/{3} - {4}%", FullPath, Note, JobDone, JobTotal, Percentage);
+            }
+
+            if (Type == NoticeType.AddFile)
+            {
+                s = string.Format("{0}: {1} files", FullPath, JobDone);
+            }
+
             s = Datetime.ToString() + " " + s;
             return s;
         }

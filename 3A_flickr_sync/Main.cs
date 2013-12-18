@@ -192,30 +192,32 @@ namespace _3A_flickr_sync
         void Clear()
         {
             rtbLog.Clear();
+            rtbNote.Clear();
             noteToDisplay = new List<Notice>() { };
 
             //Can not set datasource has zero item to dataGridView. It should to be set to null
-            dataGridViewNote.DataSource = null;
-
+            //dataGridViewNote.DataSource = null;
 
         }
         void dataGridViewNote_ShowNote()
         {
-            if (noteToDisplay.Count == 0)
-            {
-                //Can not set datasource has zero item to dataGridView. It should to be set to null
-                dataGridViewNote.ClearSelection();
-                //dataGridViewNote.DataSource = new List<Notice>();
-                dataGridViewNote.DataSource = null;
-                dataGridViewNote.Refresh();
-            }
-            else
-            {
-                dataGridViewNote.ClearSelection();
-                dataGridViewNote.DataSource = noteToDisplay;
-                dataGridViewNote.AutoResizeColumns();
-                dataGridViewNote.Refresh();
-            }
+            //if (noteToDisplay.Count == 0)
+            //{
+            //    //Can not set datasource has zero item to dataGridView. It should to be set to null
+            //    dataGridViewNote.ClearSelection();
+            //    //dataGridViewNote.DataSource = new List<Notice>();
+            //    dataGridViewNote.DataSource = null;
+            //    dataGridViewNote.Refresh();
+            //}
+            //else
+            //{
+            //    dataGridViewNote.ClearSelection();
+            //    dataGridViewNote.DataSource = noteToDisplay;
+            //    dataGridViewNote.AutoResizeColumns();
+            //    dataGridViewNote.Refresh();
+            //}
+
+            rtbNote.Lines = noteToDisplay.Select(r => r.GetNote()).ToArray();
 
         }
 

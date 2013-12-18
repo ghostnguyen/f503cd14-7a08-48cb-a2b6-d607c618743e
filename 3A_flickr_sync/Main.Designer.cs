@@ -31,19 +31,18 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.dataGridViewNote = new System.Windows.Forms.DataGridView();
-            this.rtbLog = new System.Windows.Forms.RichTextBox();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.selectFoldersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.startUploadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.rtbLog = new System.Windows.Forms.RichTextBox();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.rtbNote = new System.Windows.Forms.RichTextBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewNote)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -66,65 +65,6 @@
             this.loginToolStripMenuItem.Text = "Login";
             this.loginToolStripMenuItem.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
             // 
-            // clearLogToolStripMenuItem
-            // 
-            this.clearLogToolStripMenuItem.Image = global::_3A_flickr_sync.Properties.Resources.delete;
-            this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
-            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(85, 20);
-            this.clearLogToolStripMenuItem.Text = "Clear Log";
-            this.clearLogToolStripMenuItem.Visible = false;
-            this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 24);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.dataGridViewNote);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.rtbLog);
-            this.splitContainer1.Size = new System.Drawing.Size(744, 399);
-            this.splitContainer1.SplitterDistance = 196;
-            this.splitContainer1.SplitterWidth = 3;
-            this.splitContainer1.TabIndex = 3;
-            // 
-            // dataGridViewNote
-            // 
-            this.dataGridViewNote.AllowUserToAddRows = false;
-            this.dataGridViewNote.AllowUserToDeleteRows = false;
-            this.dataGridViewNote.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.dataGridViewNote.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewNote.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridViewNote.Location = new System.Drawing.Point(0, 0);
-            this.dataGridViewNote.Margin = new System.Windows.Forms.Padding(2);
-            this.dataGridViewNote.MultiSelect = false;
-            this.dataGridViewNote.Name = "dataGridViewNote";
-            this.dataGridViewNote.ReadOnly = true;
-            this.dataGridViewNote.RowTemplate.Height = 24;
-            this.dataGridViewNote.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridViewNote.ShowCellErrors = false;
-            this.dataGridViewNote.ShowRowErrors = false;
-            this.dataGridViewNote.Size = new System.Drawing.Size(744, 196);
-            this.dataGridViewNote.TabIndex = 0;
-            // 
-            // rtbLog
-            // 
-            this.rtbLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtbLog.Location = new System.Drawing.Point(0, 0);
-            this.rtbLog.Margin = new System.Windows.Forms.Padding(2);
-            this.rtbLog.Name = "rtbLog";
-            this.rtbLog.ReadOnly = true;
-            this.rtbLog.Size = new System.Drawing.Size(744, 200);
-            this.rtbLog.TabIndex = 0;
-            this.rtbLog.Text = "";
-            // 
             // selectFoldersToolStripMenuItem
             // 
             this.selectFoldersToolStripMenuItem.Image = global::_3A_flickr_sync.Properties.Resources.Folder;
@@ -144,6 +84,56 @@
             this.startUploadToolStripMenuItem.Visible = false;
             this.startUploadToolStripMenuItem.Click += new System.EventHandler(this.startUploadToolStripMenuItem_Click);
             // 
+            // clearLogToolStripMenuItem
+            // 
+            this.clearLogToolStripMenuItem.Image = global::_3A_flickr_sync.Properties.Resources.delete;
+            this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
+            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(85, 20);
+            this.clearLogToolStripMenuItem.Text = "Clear Log";
+            this.clearLogToolStripMenuItem.Visible = false;
+            this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 24);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.rtbNote);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.rtbLog);
+            this.splitContainer1.Size = new System.Drawing.Size(744, 399);
+            this.splitContainer1.SplitterDistance = 196;
+            this.splitContainer1.SplitterWidth = 3;
+            this.splitContainer1.TabIndex = 3;
+            // 
+            // rtbLog
+            // 
+            this.rtbLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtbLog.Location = new System.Drawing.Point(0, 0);
+            this.rtbLog.Margin = new System.Windows.Forms.Padding(2);
+            this.rtbLog.Name = "rtbLog";
+            this.rtbLog.ReadOnly = true;
+            this.rtbLog.Size = new System.Drawing.Size(744, 200);
+            this.rtbLog.TabIndex = 0;
+            this.rtbLog.Text = "";
+            // 
+            // rtbNote
+            // 
+            this.rtbNote.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtbNote.Location = new System.Drawing.Point(0, 0);
+            this.rtbNote.Name = "rtbNote";
+            this.rtbNote.ReadOnly = true;
+            this.rtbNote.Size = new System.Drawing.Size(744, 196);
+            this.rtbNote.TabIndex = 1;
+            this.rtbNote.Text = "";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -162,7 +152,6 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewNote)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -177,8 +166,8 @@
         private System.Windows.Forms.ToolStripMenuItem clearLogToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.RichTextBox rtbLog;
-        private System.Windows.Forms.DataGridView dataGridViewNote;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.RichTextBox rtbNote;
     }
 }
 
