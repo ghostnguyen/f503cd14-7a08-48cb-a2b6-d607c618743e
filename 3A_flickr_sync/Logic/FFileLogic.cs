@@ -28,8 +28,8 @@ namespace _3A_flickr_sync.Logic
 
         static FFileLogic()
         {
-            MinBuffer = 5;
-            Buffer = 10;
+            MinBuffer = FlickrLogic.MaxUpload * 2;
+            Buffer = MinBuffer * 5;
         }
 
         public static Tuple<string, FFile> DequeueForUpload()
@@ -57,6 +57,11 @@ namespace _3A_flickr_sync.Logic
             }
         }
 
+        static public void ClearForUpload()
+        {
+            fileList = new ConcurrentQueue<Tuple<string, FFile>>();
+        }
+
         public FFileLogic(FFolder folder)
             : base(folder.Path)
         {
@@ -73,6 +78,11 @@ namespace _3A_flickr_sync.Logic
                     var last = fileList.LastOrDefault(r1 => r1.Item1 == db.Path);
 
                     int fromID = last == null ? 0 : last.Item2.Id;
+
+                    while (fromID == 0 && FlickrLogic.TotalUpload > 0)
+                    {
+                        Thread.Sleep(TimeSpan.FromSeconds(1));
+                    }
 
                     var l = TakeNew(Buffer, fromID);
 

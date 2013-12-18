@@ -30,12 +30,12 @@ namespace _3A_flickr_sync.FlickrNet
         /// <param name="safetyLevel">The safety level of the photo, i.e. Safe, Moderate or Restricted.</param>
         /// <param name="hiddenFromSearch">Is the photo hidden from public searches.</param>
         /// <returns>The id of the photograph after successful uploading.</returns>
-        public async Task<string> UploadPicture(string path, IProgress<UploadProgressChangedEventArgs> progress, string title = "", string description = "", string tags = "", bool isPublic = false, bool isFamily = true, bool isFriend = false, ContentType contentType = ContentType.None, SafetyLevel safetyLevel = SafetyLevel.Restricted, HiddenFromSearch hiddenFromSearch = HiddenFromSearch.Hidden)
+        public async Task<string> UploadPicture(string fullPath, IProgress<UploadProgressChangedEventArgs> progress, string title = "", string description = "", string tags = "", bool isPublic = false, bool isFamily = true, bool isFriend = false, ContentType contentType = ContentType.None, SafetyLevel safetyLevel = SafetyLevel.Restricted, HiddenFromSearch hiddenFromSearch = HiddenFromSearch.Hidden)
         {
             CheckRequiresAuthentication();
 
-            string fileName = Path.GetFileName(path);
-            using (Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            string fileName = Path.GetFileName(fullPath);
+            using (Stream stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 Uri uploadUri = new Uri(UploadUrl);
 
@@ -79,7 +79,7 @@ namespace _3A_flickr_sync.FlickrNet
                 parameters.Add("oauth_signature", sig);
 
                 //string responseXml = UploadData(stream, fileName, uploadUri, parameters);
-                var task = UploadData(stream, fileName, uploadUri, parameters, progress);
+                var task = UploadData(stream, fullPath, uploadUri, parameters, progress);
 
                 string responseXml = await task;
 
@@ -193,7 +193,7 @@ namespace _3A_flickr_sync.FlickrNet
 
             FlickrLogic.UploadEventList.Add(new Notice()
             {
-                Type = NoticeType.UploadDone,
+                Type = NoticeType.Upload,
                 FullPath = fileName,
                 Note = "Ready to upload.",
             });

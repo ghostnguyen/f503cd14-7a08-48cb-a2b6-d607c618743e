@@ -48,7 +48,7 @@ namespace _3A_flickr_sync.Logic
         {
             ResetCancellationToken();
 
-            MaxUpload = 12;
+            MaxUpload = System.Environment.ProcessorCount + 4;
 
             var networkStatus = Observable.Interval(TimeSpan.FromSeconds(3)).Where(r => IsNetworkOk == false && IsUpload)
                 .Subscribe(r =>
@@ -74,7 +74,7 @@ namespace _3A_flickr_sync.Logic
                         {
                             FlickrLogic.UploadEventList.Add(new Notice()
                             {
-                                Type = NoticeType.UploadDone,
+                                Type = NoticeType.Upload,
                                 FullPath = file.Item2.Path,
                                 Note = "Waiting",
                             });
@@ -244,6 +244,11 @@ namespace _3A_flickr_sync.Logic
             else
             {
                 FlickrLogic.IsUpload = true;
+
+                while (TotalUpload > 0)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(1));
+                }
 
                 var currentFolderId = 0;
                 while (true)

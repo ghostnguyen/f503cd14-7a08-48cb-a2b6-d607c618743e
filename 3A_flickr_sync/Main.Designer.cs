@@ -31,13 +31,13 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectFoldersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.startUploadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dataGridViewNote = new System.Windows.Forms.DataGridView();
             this.rtbLog = new System.Windows.Forms.RichTextBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.selectFoldersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.startUploadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -66,27 +66,11 @@
             this.loginToolStripMenuItem.Text = "Login";
             this.loginToolStripMenuItem.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
             // 
-            // selectFoldersToolStripMenuItem
-            // 
-            this.selectFoldersToolStripMenuItem.Name = "selectFoldersToolStripMenuItem";
-            this.selectFoldersToolStripMenuItem.Size = new System.Drawing.Size(91, 20);
-            this.selectFoldersToolStripMenuItem.Text = "Select Folders";
-            this.selectFoldersToolStripMenuItem.Visible = false;
-            this.selectFoldersToolStripMenuItem.Click += new System.EventHandler(this.selectFoldersToolStripMenuItem_Click);
-            // 
-            // startUploadToolStripMenuItem
-            // 
-            this.startUploadToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.startUploadToolStripMenuItem.Name = "startUploadToolStripMenuItem";
-            this.startUploadToolStripMenuItem.Size = new System.Drawing.Size(84, 20);
-            this.startUploadToolStripMenuItem.Text = "Start Upload";
-            this.startUploadToolStripMenuItem.Visible = false;
-            this.startUploadToolStripMenuItem.Click += new System.EventHandler(this.startUploadToolStripMenuItem_Click);
-            // 
             // clearLogToolStripMenuItem
             // 
+            this.clearLogToolStripMenuItem.Image = global::_3A_flickr_sync.Properties.Resources.delete;
             this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
-            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
+            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(85, 20);
             this.clearLogToolStripMenuItem.Text = "Clear Log";
             this.clearLogToolStripMenuItem.Visible = false;
             this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
@@ -140,6 +124,25 @@
             this.rtbLog.Size = new System.Drawing.Size(744, 200);
             this.rtbLog.TabIndex = 0;
             this.rtbLog.Text = "";
+            // 
+            // selectFoldersToolStripMenuItem
+            // 
+            this.selectFoldersToolStripMenuItem.Image = global::_3A_flickr_sync.Properties.Resources.Folder;
+            this.selectFoldersToolStripMenuItem.Name = "selectFoldersToolStripMenuItem";
+            this.selectFoldersToolStripMenuItem.Size = new System.Drawing.Size(107, 20);
+            this.selectFoldersToolStripMenuItem.Text = "Select Folders";
+            this.selectFoldersToolStripMenuItem.Visible = false;
+            this.selectFoldersToolStripMenuItem.Click += new System.EventHandler(this.selectFoldersToolStripMenuItem_Click);
+            // 
+            // startUploadToolStripMenuItem
+            // 
+            this.startUploadToolStripMenuItem.Image = global::_3A_flickr_sync.Properties.Resources.Flickr;
+            this.startUploadToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.startUploadToolStripMenuItem.Name = "startUploadToolStripMenuItem";
+            this.startUploadToolStripMenuItem.Size = new System.Drawing.Size(116, 20);
+            this.startUploadToolStripMenuItem.Text = "Start Upload";
+            this.startUploadToolStripMenuItem.Visible = false;
+            this.startUploadToolStripMenuItem.Click += new System.EventHandler(this.startUploadToolStripMenuItem_Click);
             // 
             // Main
             // 

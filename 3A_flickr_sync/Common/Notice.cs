@@ -26,7 +26,7 @@ namespace _3A_flickr_sync.Common
         public string Note { get; set; }
         public long JobDone { get; set; }
         public long JobTotal { get; set; }
-        public float Percentage { get; set; }
+        public int Percentage { get; set; }
 
         //public UploadProgressChangedEventArgs UploadProgress { get; set; }
 
@@ -40,7 +40,7 @@ namespace _3A_flickr_sync.Common
             string s = "";
             if (Type == NoticeType.UploadDone)
             {
-                s = string.Format("{0} Uploaded.", FullPath);
+                s = string.Format("{0}: {1}", FullPath, Note);
             }
             if (Type == NoticeType.AddFileDone)
             {

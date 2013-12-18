@@ -96,14 +96,18 @@ namespace _3A_flickr_sync
             bool hasUser = Flickr.User != null;
 
             selectFoldersToolStripMenuItem.Visible = hasUser;
+
             startUploadToolStripMenuItem.Visible = hasUser;
+            startUploadToolStripMenuItem.Image = Resources.Flickr;
+
             clearLogToolStripMenuItem.Visible = hasUser;
 
             Clear();
 
             if (hasUser)
             {
-                loginToolStripMenuItem.Text = string.Format("Current user: {0}. Click to login to other account.", Flickr.User.UserName);
+                this.Text = "3A Flickr Sync - " + Flickr.User.UserName;
+                loginToolStripMenuItem.Text = "Login to other account ";
             }
             else
             {
@@ -168,7 +172,7 @@ namespace _3A_flickr_sync
 
             if (FlickrLogic.IsUpload)
             {
-                menu.Image = null;
+                menu.Image = Resources.Flickr;
                 menu.Text = "Start upload";
                 FlickrLogic.StopUpload();
             }
@@ -192,6 +196,8 @@ namespace _3A_flickr_sync
 
             //Can not set datasource has zero item to dataGridView. It should to be set to null
             dataGridViewNote.DataSource = null;
+
+
         }
         void dataGridViewNote_ShowNote()
         {
@@ -210,7 +216,7 @@ namespace _3A_flickr_sync
                 dataGridViewNote.AutoResizeColumns();
                 dataGridViewNote.Refresh();
             }
-            
+
         }
 
     }
