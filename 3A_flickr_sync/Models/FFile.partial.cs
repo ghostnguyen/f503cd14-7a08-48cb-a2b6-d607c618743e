@@ -6,8 +6,9 @@ namespace _3A_flickr_sync.Models
     public enum FFileStatus
     {
         New = 0,
-        UploadNoSets = 10,
-        UploadInSets = 11,
+        Uploaded_NoSet = 10,
+        Uploaded_SyncSet = 11,
+        Uploaded_InSet = 13,
         HashCodeFound = 20,
     }
 

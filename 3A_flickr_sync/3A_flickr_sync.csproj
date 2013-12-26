@@ -135,6 +135,7 @@
     </Compile>
     <Compile Include="FlickrNet\Auth.cs" />
     <Compile Include="FlickrNet\BoundaryBox.cs" />
+    <Compile Include="FlickrNet\Context.cs" />
     <Compile Include="FlickrNet\DateGranularity.cs" />
     <Compile Include="FlickrNet\Enums.cs" />
     <Compile Include="FlickrNet\Flickr.cs" />

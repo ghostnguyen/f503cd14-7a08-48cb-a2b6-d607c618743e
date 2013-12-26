@@ -51,20 +51,20 @@ namespace _3A_flickr_sync.FlickrNet
         //    GetResponse<NoResponse>(parameters);
         //}
 
-        ///// <summary>
-        ///// Get all the contexts (group, set and photostream 'next' and 'previous'
-        ///// pictures) for a photo.
-        ///// </summary>
-        ///// <param name="photoId">The photo id of the photo to get the contexts for.</param>
-        ///// <returns>An instance of the <see cref="AllContexts"/> class.</returns>
-        //public AllContexts PhotosGetAllContexts(string photoId)
-        //{
-        //    Dictionary<string, string> parameters = new Dictionary<string, string>();
-        //    parameters.Add("method", "flickr.photos.getAllContexts");
-        //    parameters.Add("photo_id", photoId);
+        /// <summary>
+        /// Get all the contexts (group, set and photostream 'next' and 'previous'
+        /// pictures) for a photo.
+        /// </summary>
+        /// <param name="photoId">The photo id of the photo to get the contexts for.</param>
+        /// <returns>An instance of the <see cref="AllContexts"/> class.</returns>
+        public AllContexts PhotosGetAllContexts(string photoId)
+        {
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("method", "flickr.photos.getAllContexts");
+            parameters.Add("photo_id", photoId);
 
-        //    return GetResponse<AllContexts>(parameters);
-        //}
+            return GetResponse<AllContexts>(parameters);
+        }
 
         ///// <summary>
         ///// Gets the most recent 10 photos from your contacts.

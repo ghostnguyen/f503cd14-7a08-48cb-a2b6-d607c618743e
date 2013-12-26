@@ -125,6 +125,8 @@ namespace _3A_flickr_sync.Logic
 
                             if (ExistFile(hashCode))
                             {
+                                file.HashCode = hashCode;
+                                file.HashCodeNoExif = hashCodeNoExif;
                                 file.Status = FFileStatus.HashCodeFound;
                                 db.SaveChanges();
 
@@ -168,16 +170,9 @@ namespace _3A_flickr_sync.Logic
                                     file.PhotoID = photoID;
                                     file.HashCode = hashCode;
                                     file.HashCodeNoExif = hashCodeNoExif;
-                                    file.Status = FFileStatus.UploadNoSets;
+                                    file.Status = FFileStatus.Uploaded_NoSet;
                                     file.UserID = Flickr.User.UserId;
                                     db.SaveChanges();
-
-                                    FlickrLogic.UploadEventList.Add(new Notice()
-                                    {
-                                        Type = NoticeType.Upload,
-                                        FullPath = file.Path,
-                                        Note = "Add to photo sets",
-                                    });
 
                                     UpdateSets(file.Id);
 
@@ -208,20 +203,121 @@ namespace _3A_flickr_sync.Logic
         public FFile UpdateSets(int fileID)
         {
             var file = db.FFiles.FirstOrDefault(r => r.Id == fileID);
-            if (file != null && file.Status == FFileStatus.UploadNoSets)
+            if (file != null && file.Status == FFileStatus.Uploaded_NoSet)
             {
+                FlickrLogic.UploadEventList.Add(new Notice()
+                {
+                    Type = NoticeType.Upload,
+                    FullPath = file.Path,
+                    Note = "Add to photo sets",
+                });
+
+
                 SetLogic l = new SetLogic();
                 string setID = l.AddPhoto(file);
 
-                file.SetsID = setID;
-                file.Status = FFileStatus.UploadInSets;
-                db.SaveChanges();
+                if (string.IsNullOrEmpty(setID))
+                { }
+                else
+                {
+                    file.SetsID = setID;
+                    file.Status = FFileStatus.Uploaded_SyncSet;
+                    db.SaveChanges();
+                }
+            }
+
+            return file;
+        }
+
+        public FFile Update_HashCodeFound(int fileID)
+        {
+            Flickr flickr = new Flickr();
+            var file = db.FFiles.FirstOrDefault(r => r.Id == fileID);
+            if (file != null && file.Status == FFileStatus.HashCodeFound
+                && File.Exists(file.Path))
+            {
+                FlickrLogic.UploadEventList.Add(new Notice()
+                {
+                    Type = NoticeType.Upload,
+                    FullPath = file.Path,
+                    Note = "Checking HashCodeFound",
+                });
+
+                
+                if (string.IsNullOrEmpty(file.PhotoID))
+                {
+                    if (string.IsNullOrEmpty(file.HashCode))
+                    {
+                        var hashCode = Helper.HashFile(file.Path);
+                        var hashCodeNoExif = Helper.HashPhotoNoExif(file.Path);
+
+                        file.HashCode = hashCode;
+                        file.HashCodeNoExif = hashCodeNoExif;
+
+                        db.SaveChanges();
+                    }
+
+                    var l = GetPhoto_ByHashCode(file.HashCode);
+                    if (l.Count() > 0)
+                    {
+                        var photo = l.First();
+                        file.PhotoID = photo.PhotoId;
+                        file.UserID = photo.UserId;
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        file.Status = FFileStatus.New;
+                        file.PhotoID = null;
+                        file.SetsID = null;
+                        file.UserID = null;
+                        db.SaveChanges();
+                    }
+                }
+
+
+                if (string.IsNullOrEmpty(file.PhotoID))
+                { }
+                else
+                {
+                    var context = flickr.PhotosGetAllContexts(file.PhotoID);
+                    if (context == null)
+                    { }
+                    else
+                    {
+                        if (context.Sets.Count > 0)
+                        {
+
+                        }
+                        else
+                        {
+                            file.Status = FFileStatus.Uploaded_NoSet;
+                            db.SaveChanges();
+
+                            UpdateSets(file.Id);
+                        }
+                    }
+                }
+
+                FlickrLogic.UploadEventList.Add(new Notice()
+                {
+                    Type = NoticeType.UploadDone,
+                    FullPath = file.Path,
+                    Note = "Done " + file.Status.ToString(),
+                });
             }
 
             return file;
         }
 
         public bool ExistFile(string hashCode)
+        {
+            var l = GetPhoto_ByHashCode(hashCode);
+           
+            return l.Count() > 0;
+        }
+
+        public PhotoCollection GetPhoto_ByHashCode(string hashCode)
         {
             Flickr flickr = new Flickr();
 
@@ -230,7 +326,7 @@ namespace _3A_flickr_sync.Logic
 
             var l = flickr.PhotosSearch(op);
 
-            return l.Count() > 0;
+            return l;
         }
 
         async static public Task StartUpload()
