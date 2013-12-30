@@ -20,7 +20,14 @@ namespace _3A_flickr_sync.Models
         //{
         //    return string.Format("{0}\\{1}", folderPath, Id);
         //}
+
+        public string GetHashCodeTag()
+        {
+            return string.Format("MD5:{0} MD5NoExif:{1}", HashCode, HashCodeNoExif);
+        }
     }
+
+
 
 
 

@@ -44,6 +44,11 @@ namespace _3A_flickr_sync.Logic
             FlickrLogic.CancellationTokenSrc.Cancel();
         }
 
+        static public void Log(string path, NoticeType type, string note)
+        {
+            FlickrLogic.UploadEventList.Add(new Notice() { Type = type, Note = note, FullPath = path });
+        }
+
         static FlickrLogic()
         {
             ResetCancellationToken();
@@ -72,12 +77,7 @@ namespace _3A_flickr_sync.Logic
                         if (file == null) { }
                         else
                         {
-                            FlickrLogic.UploadEventList.Add(new Notice()
-                            {
-                                Type = NoticeType.Upload,
-                                FullPath = file.Item2.Path,
-                                Note = "Waiting",
-                            });
+                            FlickrLogic.Log(file.Item2.Path, NoticeType.Upload, "Waiting");
 
                             FlickrLogic logic = new FlickrLogic(file.Item1);
                             await logic.Upload(file.Item2.Id);
@@ -100,102 +100,65 @@ namespace _3A_flickr_sync.Logic
                 await Task.Delay(TimeSpan.FromSeconds(3));
             }
 
-            var file = db.FFiles.FirstOrDefault(r => r.Id == fFileID);
+            Flickr flickr = new Flickr();
 
-            if (file != null && file.Status == FFileStatus.New)
+            FFileLogic fFileLogic = new FFileLogic(db.Path);
+            
+            var file = fFileLogic.GetForSure(fFileID);
+            var isExisted = fFileLogic.CheckExistHashCode_and_ChangeStatus(ExistFile, fFileID);
+
+            if (isExisted)
             {
-                if (file.Path.Contains(db.Path))
-                {
-                    Flickr flickr = new Flickr();
+            }
+            else
+            {
 
-                    FileInfo fileInfo = new FileInfo(file.Path);
-                    if (fileInfo.Exists)
+                var progress = new Progress<UploadProgressChangedEventArgs>();
+
+                progress.ToObservable()
+                    .DistinctUntilChanged(r => (int)r.EventArgs.UploadPercentage() / 5)
+                    .Subscribe(r =>
                     {
-                        try
+                        FlickrLogic.UploadEventList.Add(new Notice()
                         {
-                            var hashCode = Helper.HashFile(file.Path);
-                            var hashCodeNoExif = Helper.HashPhotoNoExif(file.Path);
+                            Type = NoticeType.Upload,
+                            JobDone = r.EventArgs.BytesSent,
+                            JobTotal = r.EventArgs.TotalBytesToSend,
+                            Percentage = r.EventArgs.UploadPercentage(),
+                            FullPath = file.Path,
+                            Note = "Uploading",
+                        });
+                    })
+                ;
 
-                            FlickrLogic.UploadEventList.Add(new Notice()
-                            {
-                                Type = NoticeType.Upload,
-                                FullPath = file.Path,
-                                Note = "Check existing",
-                            });
+                var task = flickr.UploadPicture(file.Path, tags: file.GetHashCodeTag(), progress: progress);
 
-                            if (ExistFile(hashCode))
-                            {
-                                file.HashCode = hashCode;
-                                file.HashCodeNoExif = hashCodeNoExif;
-                                file.Status = FFileStatus.HashCodeFound;
-                                db.SaveChanges();
+                var photoID = await task;
 
-                                FlickrLogic.UploadEventList.Add(new Notice()
-                                {
-                                    Type = NoticeType.UploadDone,
-                                    FullPath = file.Path,
-                                    Note = "Existed",
-                                });
-                            }
-                            else
-                            {
-                                var tags = string.Format("MD5:{0} MD5NoExif:{1}", hashCode, hashCodeNoExif);
+                if (string.IsNullOrEmpty(photoID))
+                { }
+                else
+                {
+                    file.PhotoID = photoID;
+                    file.Status = FFileStatus.Uploaded_NoSet;
+                    file.UserID = Flickr.User.UserId;
+                    db.SaveChanges();
 
-                                var progress = new Progress<UploadProgressChangedEventArgs>();
+                    UpdateSets(file.Id);
 
-                                progress.ToObservable()
-                                    .DistinctUntilChanged(r => (int)r.EventArgs.UploadPercentage() / 5)
-                                    .Subscribe(r =>
-                                    {
-                                        FlickrLogic.UploadEventList.Add(new Notice()
-                                        {
-                                            Type = NoticeType.Upload,
-                                            JobDone = r.EventArgs.BytesSent,
-                                            JobTotal = r.EventArgs.TotalBytesToSend,
-                                            Percentage = r.EventArgs.UploadPercentage(),
-                                            FullPath = file.Path,
-                                            Note = "Uploading",
-                                        });
-                                    })
-                                ;
-
-                                var task = flickr.UploadPicture(file.Path, tags: tags, progress: progress);
-
-                                var photoID = await task;
-
-                                if (string.IsNullOrEmpty(photoID))
-                                { }
-                                else
-                                {
-                                    file.PhotoID = photoID;
-                                    file.HashCode = hashCode;
-                                    file.HashCodeNoExif = hashCodeNoExif;
-                                    file.Status = FFileStatus.Uploaded_NoSet;
-                                    file.UserID = Flickr.User.UserId;
-                                    db.SaveChanges();
-
-                                    UpdateSets(file.Id);
-
-                                    FlickrLogic.UploadEventList.Add(new Notice()
-                                    {
-                                        Type = NoticeType.UploadDone,
-                                        FullPath = file.Path,
-                                        Note = "Uploaded",
-                                    });
-                                }
-                            }
-                        }
-                        catch (WebException ex)
-                        {
-                            FlickrLogic.UploadEventList.Add(new Notice() { Type = NoticeType.UploadException, Note = ex.Message, FullPath = file.Path });
-                        }
-                        catch (Exception ex)
-                        {
-                            FlickrLogic.UploadEventList.Add(new Notice() { Type = NoticeType.Exception, Note = ex.Message, FullPath = file.Path });
-                        }
-                    }
+                    FlickrLogic.Log(file.Path, NoticeType.UploadDone, "Uploaded");
                 }
             }
+
+
+            //catch (WebException ex)
+            //{
+            //    FlickrLogic.Log(file.Path, NoticeType.UploadException, ex.Message);
+            //}
+            //catch (Exception ex)
+            //{
+            //    FlickrLogic.Log(file.Path, NoticeType.Exception, ex.Message);
+            //}
 
             return file;
         }
@@ -205,13 +168,7 @@ namespace _3A_flickr_sync.Logic
             var file = db.FFiles.FirstOrDefault(r => r.Id == fileID);
             if (file != null && file.Status == FFileStatus.Uploaded_NoSet)
             {
-                FlickrLogic.UploadEventList.Add(new Notice()
-                {
-                    Type = NoticeType.Upload,
-                    FullPath = file.Path,
-                    Note = "Add to photo sets",
-                });
-
+                FlickrLogic.Log(file.Path, NoticeType.Upload, "Add to photo sets");
 
                 SetLogic l = new SetLogic();
                 string setID = l.AddPhoto(file);
@@ -236,14 +193,8 @@ namespace _3A_flickr_sync.Logic
             if (file != null && file.Status == FFileStatus.HashCodeFound
                 && File.Exists(file.Path))
             {
-                FlickrLogic.UploadEventList.Add(new Notice()
-                {
-                    Type = NoticeType.Upload,
-                    FullPath = file.Path,
-                    Note = "Checking HashCodeFound",
-                });
+                FlickrLogic.Log(file.Path, NoticeType.Upload, "Checking HashCodeFound");
 
-                
                 if (string.IsNullOrEmpty(file.PhotoID))
                 {
                     if (string.IsNullOrEmpty(file.HashCode))
@@ -299,12 +250,7 @@ namespace _3A_flickr_sync.Logic
                     }
                 }
 
-                FlickrLogic.UploadEventList.Add(new Notice()
-                {
-                    Type = NoticeType.UploadDone,
-                    FullPath = file.Path,
-                    Note = "Done " + file.Status.ToString(),
-                });
+                FlickrLogic.Log(file.Path, NoticeType.UploadDone, "Done " + file.Status.ToString());
             }
 
             return file;
@@ -313,7 +259,7 @@ namespace _3A_flickr_sync.Logic
         public bool ExistFile(string hashCode)
         {
             var l = GetPhoto_ByHashCode(hashCode);
-           
+
             return l.Count() > 0;
         }
 

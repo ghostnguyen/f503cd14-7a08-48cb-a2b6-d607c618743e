@@ -157,5 +157,56 @@ namespace _3A_flickr_sync.Logic
                 .Take(count)
                 .ToList();
         }
+
+        public bool CheckExistHashCode_and_ChangeStatus(Func<string, bool> flickrCheckF, int fFileID)
+        {
+            bool check = false;
+
+            var file = GetForSure(fFileID);
+
+
+            if (file != null)
+            {
+                FlickrLogic.Log(file.Path, NoticeType.Upload, "Check existing");
+
+                var hashCode = Helper.HashFile(file.Path);
+                var hashCodeNoExif = Helper.HashPhotoNoExif(file.Path);
+
+                if (string.IsNullOrEmpty(file.HashCode))
+                {
+                    file.HashCode = hashCode;
+                    file.HashCodeNoExif = hashCodeNoExif;
+                }
+
+                check = flickrCheckF(hashCode);
+
+                if (file.Status == FFileStatus.New)
+                    file.Status = FFileStatus.HashCodeFound;
+
+                db.SaveChanges();
+
+                FlickrLogic.Log(file.Path, NoticeType.UploadDone, "Existed");
+            }
+
+            return check;
+        }
+
+        public FFile GetForSure(int fFileID)
+        {
+            var file = db.FFiles.FirstOrDefault(r => r.Id == fFileID);
+
+            if (file != null && file.Path.Contains(db.Path))
+            {
+                FileInfo fileInfo = new FileInfo(file.Path);
+                if (fileInfo.Exists)
+                { }
+                else { file = null; }
+            }
+            else { file = null; }
+
+            return file;
+        }
+
+        
     }
 }
