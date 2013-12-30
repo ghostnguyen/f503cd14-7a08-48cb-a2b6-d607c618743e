@@ -10,6 +10,7 @@ using _3A_flickr_sync.Models;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Threading;
+using _3A_flickr_sync.FlickrNet;
 
 namespace _3A_flickr_sync.Logic
 {
@@ -158,37 +159,22 @@ namespace _3A_flickr_sync.Logic
                 .ToList();
         }
 
-        public bool CheckExistHashCode_and_ChangeStatus(Func<string, bool> flickrCheckF, int fFileID)
+        public bool CheckExistHashCode(Func<string, bool> flickrCheckF, int fFileID)
         {
-            bool check = false;
+            UpdateHashCode(fFileID);
 
-            var file = GetForSure(fFileID);
-
-
-            if (file != null)
+            return DoUpdate(fFileID, file =>
             {
                 FlickrLogic.Log(file.Path, NoticeType.Upload, "Check existing");
 
-                var hashCode = Helper.HashFile(file.Path);
-                var hashCodeNoExif = Helper.HashPhotoNoExif(file.Path);
-
-                if (string.IsNullOrEmpty(file.HashCode))
-                {
-                    file.HashCode = hashCode;
-                    file.HashCodeNoExif = hashCodeNoExif;
-                }
-
-                check = flickrCheckF(hashCode);
-
-                if (file.Status == FFileStatus.New)
-                    file.Status = FFileStatus.HashCodeFound;
-
-                db.SaveChanges();
+                bool check = flickrCheckF(file.HashCode);
 
                 FlickrLogic.Log(file.Path, NoticeType.UploadDone, "Existed");
-            }
 
-            return check;
+                return check;
+            });
+
+
         }
 
         public FFile GetForSure(int fFileID)
@@ -207,6 +193,88 @@ namespace _3A_flickr_sync.Logic
             return file;
         }
 
-        
+        public FFile UpdateHashCode(int fFileID)
+        {
+            return DoUpdate(fFileID, file =>
+            {
+                var hashCode = Helper.HashFile(file.Path);
+                var hashCodeNoExif = Helper.HashPhotoNoExif(file.Path);
+
+                if (string.IsNullOrEmpty(file.HashCode))
+                {
+                    if (file.HashCode != hashCode) file.HashCode = hashCode;
+                    if (file.HashCodeNoExif != hashCodeNoExif) file.HashCodeNoExif = hashCodeNoExif;
+                }
+
+                db.SaveChanges();
+
+                return file;
+            });
+        }
+
+        public FFile UpdateFlickrIds(int fFileID, Func<string, PhotoCollection> getPhoto_ByHashCode)
+        {
+            return DoUpdate(fFileID, file =>
+            {
+                if (string.IsNullOrEmpty(file.PhotoID))
+                {
+                    var l = getPhoto_ByHashCode(file.HashCode);
+                    if (l.Count() > 0)
+                    {
+                        var photo = l.First();
+                        file.PhotoID = photo.PhotoId;
+                        file.UserID = photo.UserId;
+                    }
+                    else
+                    {
+                        file.PhotoID = null;
+                        file.SetsID = null;
+                        file.UserID = null;
+                    }
+                    db.SaveChanges();
+                }
+
+                return file;
+            });
+        }
+
+        public FFile UpdateStatus(int fFileID)
+        {
+            return DoUpdate(fFileID, file =>
+            {
+                if (string.IsNullOrEmpty(file.PhotoID))
+                {
+                    file.Status = FFileStatus.New;
+                    db.SaveChanges();
+                }
+
+                return file;
+            });
+        }
+
+        FFile DoUpdate(int fFileID, Func<FFile, FFile> fUpdate)
+        {
+            var file = GetForSure(fFileID);
+
+            if (file != null)
+            {
+                file = fUpdate(file);
+            }
+
+            return file;
+        }
+
+        bool DoUpdate(int fFileID, Func<FFile, bool> fUpdate)
+        {
+            bool r = false;
+            var file = GetForSure(fFileID);
+
+            if (file != null)
+            {
+                r = fUpdate(file);
+            }
+
+            return r;
+        }
     }
 }

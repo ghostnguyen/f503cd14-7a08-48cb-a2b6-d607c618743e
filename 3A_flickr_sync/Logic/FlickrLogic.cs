@@ -31,6 +31,9 @@ namespace _3A_flickr_sync.Logic
         static public CancellationTokenSource CancellationTokenSrc;
         static public CancellationToken CancellationToken;
 
+        FFileLogic fFileLogic;
+        Flickr flickr;
+
         static public void ResetCancellationToken()
         {
             IsUpload = false;
@@ -91,6 +94,8 @@ namespace _3A_flickr_sync.Logic
         public FlickrLogic(string path)
             : base(path)
         {
+            FFileLogic fFileLogic = new FFileLogic(path);
+            flickr = new Flickr();
         }
 
         public async Task<FFile> Upload(int fFileID)
@@ -100,19 +105,17 @@ namespace _3A_flickr_sync.Logic
                 await Task.Delay(TimeSpan.FromSeconds(3));
             }
 
-            Flickr flickr = new Flickr();
-
-            FFileLogic fFileLogic = new FFileLogic(db.Path);
-            
             var file = fFileLogic.GetForSure(fFileID);
-            var isExisted = fFileLogic.CheckExistHashCode_and_ChangeStatus(ExistFile, fFileID);
+            var isExisted = fFileLogic.CheckExistHashCode(ExistFile, fFileID);
 
             if (isExisted)
             {
+                if (file.Status == FFileStatus.New)
+                    file.Status = FFileStatus.HashCodeFound;
+                db.SaveChanges();
             }
             else
             {
-
                 var progress = new Progress<UploadProgressChangedEventArgs>();
 
                 progress.ToObservable()
@@ -150,16 +153,6 @@ namespace _3A_flickr_sync.Logic
                 }
             }
 
-
-            //catch (WebException ex)
-            //{
-            //    FlickrLogic.Log(file.Path, NoticeType.UploadException, ex.Message);
-            //}
-            //catch (Exception ex)
-            //{
-            //    FlickrLogic.Log(file.Path, NoticeType.Exception, ex.Message);
-            //}
-
             return file;
         }
 
@@ -186,46 +179,16 @@ namespace _3A_flickr_sync.Logic
             return file;
         }
 
-        public FFile Update_HashCodeFound(int fileID)
+        public FFile Processing_HashCodeFound(int fileID)
         {
-            Flickr flickr = new Flickr();
-            var file = db.FFiles.FirstOrDefault(r => r.Id == fileID);
-            if (file != null && file.Status == FFileStatus.HashCodeFound
-                && File.Exists(file.Path))
+            var file = fFileLogic.UpdateHashCode(fileID);
+
+            if (file != null && file.Status == FFileStatus.HashCodeFound)
             {
                 FlickrLogic.Log(file.Path, NoticeType.Upload, "Checking HashCodeFound");
 
-                if (string.IsNullOrEmpty(file.PhotoID))
-                {
-                    if (string.IsNullOrEmpty(file.HashCode))
-                    {
-                        var hashCode = Helper.HashFile(file.Path);
-                        var hashCodeNoExif = Helper.HashPhotoNoExif(file.Path);
-
-                        file.HashCode = hashCode;
-                        file.HashCodeNoExif = hashCodeNoExif;
-
-                        db.SaveChanges();
-                    }
-
-                    var l = GetPhoto_ByHashCode(file.HashCode);
-                    if (l.Count() > 0)
-                    {
-                        var photo = l.First();
-                        file.PhotoID = photo.PhotoId;
-                        file.UserID = photo.UserId;
-                        db.SaveChanges();
-                    }
-                    else
-                    {
-                        file.Status = FFileStatus.New;
-                        file.PhotoID = null;
-                        file.SetsID = null;
-                        file.UserID = null;
-                        db.SaveChanges();
-                    }
-                }
-
+                file = fFileLogic.UpdateFlickrIds(fileID, GetPhoto_ByHashCode);
+                fFileLogic.UpdateStatus(fileID);
 
                 if (string.IsNullOrEmpty(file.PhotoID))
                 { }
