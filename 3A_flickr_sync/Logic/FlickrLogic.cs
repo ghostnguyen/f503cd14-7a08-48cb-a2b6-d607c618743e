@@ -250,6 +250,7 @@ namespace _3A_flickr_sync.Logic
             {
                 FlickrLogic.IsUpload = true;
 
+                //wait for all upload complete if remaining
                 while (TotalUpload > 0)
                 {
                     await Task.Delay(TimeSpan.FromSeconds(1));
@@ -261,10 +262,12 @@ namespace _3A_flickr_sync.Logic
                     if (CancellationToken != null)
                         CancellationToken.ThrowIfCancellationRequested();
 
+                    //TODO: Error here. Should be fix. folder will be back loop
                     var folder = FFolderLogic.GetForCurrentUser(currentFolderId);
                     if (folder == null)
                     {
-                        await Task.Delay(TimeSpan.FromSeconds(5));
+                        StopUpload();
+                        //await Task.Delay(TimeSpan.FromSeconds(5));
                     }
                     else
                     {
