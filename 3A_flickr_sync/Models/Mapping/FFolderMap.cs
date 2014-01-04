@@ -16,6 +16,7 @@ namespace _3A_flickr_sync.Models.Mapping
             this.Property(t => t.Id).HasColumnName("Id");
             this.Property(t => t.Path).HasColumnName("Path");
             this.Property(t => t.UserId).HasColumnName("UserId");
+            this.Property(t => t.ProcessingStatus).HasColumnName("ProcessingStatus");
         }
     }
 }

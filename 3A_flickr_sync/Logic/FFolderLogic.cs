@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using _3A_flickr_sync.FlickrNet;
 using _3A_flickr_sync.Models;
+using _3A_flickr_sync.Common;
 
 namespace _3A_flickr_sync.Logic
 {
@@ -46,9 +47,33 @@ namespace _3A_flickr_sync.Logic
             db.SaveChanges();
         }
 
-        public static FFolder GetForCurrentUser(int excludeID)
+        //public static FFolder GetForCurrentUser(int excludeID)
+        //{
+        //    return db.FFolders.FirstOrDefault(r => r.Id != excludeID && r.UserId == Flickr.User.UserId);
+        //}
+
+        public static FFolder GetForUpload()
         {
-            return db.FFolders.FirstOrDefault(r => r.Id != excludeID && r.UserId == Flickr.User.UserId);
+            var v = db.FFolders.FirstOrDefault(r => r.ProcessingStatus == null && r.UserId == Flickr.User.UserId);
+            if (v == null)
+            { }
+            else
+            {
+                v.ProcessingStatus = ProcessingStatus.Processing;
+                db.SaveChanges();
+            }
+            return v;
+        }
+
+        public static void Reset_ProcessingStatus()
+        {
+            var v = db.FFolders.Where(r => r.ProcessingStatus != null);
+
+            foreach (var item in v)
+            {
+                item.ProcessingStatus = null;
+            }
+            db.SaveChanges();
         }
     }
 }

@@ -108,7 +108,7 @@ namespace _3A_flickr_sync.Logic
             FFile v = null;
             if (file.Exists)
             {
-                v = db.FFiles.Where(r => r.Path == file.FullName).FirstOrDefault();
+                v = db.FFiles.FirstOrDefault(r => r.Path == file.FullName);
 
                 if (v == null)
                 {
@@ -179,7 +179,7 @@ namespace _3A_flickr_sync.Logic
 
         public FFile GetForSure(int fFileID)
         {
-            var file = db.FFiles.FirstOrDefault(r => r.Id == fFileID);
+            var file = db.FFiles.Find(fFileID);
 
             if (file != null && file.Path.Contains(db.Path))
             {

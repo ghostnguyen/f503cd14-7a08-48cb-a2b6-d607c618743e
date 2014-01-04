@@ -54,6 +54,7 @@ namespace _3A_flickr_sync.Logic
 
         static FlickrLogic()
         {
+            
             ResetCancellationToken();
 
             MaxUpload = System.Environment.ProcessorCount + 4;
@@ -94,7 +95,7 @@ namespace _3A_flickr_sync.Logic
         public FlickrLogic(string path)
             : base(path)
         {
-            FFileLogic fFileLogic = new FFileLogic(path);
+            fFileLogic = new FFileLogic(path);
             flickr = new Flickr();
         }
 
@@ -256,14 +257,14 @@ namespace _3A_flickr_sync.Logic
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 }
 
-                var currentFolderId = 0;
+                FFolderLogic.Reset_ProcessingStatus();
                 while (true)
                 {
                     if (CancellationToken != null)
                         CancellationToken.ThrowIfCancellationRequested();
 
                     //TODO: Error here. Should be fix. folder will be back loop
-                    var folder = FFolderLogic.GetForCurrentUser(currentFolderId);
+                    var folder = FFolderLogic.GetForUpload();
                     if (folder == null)
                     {
                         StopUpload();
@@ -271,6 +272,7 @@ namespace _3A_flickr_sync.Logic
                     }
                     else
                     {
+                        
                         FFileLogic fLogic = new FFileLogic(folder);
                         await fLogic.StartBuffer(CancellationToken);
                     }

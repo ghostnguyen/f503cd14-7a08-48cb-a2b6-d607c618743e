@@ -1,3 +1,4 @@
+using _3A_flickr_sync.Common;
 using System;
 using System.Collections.Generic;
 
@@ -15,6 +16,8 @@ namespace _3A_flickr_sync.Models
     public partial class FFile
     {
         public Nullable<FFileStatus> Status { get; set; }
+        public Nullable<ProcessingStatus> ProcessingStatus { get; set; }
+
 
         //public string GetPathId(string folderPath)
         //{
