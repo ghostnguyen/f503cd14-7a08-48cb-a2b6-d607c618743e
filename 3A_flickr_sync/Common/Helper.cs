@@ -132,13 +132,21 @@ namespace _3A_flickr_sync.Common
 
         public static string HashFile(string path)
         {
-            using (var md5 = MD5.Create())
+            string s = "";
+            try
             {
-                using (var stream = File.OpenRead(path))
+                using (var md5 = MD5.Create())
                 {
-                    return md5.ComputeHash(stream).ToReadableString();
+                    using (var stream = File.OpenRead(path))
+                    {
+                        s = md5.ComputeHash(stream).ToReadableString();
+                    }
                 }
             }
+            catch (Exception)
+            { }
+
+            return s;
         }
 
         public static string HashPhotoNoExif(string path)
@@ -440,5 +448,5 @@ namespace _3A_flickr_sync.Common
         }
     }
 
-    
+
 }

@@ -172,21 +172,33 @@ namespace _3A_flickr_sync.Logic
                 FlickrLogic.Log(file.Path, NoticeType.UploadDone, "Existed");
 
                 return check;
-            });
-
-
+            }, false);
         }
 
         public FFile GetForSure(int fFileID)
         {
-            var file = db.FFiles.Find(fFileID);
+            var file = Get(fFileID);
 
-            if (file != null && file.Path.Contains(db.Path))
+            if (file == null)
+            {
+            }
+            else
             {
                 FileInfo fileInfo = new FileInfo(file.Path);
                 if (fileInfo.Exists)
                 { }
                 else { file = null; }
+            }
+
+            return file;
+        }
+
+        public FFile Get(int fFileID)
+        {
+            var file = db.FFiles.Find(fFileID);
+
+            if (file != null && file.Path.Contains(db.Path))
+            {
             }
             else { file = null; }
 
@@ -200,15 +212,18 @@ namespace _3A_flickr_sync.Logic
                 var hashCode = Helper.HashFile(file.Path);
                 var hashCodeNoExif = Helper.HashPhotoNoExif(file.Path);
 
-                if (string.IsNullOrEmpty(file.HashCode))
+                if (string.IsNullOrEmpty(hashCode))
                 {
-                    if (file.HashCode != hashCode) file.HashCode = hashCode;
-                    if (file.HashCodeNoExif != hashCodeNoExif) file.HashCodeNoExif = hashCodeNoExif;
+                    file = null;
                 }
-
-                db.SaveChanges();
-
-                return file;
+                else
+                {
+                    if (string.IsNullOrEmpty(file.HashCode))
+                    {
+                        file.HashCode = hashCode;
+                        file.HashCodeNoExif = hashCodeNoExif;
+                    }
+                }
             });
         }
 
@@ -231,10 +246,7 @@ namespace _3A_flickr_sync.Logic
                         file.SetsID = null;
                         file.UserID = null;
                     }
-                    db.SaveChanges();
                 }
-
-                return file;
             });
         }
 
@@ -245,36 +257,39 @@ namespace _3A_flickr_sync.Logic
                 if (string.IsNullOrEmpty(file.PhotoID))
                 {
                     file.Status = FFileStatus.New;
-                    db.SaveChanges();
                 }
-
-                return file;
             });
         }
 
-        FFile DoUpdate(int fFileID, Func<FFile, FFile> fUpdate)
+        public T DoUpdate<T>(int fFileID, Func<FFile, T> fUpdate, bool isSaveChanges = true)
         {
-            var file = GetForSure(fFileID);
-
-            if (file != null)
-            {
-                file = fUpdate(file);
-            }
-
-            return file;
-        }
-
-        bool DoUpdate(int fFileID, Func<FFile, bool> fUpdate)
-        {
-            bool r = false;
-            var file = GetForSure(fFileID);
+            T r = default(T);
+            var file = Get(fFileID);
 
             if (file != null)
             {
                 r = fUpdate(file);
+
+                if (isSaveChanges)
+                    db.SaveChanges();
             }
 
             return r;
+        }
+
+        public FFile DoUpdate(int fFileID, Action<FFile> fUpdate, bool isSaveChanges = true)
+        {
+            var file = Get(fFileID);
+
+            if (file != null)
+            {
+                fUpdate(file);
+
+                if (isSaveChanges)
+                    db.SaveChanges();
+            }
+
+            return file;
         }
     }
 }

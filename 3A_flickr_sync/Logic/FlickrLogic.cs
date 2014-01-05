@@ -107,50 +107,61 @@ namespace _3A_flickr_sync.Logic
             }
 
             var file = fFileLogic.GetForSure(fFileID);
-            var isExisted = fFileLogic.CheckExistHashCode(ExistFile, fFileID);
-
-            if (isExisted)
-            {
-                if (file.Status == FFileStatus.New)
-                    file.Status = FFileStatus.HashCodeFound;
-                db.SaveChanges();
-            }
+            
+            if (file == null)
+            { }
             else
             {
-                var progress = new Progress<UploadProgressChangedEventArgs>();
+                var isExisted = fFileLogic.CheckExistHashCode(ExistFile, fFileID);
 
-                progress.ToObservable()
-                    .DistinctUntilChanged(r => (int)r.EventArgs.UploadPercentage() / 5)
-                    .Subscribe(r =>
+                if (isExisted)
+                {
+                    file = fFileLogic.DoUpdate(fFileID, file1 =>
                     {
-                        FlickrLogic.UploadEventList.Add(new Notice()
-                        {
-                            Type = NoticeType.Upload,
-                            JobDone = r.EventArgs.BytesSent,
-                            JobTotal = r.EventArgs.TotalBytesToSend,
-                            Percentage = r.EventArgs.UploadPercentage(),
-                            FullPath = file.Path,
-                            Note = "Uploading",
-                        });
-                    })
-                ;
-
-                var task = flickr.UploadPicture(file.Path, tags: file.GetHashCodeTag(), progress: progress);
-
-                var photoID = await task;
-
-                if (string.IsNullOrEmpty(photoID))
-                { }
+                        if (file1.Status == FFileStatus.New)
+                            file1.Status = FFileStatus.HashCodeFound;
+                    });
+                }
                 else
                 {
-                    file.PhotoID = photoID;
-                    file.Status = FFileStatus.Uploaded_NoSet;
-                    file.UserID = Flickr.User.UserId;
-                    db.SaveChanges();
+                    var progress = new Progress<UploadProgressChangedEventArgs>();
 
-                    UpdateSets(file.Id);
+                    progress.ToObservable()
+                        .DistinctUntilChanged(r => (int)r.EventArgs.UploadPercentage() / 5)
+                        .Subscribe(r =>
+                        {
+                            FlickrLogic.UploadEventList.Add(new Notice()
+                            {
+                                Type = NoticeType.Upload,
+                                JobDone = r.EventArgs.BytesSent,
+                                JobTotal = r.EventArgs.TotalBytesToSend,
+                                Percentage = r.EventArgs.UploadPercentage(),
+                                FullPath = file.Path,
+                                Note = "Uploading",
+                            });
+                        })
+                    ;
 
-                    FlickrLogic.Log(file.Path, NoticeType.UploadDone, "Uploaded");
+                    var task = flickr.UploadPicture(file.Path, tags: file.GetHashCodeTag(), progress: progress);
+
+                    var photoID = await task;
+
+                    if (string.IsNullOrEmpty(photoID))
+                    { }
+                    else
+                    {
+
+                        file = fFileLogic.DoUpdate(fFileID, file1 =>
+                        {
+                            file1.PhotoID = photoID;
+                            file1.Status = FFileStatus.Uploaded_NoSet;
+                            file1.UserID = Flickr.User.UserId;
+                        });
+
+                        UpdateSets(file.Id);
+
+                        FlickrLogic.Log(file.Path, NoticeType.UploadDone, "Uploaded");
+                    }
                 }
             }
 
@@ -159,7 +170,8 @@ namespace _3A_flickr_sync.Logic
 
         public FFile UpdateSets(int fileID)
         {
-            var file = db.FFiles.FirstOrDefault(r => r.Id == fileID);
+            var file = fFileLogic.Get(fileID);
+
             if (file != null && file.Status == FFileStatus.Uploaded_NoSet)
             {
                 FlickrLogic.Log(file.Path, NoticeType.Upload, "Add to photo sets");
@@ -171,9 +183,11 @@ namespace _3A_flickr_sync.Logic
                 { }
                 else
                 {
-                    file.SetsID = setID;
-                    file.Status = FFileStatus.Uploaded_SyncSet;
-                    db.SaveChanges();
+                    file = fFileLogic.DoUpdate(fileID, file1 =>
+                    {
+                        file1.SetsID = setID;
+                        file1.Status = FFileStatus.Uploaded_SyncSet;
+                    });
                 }
             }
 
@@ -206,8 +220,10 @@ namespace _3A_flickr_sync.Logic
                         }
                         else
                         {
-                            file.Status = FFileStatus.Uploaded_NoSet;
-                            db.SaveChanges();
+                            file = fFileLogic.DoUpdate(fileID, file1 =>
+                            {
+                                file1.Status = FFileStatus.Uploaded_NoSet;
+                            });
 
                             UpdateSets(file.Id);
                         }
@@ -263,7 +279,6 @@ namespace _3A_flickr_sync.Logic
                     if (CancellationToken != null)
                         CancellationToken.ThrowIfCancellationRequested();
 
-                    //TODO: Error here. Should be fix. folder will be back loop
                     var folder = FFolderLogic.GetForUpload();
                     if (folder == null)
                     {
@@ -272,7 +287,6 @@ namespace _3A_flickr_sync.Logic
                     }
                     else
                     {
-                        
                         FFileLogic fLogic = new FFileLogic(folder);
                         await fLogic.StartBuffer(CancellationToken);
                     }
