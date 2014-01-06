@@ -1,6 +1,6 @@
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using _3A_flickr_sync.Models.Mapping;
+
 using System.Configuration;
 using System.Data.SqlClient;
 using _3A_flickr_sync.Common;

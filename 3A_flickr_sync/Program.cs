@@ -25,7 +25,7 @@ namespace _3A_flickr_sync
             Flickr.ResetOAuth();
 
             AppDomain currentDomain = AppDomain.CurrentDomain;
-            currentDomain.UnhandledException += currentDomain_UnhandledException;
+            //currentDomain.UnhandledException += currentDomain_UnhandledException;
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

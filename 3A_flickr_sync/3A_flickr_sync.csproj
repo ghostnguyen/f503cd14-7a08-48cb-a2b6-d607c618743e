@@ -199,7 +199,6 @@
     <Compile Include="Logic\FFolderLogic.cs" />
     <Compile Include="Models\FFolder.partial.cs" />
     <Compile Include="Models\FSMasterDBContext.partial.cs" />
-    <Compile Include="Models\Mapping\SetMap.cs" />
     <Compile Include="Models\Set.cs" />
     <Compile Include="Models\FUser.cs" />
     <Compile Include="Models\FFile.partial.cs" />
@@ -208,9 +207,6 @@
     <Compile Include="Models\FFolder.cs" />
     <Compile Include="Models\FSDBContext.cs" />
     <Compile Include="Models\FSMasterDBContext.cs" />
-    <Compile Include="Models\Mapping\FUserMap.cs" />
-    <Compile Include="Models\Mapping\FFileMap.cs" />
-    <Compile Include="Models\Mapping\FFolderMap.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Enter_Oauth_Verifier.resx">

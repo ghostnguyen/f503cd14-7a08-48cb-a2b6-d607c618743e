@@ -1,6 +1,5 @@
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using _3A_flickr_sync.Models.Mapping;
 
 namespace _3A_flickr_sync.Models
 {
@@ -12,11 +11,5 @@ namespace _3A_flickr_sync.Models
         }
 
         public DbSet<FFile> FFiles { get; set; }
-        
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            modelBuilder.Configurations.Add(new FFileMap());
-        }
     }
 }

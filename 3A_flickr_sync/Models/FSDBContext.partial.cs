@@ -5,7 +5,7 @@ using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.IO;
 using _3A_flickr_sync.Common;
-using _3A_flickr_sync.Models.Mapping;
+
 
 namespace _3A_flickr_sync.Models
 {
