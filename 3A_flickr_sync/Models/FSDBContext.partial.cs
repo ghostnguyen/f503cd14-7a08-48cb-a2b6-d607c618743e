@@ -22,7 +22,8 @@ namespace _3A_flickr_sync.Models
         //}
 
         public FSDBContext()
-            : this(FlickrLogic.CurrentFolderPath)
+            //: this(FlickrLogic.CurrentFolderPath)
+            : base(GetConnectionString(FlickrLogic.CurrentFolderPath))
         {
         }
 
@@ -46,12 +47,12 @@ namespace _3A_flickr_sync.Models
             { }
             else
             {
-                _3A_flickr_sync.Migrations.Configuration a = new Migrations.Configuration();
-                //a.TargetDatabase = new DbConnectionInfo(GetConnectionString(path), "System.Data.SqlClient");
-
                 try
                 {
-                    var dbMigrator = new DbMigrator(a);
+                    //_3A_flickr_sync.Migrations.Configuration a = new Migrations.Configuration();
+                    //a.TargetDatabase = new DbConnectionInfo(GetConnectionString(path), "System.Data.SqlClient");
+                    Configuration conf = new Configuration();
+                    var dbMigrator = new DbMigrator(conf);
                     dbMigrator.Update();
                 }
                 catch (Exception ex)

@@ -282,7 +282,7 @@ namespace _3A_flickr_sync.Logic
                 {
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 }
-
+                
                 FFolderLogic.Reset_ProcessingStatus();
 
                 while (FlickrLogic.IsUpload)
