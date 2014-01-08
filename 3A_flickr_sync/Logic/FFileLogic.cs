@@ -70,22 +70,15 @@ namespace _3A_flickr_sync.Logic
 
         async public Task<bool> StartBuffer(CancellationToken cancellationToken)
         {
+            Reset_ProcessingStatus();
+
             bool hasPhoto = true;
             var re = Observable.Interval(TimeSpan.FromSeconds(2)).TakeWhile(r => hasPhoto);
 
             re.Where(r => fileList.Count < MinBuffer)
                 .Subscribe(r =>
                 {
-                    var last = fileList.LastOrDefault(r1 => r1.Item1 == db.Path);
-
-                    int fromID = last == null ? 0 : last.Item2.Id;
-
-                    while (fromID == 0 && FlickrLogic.TotalUpload > 0)
-                    {
-                        Thread.Sleep(TimeSpan.FromSeconds(1));
-                    }
-
-                    var l = TakeNew(Buffer, fromID);
+                    var l = TakeBuffer(Buffer);
 
                     if (l.Count == 0)
                     {
@@ -93,7 +86,7 @@ namespace _3A_flickr_sync.Logic
                     }
                     else
                     {
-                        l.ForEach(r1 => fileList.Enqueue(new Tuple<string, FFile>(db.Path, r1)));
+                        l.ForEach(r1 => fileList.Enqueue(new Tuple<string, FFile>(db.Fullpath, r1)));
                     }
                 }, cancellationToken
                 );
@@ -150,13 +143,22 @@ namespace _3A_flickr_sync.Logic
             }
         }
 
-        public List<FFile> TakeNew(int count, int fromID = 0)
+        public List<FFile> TakeBuffer(int count)
         {
-            return db.FFiles
-                .Where(r1 => r1.Status == FFileStatus.New && r1.Path.Contains(db.Path)
-                && r1.Id > fromID)
+            var r = db.FFiles
+                .Where(r1 => true
+                    && (r1.Status == FFileStatus.New || r1.Status == FFileStatus.HashCodeFound)
+                    && r1.Path.Contains(db.Fullpath)
+                    && r1.ProcessingStatus == null
+                    )
                 .Take(count)
                 .ToList();
+
+            r.ForEach(r1 => r1.ProcessingStatus = ProcessingStatus.Processing);
+
+            db.SaveChanges();
+
+            return r;
         }
 
         public bool CheckExistHashCode(Func<string, bool> flickrCheckF, int fFileID)
@@ -197,7 +199,7 @@ namespace _3A_flickr_sync.Logic
         {
             var file = db.FFiles.Find(fFileID);
 
-            if (file != null && file.Path.Contains(db.Path))
+            if (file != null && file.Path.Contains(db.Fullpath))
             {
             }
             else { file = null; }
@@ -290,6 +292,17 @@ namespace _3A_flickr_sync.Logic
             }
 
             return file;
+        }
+
+        public void Reset_ProcessingStatus()
+        {
+            var v = db.FFiles.Where(r => r.ProcessingStatus != null);
+
+            foreach (var item in v)
+            {
+                item.ProcessingStatus = null;
+            }
+            db.SaveChanges();
         }
     }
 }

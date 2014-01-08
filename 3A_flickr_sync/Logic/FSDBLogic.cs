@@ -11,7 +11,7 @@ namespace _3A_flickr_sync.Logic
     {
         internal FSDBContext db = null;
 
-        public string SyncPath { get { return db == null ? "" : db.Path; } }
+        public string SyncPath { get { return db == null ? "" : db.Fullpath; } }
 
         public FSDBLogic(string path)
         {

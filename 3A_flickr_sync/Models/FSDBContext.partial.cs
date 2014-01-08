@@ -2,9 +2,11 @@ using System;
 using System.Configuration;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
 using System.IO;
 using _3A_flickr_sync.Common;
+using _3A_flickr_sync.Logic;
 
 
 namespace _3A_flickr_sync.Models
@@ -14,20 +16,48 @@ namespace _3A_flickr_sync.Models
         /// <summary>
         /// Should delete this method from EF Tools
         /// </summary>
-        private FSDBContext()
-        {
+        //private FSDBContext()
+        //{
 
+        //}
+
+        public FSDBContext()
+            : this(FlickrLogic.CurrentFolderPath)
+        {
         }
 
-        public string Path { 
-            get; 
-            private set; }
+        public string Fullpath
+        {
+            get;
+            private set;
+        }
 
         public FSDBContext(string path)
             : base(GetConnectionString(path))
         {
-            Path = path;
-            Database.CreateIfNotExists();
+            if (string.IsNullOrEmpty(path) || Directory.Exists(path) == false)
+            {
+                throw new Exception("Fullpath is wrong.");
+            }
+
+            Fullpath = path;
+
+            if (Database.CreateIfNotExists())
+            { }
+            else
+            {
+                _3A_flickr_sync.Migrations.Configuration a = new Migrations.Configuration();
+                //a.TargetDatabase = new DbConnectionInfo(GetConnectionString(path), "System.Data.SqlClient");
+
+                try
+                {
+                    var dbMigrator = new DbMigrator(a);
+                    dbMigrator.Update();
+                }
+                catch (Exception ex)
+                {
+                }
+            }
         }
 
         private static string GetConnectionString(string path)
@@ -39,14 +69,14 @@ namespace _3A_flickr_sync.Models
             else
             {
                 if (Directory.Exists(path))
-                {                    
+                {
                     var connStr = AppSetting.FSDBConnectionStr;
                     SqlConnectionStringBuilder connStrBuilder = new SqlConnectionStringBuilder(connStr);
 
                     FileInfo fileInfo = new FileInfo(connStrBuilder.AttachDBFilename);
                     connStrBuilder.AttachDBFilename = path + @"\" + fileInfo.Name;
 
-                    return connStrBuilder.ConnectionString;                    
+                    return connStrBuilder.ConnectionString;
                 }
                 else
                 {

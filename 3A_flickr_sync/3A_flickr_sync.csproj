@@ -198,6 +198,7 @@
     <Compile Include="Logic\FFileLogic.cs" />
     <Compile Include="Logic\FFolderLogic.cs" />
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Migrations\ConfigurationMaster.cs" />
     <Compile Include="Models\FFolder.partial.cs" />
     <Compile Include="Models\FSMasterDBContext.partial.cs" />
     <Compile Include="Models\Set.cs" />

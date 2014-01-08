@@ -5,14 +5,15 @@ namespace _3A_flickr_sync.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<_3A_flickr_sync.Models.FSDBContext>
+    internal sealed class ConfigurationMaster : DbMigrationsConfiguration<_3A_flickr_sync.Models.FSMasterDBContext>
     {
-        public Configuration()
+        public ConfigurationMaster()
         {
             AutomaticMigrationsEnabled = true;
+            ContextKey = "_3A_flickr_sync.Models.FSMasterDBContext";
         }
 
-        protected override void Seed(_3A_flickr_sync.Models.FSDBContext context)
+        protected override void Seed(_3A_flickr_sync.Models.FSMasterDBContext context)
         {
             //  This method will be called after migrating to the latest version.
 
