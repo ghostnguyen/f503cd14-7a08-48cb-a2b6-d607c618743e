@@ -16,16 +16,16 @@ namespace _3A_flickr_sync.Models
         /// <summary>
         /// Should delete this method from EF Tools
         /// </summary>
-        //private FSDBContext()
-        //{
-
-        //}
-
-        public FSDBContext()
-            //: this(FlickrLogic.CurrentFolderPath)
-            : base(GetConnectionString(FlickrLogic.CurrentFolderPath))
+        private FSDBContext()
         {
+
         }
+
+        //public FSDBContext()
+        //    //: this(FlickrLogic.CurrentFolderPath)
+        //    : base(GetConnectionString(FlickrLogic.CurrentFolderPath))
+        //{
+        //}
 
         public string Fullpath
         {
@@ -47,15 +47,15 @@ namespace _3A_flickr_sync.Models
             { }
             else
             {
-                try
-                {
-                    //Configuration conf = new Configuration();
-                    //var dbMigrator = new DbMigrator(conf);
-                    //dbMigrator.Update();
-                }
-                catch (Exception ex)
-                {
-                }
+                //try
+                //{
+                //    Configuration conf = new Configuration();
+                //    var dbMigrator = new DbMigrator(conf);
+                //    dbMigrator.Update();
+                //}
+                //catch (Exception ex)
+                //{
+                //}
             }
         }
 

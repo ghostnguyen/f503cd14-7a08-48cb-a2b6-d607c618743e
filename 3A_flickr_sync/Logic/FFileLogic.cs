@@ -145,7 +145,7 @@ namespace _3A_flickr_sync.Logic
 
         public List<FFile> TakeBuffer(int count)
         {
-            var r11 =db.FFiles.ToList();
+            var r11 = db.FFiles.ToList();
 
             var r = db.FFiles
                 .Where(r1 => true
@@ -173,7 +173,8 @@ namespace _3A_flickr_sync.Logic
 
                 bool check = flickrCheckF(file.HashCode);
 
-                FlickrLogic.Log(file.Path, NoticeType.UploadDone, "Existed");
+                if (check)
+                    FlickrLogic.Log(file.Path, NoticeType.UploadDone, "Existed");
 
                 return check;
             }, false);
