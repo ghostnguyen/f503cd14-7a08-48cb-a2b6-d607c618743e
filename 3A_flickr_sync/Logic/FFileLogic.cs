@@ -145,9 +145,11 @@ namespace _3A_flickr_sync.Logic
 
         public List<FFile> TakeBuffer(int count)
         {
+            var r11 =db.FFiles.ToList();
+
             var r = db.FFiles
                 .Where(r1 => true
-                    && (r1.Status == FFileStatus.New || r1.Status == FFileStatus.HashCodeFound)
+                    && (r1.Status == FFileStatus.New || r1.Status == FFileStatus.Existing)
                     && r1.Path.Contains(db.Fullpath)
                     && r1.ProcessingStatus == null
                     )

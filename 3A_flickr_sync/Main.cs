@@ -85,10 +85,21 @@ namespace _3A_flickr_sync
                 })
                 ;
 
-            //noteToDisplay.Add(new Notice());
-            //noteToDisplay.Add(new Notice());
-            //noteToDisplay.Add(new Notice());
-            //dataGridViewNote_ShowNote();
+            FlickrLogic.IsUploadNotify.ObserveOn(this).Subscribe(r =>
+            {
+                var menu = startUploadToolStripMenuItem;
+                
+                if (r)
+                {
+                    menu.Image = Resources.Uploading;
+                    menu.Text = "Stop";
+                }
+                else
+                {
+                    menu.Image = Resources.Flickr;
+                    menu.Text = "Start upload";
+                }
+            });
         }
 
         void LoadGUIByUser()
@@ -168,20 +179,22 @@ namespace _3A_flickr_sync
 
         private void startUploadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var menu = sender as ToolStripMenuItem;
+            FlickrLogic.IsUpload = !FlickrLogic.IsUpload;
 
-            if (FlickrLogic.IsUpload)
-            {
-                menu.Image = Resources.Flickr;
-                menu.Text = "Start upload";
-                FlickrLogic.StopUpload();
-            }
-            else
-            {
-                menu.Image = Resources.Uploading;
-                menu.Text = "Stop";
-                Task.Run(() => FlickrLogic.StartUpload());
-            }
+            //var menu = sender as ToolStripMenuItem;
+
+            //if (FlickrLogic.IsUpload)
+            //{
+            //    menu.Image = Resources.Flickr;
+            //    menu.Text = "Start upload";
+            //    FlickrLogic.StopUpload();
+            //}
+            //else
+            //{
+            //    menu.Image = Resources.Uploading;
+            //    menu.Text = "Stop";
+            //    Task.Run(() => FlickrLogic.StartUpload());
+            //}
         }
 
         private void clearLogToolStripMenuItem_Click(object sender, EventArgs e)

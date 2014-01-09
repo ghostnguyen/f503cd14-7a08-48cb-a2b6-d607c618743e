@@ -17,6 +17,7 @@ using System.Collections.Specialized;
 using System.Reactive.Concurrency;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Reactive.Subjects;
 
 namespace _3A_flickr_sync.Logic
 {
@@ -24,10 +25,37 @@ namespace _3A_flickr_sync.Logic
     {
         static public ObservableCollection<Notice> UploadEventList = new ObservableCollection<Notice>();
 
+
         static public bool IsNetworkOk { get; set; }
         static public int MaxUpload { get; set; }
         static public int TotalUpload { get; set; }
-        static public bool IsUpload { get; set; }
+
+        static public Subject<bool> IsUploadNotify;
+        static bool _IsUpload;
+        static public bool IsUpload
+        {
+            get
+            {
+                return _IsUpload;
+            }
+            set
+            {
+                if (_IsUpload == value)
+                { }
+                else
+                {
+                    _IsUpload = value;
+                    if (IsUploadNotify == null)
+                    {
+                    }
+                    else
+                    {
+                        IsUploadNotify.OnNext(value);
+                    }
+                }
+            }
+        }
+
         static public CancellationTokenSource CancellationTokenSrc;
         static public CancellationToken CancellationToken;
         static public string CurrentFolderPath { get; set; }
@@ -37,16 +65,16 @@ namespace _3A_flickr_sync.Logic
 
         static public void ResetCancellationToken()
         {
-            IsUpload = false;
+            //IsUpload = false;
             CancellationTokenSrc = new CancellationTokenSource();
             CancellationToken = CancellationTokenSrc.Token;
         }
 
-        static public void StopUpload()
-        {
-            FlickrLogic.IsUpload = false;
-            FlickrLogic.CancellationTokenSrc.Cancel();
-        }
+        //static public void StopUpload()
+        //{
+        //    FlickrLogic.IsUpload = false;
+        //    FlickrLogic.CancellationTokenSrc.Cancel();
+        //}
 
         static public void Log(string path, NoticeType type, string note)
         {
@@ -55,7 +83,6 @@ namespace _3A_flickr_sync.Logic
 
         static FlickrLogic()
         {
-            
             ResetCancellationToken();
 
             MaxUpload = System.Environment.ProcessorCount + 4;
@@ -78,16 +105,16 @@ namespace _3A_flickr_sync.Logic
                     Task.Run(async () =>
                     {
                         TotalUpload++;
-                        
+
                         var file = FFileLogic.DequeueForUpload();
                         if (file == null) { }
-                        else if(file.Item2.Status == FFileStatus.New)
+                        else if (file.Item2.Status == FFileStatus.New)
                         {
                             FlickrLogic.Log(file.Item2.Path, NoticeType.Upload, "Waiting Upload");
                             FlickrLogic logic = new FlickrLogic(file.Item1);
                             await logic.Upload(file.Item2.Id);
                         }
-                        else if (file.Item2.Status == FFileStatus.HashCodeFound)
+                        else if (file.Item2.Status == FFileStatus.Existing)
                         {
                             FlickrLogic.Log(file.Item2.Path, NoticeType.Upload, "Waiting HashCodeFound");
                             FlickrLogic logic = new FlickrLogic(file.Item1);
@@ -97,6 +124,21 @@ namespace _3A_flickr_sync.Logic
                         TotalUpload--;
                     });
                 });
+
+
+            IsUploadNotify = new Subject<bool>();
+            IsUploadNotify.Subscribe(r =>
+            {
+                if (r)
+                {
+                    StartUpload();
+                }
+                else
+                {
+                    FlickrLogic.CancellationTokenSrc.Cancel();
+                }
+            });
+
         }
 
         public FlickrLogic(string path)
@@ -114,7 +156,7 @@ namespace _3A_flickr_sync.Logic
             }
 
             var file = fFileLogic.GetForSure(fFileID);
-            
+
             if (file == null)
             { }
             else
@@ -127,7 +169,7 @@ namespace _3A_flickr_sync.Logic
                     {
                         if (file1.Status == FFileStatus.New)
                         {
-                            file1.Status = FFileStatus.HashCodeFound;
+                            file1.Status = FFileStatus.Existing;
                             file1.ProcessingStatus = null;
                         }
                     });
@@ -208,7 +250,7 @@ namespace _3A_flickr_sync.Logic
         {
             var file = fFileLogic.UpdateHashCode(fileID);
 
-            if (file != null && file.Status == FFileStatus.HashCodeFound)
+            if (file != null && file.Status == FFileStatus.Existing)
             {
                 FlickrLogic.Log(file.Path, NoticeType.Upload, "Checking HashCodeFound");
 
@@ -265,42 +307,32 @@ namespace _3A_flickr_sync.Logic
             return l;
         }
 
-        async static public Task StartUpload()
+        async static Task StartUpload()
         {
             ResetCancellationToken();
 
-            if (FlickrLogic.IsUpload)
+            //wait for all upload complete if remaining
+            while (TotalUpload > 0)
             {
-
+                await Task.Delay(TimeSpan.FromSeconds(1));
             }
-            else
+
+            FFolderLogic.Reset_ProcessingStatus();
+
+            while (FlickrLogic.IsUpload)
             {
-                FlickrLogic.IsUpload = true;
-
-                //wait for all upload complete if remaining
-                while (TotalUpload > 0)
+                var folder = FFolderLogic.GetForUpload();
+                if (folder == null)
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    FlickrLogic.IsUpload = false;
+                    //StopUpload();
                 }
-                
-                FFolderLogic.Reset_ProcessingStatus();
-
-                while (FlickrLogic.IsUpload)
+                else
                 {
-                    var folder = FFolderLogic.GetForUpload();
-                    if (folder == null)
-                    {
-                        StopUpload();
-                    }
-                    else
-                    {
-                        CurrentFolderPath = folder.Path;
-                        FFileLogic fLogic = new FFileLogic(folder);
-                        await fLogic.StartBuffer(CancellationToken);
-                    }
+                    CurrentFolderPath = folder.Path;
+                    FFileLogic fLogic = new FFileLogic(folder);
+                    await fLogic.StartBuffer(CancellationToken);
                 }
-
-
             }
         }
     }
