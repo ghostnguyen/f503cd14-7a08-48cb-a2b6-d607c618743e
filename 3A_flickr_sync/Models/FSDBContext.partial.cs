@@ -49,11 +49,9 @@ namespace _3A_flickr_sync.Models
             {
                 try
                 {
-                    //_3A_flickr_sync.Migrations.Configuration a = new Migrations.Configuration();
-                    //a.TargetDatabase = new DbConnectionInfo(GetConnectionString(path), "System.Data.SqlClient");
-                    Configuration conf = new Configuration();
-                    var dbMigrator = new DbMigrator(conf);
-                    dbMigrator.Update();
+                    //Configuration conf = new Configuration();
+                    //var dbMigrator = new DbMigrator(conf);
+                    //dbMigrator.Update();
                 }
                 catch (Exception ex)
                 {
