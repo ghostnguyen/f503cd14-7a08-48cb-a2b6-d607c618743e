@@ -44,35 +44,39 @@ namespace _3A_flickr_sync.FlickrNet
 
         void IFlickrParsable.Load(XmlReader reader)
         {
-            if (reader.LocalName != "user")
-                Helper.CheckParsingException(reader);
-
-            while (reader.MoveToNextAttribute())
+            if (reader.LocalName == "user")
             {
-                switch (reader.LocalName)
+                while (reader.MoveToNextAttribute())
                 {
-                    case "nsid":
-                    case "id":
-                        UserId = reader.Value;
-                        break;
-                    case "username":
-                        UserName = reader.Value;
-                        break;
-                    case "fullname":
-                        FullName = reader.Value;
-                        break;
-                    default:
-                        Helper.CheckParsingException(reader);
-                        break;
+                    switch (reader.LocalName)
+                    {
+                        case "nsid":
+                        case "id":
+                            UserId = reader.Value;
+                            break;
+                        case "username":
+                            UserName = reader.Value;
+                            break;
+                        case "fullname":
+                            FullName = reader.Value;
+                            break;
+                        default:
+                            Helper.CheckParsingException(reader);
+                            break;
+                    }
+                }
+
+                reader.Read();
+
+                if (reader.NodeType != XmlNodeType.EndElement)
+                {
+                    UserName = reader.ReadElementContentAsString();
+                    reader.Skip();
                 }
             }
-
-            reader.Read();
-
-            if (reader.NodeType != XmlNodeType.EndElement)
+            else
             {
-                UserName = reader.ReadElementContentAsString();
-                reader.Skip();
+                Helper.CheckParsingException(reader);
             }
         }
     }

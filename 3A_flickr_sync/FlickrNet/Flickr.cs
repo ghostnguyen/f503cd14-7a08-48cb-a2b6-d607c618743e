@@ -139,7 +139,7 @@ namespace _3A_flickr_sync.FlickrNet
         /// </summary>
         public Flickr()
         {
-            
+
         }
 
         public static void ResetOAuth()
@@ -154,8 +154,18 @@ namespace _3A_flickr_sync.FlickrNet
                 Flickr flickr = new Flickr();
                 User = flickr.TestLogin();
 
-                SetLogic setL = new SetLogic();
-                setL.DownloadPhotsets();
+                if (User == null || string.IsNullOrEmpty(User.UserName))
+                {
+                    OAuthAccessToken = "";
+                    OAuthAccessTokenSecret = "";
+                }
+                else
+                {
+                    SetLogic setL = new SetLogic();
+                    setL.DownloadPhotsets();
+
+                    FFolderLogic.Scan();
+                }
             }
         }
 
@@ -169,13 +179,13 @@ namespace _3A_flickr_sync.FlickrNet
                     throw new Exception(ErrMess.Err20);
                 }
             }
-             
+
 
             if (!String.IsNullOrEmpty(OAuthAccessToken) && !String.IsNullOrEmpty(OAuthAccessTokenSecret))
                 return;
 
             if (String.IsNullOrEmpty(ApiSecret))
-                throw new Exception(ErrMess.Err20);            
+                throw new Exception(ErrMess.Err20);
         }
 
         /// <summary>

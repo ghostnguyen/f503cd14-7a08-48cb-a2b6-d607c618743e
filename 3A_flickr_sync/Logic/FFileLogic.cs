@@ -102,8 +102,9 @@ namespace _3A_flickr_sync.Logic
             return hasPhoto;
         }
 
-        public FFile Add(FileInfo file)
+        public bool Add(FileInfo file)
         {
+            bool isAdded = false;
             FFile v = null;
             if (file.Exists)
             {
@@ -113,16 +114,18 @@ namespace _3A_flickr_sync.Logic
                 {
                     db.FFiles.Add(new FFile() { Path = file.FullName, Status = FFileStatus.New });
                     db.SaveChanges();
+                    isAdded = true;
                 }
             }
-            return v;
+            return isAdded;
         }
 
-        public void Add(DirectoryInfo folder)
+        public async Task Scan()
         {
+            DirectoryInfo folder = new DirectoryInfo(SyncPath);
             if (folder.Exists)
             {
-                Task.Run(() =>
+                await Task.Run(() =>
                     {
                         var ext = AppSetting.Extension;
                         int c = 0;
@@ -134,9 +137,11 @@ namespace _3A_flickr_sync.Logic
                                 var f = new FileInfo(r);
                                 if (ext.Contains(f.Extension.ToLower()))
                                 {
-                                    Add(f);
-                                    c++;
-                                    FlickrLogic.UploadEventList.Add(new Notice() { Type = NoticeType.AddFile, JobDone = c, FullPath = folder.FullName });
+                                    if (Add(f))
+                                    {
+                                        c++;
+                                        FlickrLogic.UploadEventList.Add(new Notice() { Type = NoticeType.AddFile, JobDone = c, FullPath = folder.FullName });
+                                    }
                                 }
 
                             },

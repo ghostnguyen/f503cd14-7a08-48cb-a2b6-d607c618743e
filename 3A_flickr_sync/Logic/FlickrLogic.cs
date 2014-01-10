@@ -226,7 +226,10 @@ namespace _3A_flickr_sync.Logic
         {
             var file = fFileLogic.Get(fileID);
 
-            if (file != null && file.Status == FFileStatus.Uploaded_NoSet)
+            if (file != null
+                && (file.Status == FFileStatus.Uploaded_NoSet 
+                        || file.Status == FFileStatus.Uploaded_InSet)
+                )
             {
                 FlickrLogic.Log(file.Path, NoticeType.Upload, "Add to photo sets");
 
@@ -270,7 +273,10 @@ namespace _3A_flickr_sync.Logic
                     {
                         if (context.Sets.Count > 0)
                         {
-
+                            file = fFileLogic.DoUpdate(fileID, file1 =>
+                            {
+                                file1.Status = FFileStatus.Uploaded_InSet;
+                            });
                         }
                         else
                         {
@@ -278,9 +284,9 @@ namespace _3A_flickr_sync.Logic
                             {
                                 file1.Status = FFileStatus.Uploaded_NoSet;
                             });
-
-                            UpdateSets(file.Id);
                         }
+
+                        UpdateSets(file.Id);
                     }
                 }
 

@@ -39,7 +39,7 @@ namespace _3A_flickr_sync
                 var v = fL.CreateIfNotExist(di.SelectedPath);
 
                 FFileLogic ffL1 = new FFileLogic(v);
-                ffL1.Add(new DirectoryInfo(v.Path));
+                ffL1.Scan();
 
                 DataGridViewFolder_LoadData();
             }

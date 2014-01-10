@@ -10,7 +10,7 @@ namespace _3A_flickr_sync.Models
         Existing = 20,
         Uploaded_SyncSet = 11,
         Uploaded_NoSet = 10,
-        //Uploaded_InSet = 13,
+        Uploaded_InSet = 13,
     }
 
     public partial class FFile
