@@ -58,6 +58,12 @@ namespace _3A_flickr_sync.Logic
             }
         }
 
+        public static int QueueCount()
+        {
+            return fileList.Count;
+        }
+
+
         static public void ClearForUpload()
         {
             fileList = new ConcurrentQueue<Tuple<string, FFile>>();

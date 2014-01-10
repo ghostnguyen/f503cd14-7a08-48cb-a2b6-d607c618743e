@@ -91,11 +91,10 @@ namespace _3A_flickr_sync.Logic
             Set set;
             lock (lockForCreateFlickrSets)
             {
+                Flickr f = new Flickr();
                 set = db.Sets.FirstOrDefault(r => r.UserID == Flickr.User.UserId && r.Tittle.ToLower() == tittle.ToLower());
                 if (set == null)
                 {
-                    Flickr f = new Flickr();
-
                     var fSet = f.PhotosetsCreate(tittle, photoID);
                     if (fSet == null)
                     {
@@ -107,7 +106,10 @@ namespace _3A_flickr_sync.Logic
                         db.SaveChanges();
                     }
                 }
-
+                else
+                {
+                    f.PhotosetsAddPhoto(set.SetsID, photoID);
+                }
             }
             return set;
         }

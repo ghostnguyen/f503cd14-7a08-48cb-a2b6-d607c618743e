@@ -66,6 +66,7 @@ namespace _3A_flickr_sync.Logic
         static public void ResetCancellationToken()
         {
             //IsUpload = false;
+            TotalUpload = 0;
             CancellationTokenSrc = new CancellationTokenSource();
             CancellationToken = CancellationTokenSrc.Token;
         }
@@ -86,6 +87,7 @@ namespace _3A_flickr_sync.Logic
             ResetCancellationToken();
 
             MaxUpload = System.Environment.ProcessorCount + 4;
+            //MaxUpload = 1;
 
             var networkStatus = Observable.Interval(TimeSpan.FromSeconds(3)).Where(r => IsNetworkOk == false && IsUpload)
                 .Subscribe(r =>
@@ -312,10 +314,7 @@ namespace _3A_flickr_sync.Logic
             ResetCancellationToken();
 
             //wait for all upload complete if remaining
-            while (TotalUpload > 0)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(1));
-            }
+            await WaitForComplete();
 
             FFolderLogic.Reset_ProcessingStatus();
 
@@ -324,6 +323,8 @@ namespace _3A_flickr_sync.Logic
                 var folder = FFolderLogic.GetForUpload();
                 if (folder == null)
                 {
+                    await WaitForComplete();
+
                     FlickrLogic.IsUpload = false;
                     //StopUpload();
                 }
@@ -333,6 +334,14 @@ namespace _3A_flickr_sync.Logic
                     FFileLogic fLogic = new FFileLogic(folder);
                     await fLogic.StartBuffer(CancellationToken);
                 }
+            }
+        }
+
+        private static async Task WaitForComplete()
+        {
+            while (TotalUpload > 0 || FFileLogic.QueueCount() > 0)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(1));
             }
         }
     }
