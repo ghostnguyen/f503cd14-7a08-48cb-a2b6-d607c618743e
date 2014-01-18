@@ -79,25 +79,25 @@ namespace _3A_flickr_sync.Logic
             Reset_ProcessingStatus();
 
             bool hasPhoto = true;
-            var re = Observable.Interval(TimeSpan.FromSeconds(2)).TakeWhile(r => hasPhoto);
+            //var re = Observable.Interval(TimeSpan.FromSeconds(2)).TakeWhile(r => hasPhoto);
 
-            re.Where(r => fileList.Count < MinBuffer)
-                .Subscribe(r =>
-                {
-                    var l = TakeBuffer(Buffer);
+            //re.Where(r => fileList.Count < MinBuffer)
+            //    .Subscribe(r =>
+            //    {
+            //        var l = TakeBuffer(Buffer);
 
-                    if (l.Count == 0)
-                    {
-                        hasPhoto = false;
-                    }
-                    else
-                    {
-                        l.ForEach(r1 => fileList.Enqueue(new Tuple<string, FFile>(db.Fullpath, r1)));
-                    }
-                }, cancellationToken
-                );
+            //        if (l.Count == 0)
+            //        {
+            //            hasPhoto = false;
+            //        }
+            //        else
+            //        {
+            //            l.ForEach(r1 => fileList.Enqueue(new Tuple<string, FFile>(db.Fullpath, r1)));
+            //        }
+            //    }, cancellationToken
+            //    );
 
-            await re;
+            //await re;
 
             return hasPhoto;
         }
@@ -156,8 +156,6 @@ namespace _3A_flickr_sync.Logic
 
         public List<FFile> TakeBuffer(int count)
         {
-            var r11 = db.FFiles.ToList();
-
             var r = db.FFiles
                 .Where(r1 => true
                     && (r1.Status == FFileStatus.New || r1.Status == FFileStatus.Existing)
@@ -173,6 +171,28 @@ namespace _3A_flickr_sync.Logic
 
             return r;
         }
+
+        public FFile TakeBuffer()
+        {
+            db = new FSDBContext(SyncPath);
+
+            var r = db.FFiles
+                .FirstOrDefault(r1 => true
+                    && (r1.Status == FFileStatus.New || r1.Status == FFileStatus.Existing)
+                    && r1.Path.Contains(db.Fullpath)
+                    && r1.ProcessingStatus == null
+                    );
+            if (r == null)
+            { }
+            else
+            {
+               r.ProcessingStatus = ProcessingStatus.Processing;
+               db.SaveChanges();
+            }
+
+            return r;
+        }
+        
 
         public bool CheckExistHashCode(Func<string, bool> flickrCheckF, int fFileID)
         {
