@@ -21,86 +21,86 @@ namespace _3A_flickr_sync.Logic
         {
         }
 
-        private static ConcurrentQueue<Tuple<string, FFile>> fileList = new ConcurrentQueue<Tuple<string, FFile>>();
+        //private static ConcurrentQueue<Tuple<string, FFile>> fileList = new ConcurrentQueue<Tuple<string, FFile>>();
 
-        public static int MinBuffer { get; set; }
-        public static int Buffer { get; set; }
-
+        //public static int MinBuffer { get; set; }
+        //public static int Buffer { get; set; }
+        static readonly object lockForTakeUpload = new object();
 
         static FFileLogic()
         {
-            MinBuffer = FlickrLogic.MaxUpload * 2;
-            Buffer = MinBuffer * 5;
+            //MinBuffer = FlickrLogic.MaxUpload * 2;
+            //Buffer = MinBuffer * 5;
         }
 
-        public static Tuple<string, FFile> DequeueForUpload()
-        {
-            Tuple<string, FFile> f = null;
-            if (fileList.TryDequeue(out f))
-            { }
-            else
-            { f = null; }
-            return f;
-        }
+        //public static Tuple<string, FFile> DequeueForUpload()
+        //{
+        //    Tuple<string, FFile> f = null;
+        //    if (fileList.TryDequeue(out f))
+        //    { }
+        //    else
+        //    { f = null; }
+        //    return f;
+        //}
 
-        public static void EnqueueForUpload(Tuple<string, FFile> file)
-        {
-            if (file == null)
-            {
-            }
-            else
-            {
-                var f = fileList.FirstOrDefault(r => r.Item1 == file.Item1 && r.Item2.Id == file.Item2.Id);
-                if (f == null)
-                {
-                    fileList.Enqueue(file);
-                }
-            }
-        }
+        //public static void EnqueueForUpload(Tuple<string, FFile> file)
+        //{
+        //    if (file == null)
+        //    {
+        //    }
+        //    else
+        //    {
+        //        var f = fileList.FirstOrDefault(r => r.Item1 == file.Item1 && r.Item2.Id == file.Item2.Id);
+        //        if (f == null)
+        //        {
+        //            fileList.Enqueue(file);
+        //        }
+        //    }
+        //}
 
-        public static int QueueCount()
-        {
-            return fileList.Count;
-        }
+        //public static int QueueCount()
+        //{
+        //    return fileList.Count;
+        //}
 
 
-        static public void ClearForUpload()
-        {
-            fileList = new ConcurrentQueue<Tuple<string, FFile>>();
-        }
+        //static public void ClearForUpload()
+        //{
+        //    fileList = new ConcurrentQueue<Tuple<string, FFile>>();
+        //}
 
         public FFileLogic(FFolder folder)
             : base(folder.Path)
         {
         }
 
-        async public Task<bool> StartBuffer(CancellationToken cancellationToken)
-        {
-            Reset_ProcessingStatus();
+        //async public Task<bool> StartBuffer(CancellationToken cancellationToken)
+        //{
+        //    Reset_ProcessingStatus();
 
-            bool hasPhoto = true;
-            //var re = Observable.Interval(TimeSpan.FromSeconds(2)).TakeWhile(r => hasPhoto);
+        //    bool hasPhoto = true;
+        //    //var re = Observable.Interval(TimeSpan.FromSeconds(2)).TakeWhile(r => hasPhoto);
 
-            //re.Where(r => fileList.Count < MinBuffer)
-            //    .Subscribe(r =>
-            //    {
-            //        var l = TakeBuffer(Buffer);
+        //    //re.Where(r => fileList.Count < MinBuffer)
+        //    //    .Subscribe(r =>
+        //    //    {
+        //    //        var l = TakeBuffer(Buffer);
 
-            //        if (l.Count == 0)
-            //        {
-            //            hasPhoto = false;
-            //        }
-            //        else
-            //        {
-            //            l.ForEach(r1 => fileList.Enqueue(new Tuple<string, FFile>(db.Fullpath, r1)));
-            //        }
-            //    }, cancellationToken
-            //    );
+        //    //        if (l.Count == 0)
+        //    //        {
+        //    //            hasPhoto = false;
+        //    //        }
+        //    //        else
+        //    //        {
+        //    //            l.ForEach(r1 => fileList.Enqueue(new Tuple<string, FFile>(db.Fullpath, r1)));
+        //    //        }
+        //    //    }, cancellationToken
+        //    //    );
 
-            //await re;
+        //    //await re;
 
-            return hasPhoto;
-        }
+        //    return hasPhoto;
+        //}
 
         public bool Add(FileInfo file)
         {
@@ -154,43 +154,49 @@ namespace _3A_flickr_sync.Logic
             }
         }
 
-        public List<FFile> TakeBuffer(int count)
+        //public List<FFile> TakeBuffer(int count)
+        //{
+        //    var r = db.FFiles
+        //        .Where(r1 => true
+        //            && (r1.Status == FFileStatus.New || r1.Status == FFileStatus.Existing)
+        //            && r1.Path.Contains(db.Fullpath)
+        //            && r1.ProcessingStatus == null
+        //            )
+        //        .Take(count)
+        //        .ToList();
+
+        //    r.ForEach(r1 => r1.ProcessingStatus = ProcessingStatus.Processing);
+
+        //    db.SaveChanges();
+
+        //    return r;
+        //}
+
+        public IEnumerable<FFile> TakeBuffer()
         {
-            var r = db.FFiles
-                .Where(r1 => true
-                    && (r1.Status == FFileStatus.New || r1.Status == FFileStatus.Existing)
-                    && r1.Path.Contains(db.Fullpath)
-                    && r1.ProcessingStatus == null
-                    )
-                .Take(count)
-                .ToList();
-
-            r.ForEach(r1 => r1.ProcessingStatus = ProcessingStatus.Processing);
-
-            db.SaveChanges();
-
-            return r;
-        }
-
-        public FFile TakeBuffer()
-        {
-            db = new FSDBContext(SyncPath);
-
-            var r = db.FFiles
-                .FirstOrDefault(r1 => true
-                    && (r1.Status == FFileStatus.New || r1.Status == FFileStatus.Existing)
-                    && r1.Path.Contains(db.Fullpath)
-                    && r1.ProcessingStatus == null
-                    );
-            if (r == null)
-            { }
-            else
+            FFile r = null;
+            lock (lockForTakeUpload)
             {
-               r.ProcessingStatus = ProcessingStatus.Processing;
-               db.SaveChanges();
+                db = new FSDBContext(SyncPath);
+
+                r = db.FFiles
+                    .FirstOrDefault(r1 => true
+                        && (r1.Status == FFileStatus.New || r1.Status == FFileStatus.Existing)
+                        && r1.Path.Contains(db.Fullpath)
+                        && r1.ProcessingStatus == null
+                        );
+                if (r == null)
+                {
+                    yield break;
+                }
+                else
+                {
+                    r.ProcessingStatus = ProcessingStatus.Processing;
+                    db.SaveChanges();
+                }
             }
 
-            return r;
+            yield return r;
         }
         
 
