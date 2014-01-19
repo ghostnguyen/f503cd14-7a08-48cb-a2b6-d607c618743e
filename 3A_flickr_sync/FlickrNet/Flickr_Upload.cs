@@ -30,7 +30,7 @@ namespace _3A_flickr_sync.FlickrNet
         /// <param name="safetyLevel">The safety level of the photo, i.e. Safe, Moderate or Restricted.</param>
         /// <param name="hiddenFromSearch">Is the photo hidden from public searches.</param>
         /// <returns>The id of the photograph after successful uploading.</returns>
-        public async Task<string> UploadPicture(string fullPath, IProgress<UploadProgressChangedEventArgs> progress, string title = "", string description = "", string tags = "", bool isPublic = false, bool isFamily = true, bool isFriend = false, ContentType contentType = ContentType.None, SafetyLevel safetyLevel = SafetyLevel.Restricted, HiddenFromSearch hiddenFromSearch = HiddenFromSearch.Hidden)
+        public string UploadPicture(string fullPath, IProgress<UploadProgressChangedEventArgs> progress, string title = "", string description = "", string tags = "", bool isPublic = false, bool isFamily = true, bool isFriend = false, ContentType contentType = ContentType.None, SafetyLevel safetyLevel = SafetyLevel.Restricted, HiddenFromSearch hiddenFromSearch = HiddenFromSearch.Hidden)
         {
             CheckRequiresAuthentication();
 
@@ -79,9 +79,7 @@ namespace _3A_flickr_sync.FlickrNet
                 parameters.Add("oauth_signature", sig);
 
                 //string responseXml = UploadData(stream, fileName, uploadUri, parameters);
-                var task = UploadData(stream, fullPath, uploadUri, parameters, progress);
-
-                string responseXml = await task;
+                string responseXml = UploadData(stream, fullPath, uploadUri, parameters, progress);
 
                 var r = "";
                 if (string.IsNullOrEmpty(responseXml))
@@ -121,7 +119,7 @@ namespace _3A_flickr_sync.FlickrNet
             }
         }
 
-        private async Task<string> UploadData(Stream imageStream, string fileName, Uri uploadUri, Dictionary<string, string> parameters, IProgress<UploadProgressChangedEventArgs> progress)
+        private string UploadData(Stream imageStream, string fileName, Uri uploadUri, Dictionary<string, string> parameters, IProgress<UploadProgressChangedEventArgs> progress)
         {
             //string boundary = "FLICKR_MIME_" + DateTime.Now.ToString("yyyyMMddhhmmss", System.Globalization.DateTimeFormatInfo.InvariantInfo);
 
@@ -175,13 +173,14 @@ namespace _3A_flickr_sync.FlickrNet
             byte[] dataBuffer = CreateUploadData(imageStream, fileName, parameters, boundary);
 
             WebClient2 webClient = new WebClient2();
-            webClient.UploadProgressChanged += ((a, b) => { 
-            
+            webClient.Timeout = (int)TimeSpan.FromMinutes(10).TotalMilliseconds;
+            webClient.UploadProgressChanged += ((a, b) =>
+            {
                 if (progress != null) progress.Report(b);
                 if (FlickrLogic.CancellationToken.IsCancellationRequested)
                     ((WebClient2)a).CancelAsync();
             });
-            
+
             webClient.ContentType = "multipart/form-data; boundary=" + boundary;
 
             if (!String.IsNullOrEmpty(authHeader))
@@ -198,9 +197,7 @@ namespace _3A_flickr_sync.FlickrNet
                 Note = "Ready to upload.",
             });
 
-            var task = webClient.UploadDataTaskAsync(uploadUri, dataBuffer);
-            
-            var responseArray = await task;
+            var responseArray = webClient.UploadData(uploadUri, dataBuffer);
 
             string s = System.Text.Encoding.UTF8.GetString(responseArray);
 
@@ -252,7 +249,7 @@ namespace _3A_flickr_sync.FlickrNet
             string sig = OAuthCalculateSignature("POST", replaceUri.AbsoluteUri, parameters, OAuthAccessTokenSecret);
             parameters.Add("oauth_signature", sig);
 
-            var responseXml = await UploadData(stream, fileName, replaceUri, parameters, progress);
+            var responseXml = UploadData(stream, fileName, replaceUri, parameters, progress);
 
             XmlReaderSettings settings = new XmlReaderSettings();
             settings.IgnoreWhitespace = true;

@@ -214,10 +214,7 @@ namespace _3A_flickr_sync.Logic
                         })
                     ;
 
-                    var task = flickr.UploadPicture(file.Path, tags: file.GetHashCodeTag(), progress: progress);
-
-                     task.RunSynchronously();
-                     var photoID = task.Result;
+                    var photoID = flickr.UploadPicture(file.Path, tags: file.GetHashCodeTag(), progress: progress);
 
                     if (string.IsNullOrEmpty(photoID))
                     { }
@@ -378,6 +375,9 @@ namespace _3A_flickr_sync.Logic
                 ParallelOptions opt = new ParallelOptions();
                 opt.MaxDegreeOfParallelism = MaxUpload;
                 opt.CancellationToken = CancellationToken;
+                opt.TaskScheduler = TaskScheduler.Default;
+
+                Task.Factory.StartNew(() =>{
 
                 var r = Parallel.ForEach(fFileLogic.TakeBuffer(), opt, file =>
                     {
@@ -407,6 +407,7 @@ namespace _3A_flickr_sync.Logic
 
                         //TotalUpload--;
                     });
+                });
             }
         }
 
