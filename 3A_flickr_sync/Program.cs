@@ -21,6 +21,7 @@ namespace _3A_flickr_sync
         {
             FSMasterDBContext c = new FSMasterDBContext();
             c.Database.CreateIfNotExists();
+            System.Net.ServicePointManager.DefaultConnectionLimit = 10;
 
             Flickr.ResetOAuth();
 

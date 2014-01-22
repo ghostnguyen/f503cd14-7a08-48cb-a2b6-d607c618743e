@@ -173,7 +173,7 @@ namespace _3A_flickr_sync.FlickrNet
             byte[] dataBuffer = CreateUploadData(imageStream, fileName, parameters, boundary);
 
             WebClient2 webClient = new WebClient2();
-            webClient.Timeout = (int)TimeSpan.FromMinutes(10).TotalMilliseconds;
+            //webClient.Timeout = (int)TimeSpan.FromMinutes(10).TotalMilliseconds;
             webClient.UploadProgressChanged += ((a, b) =>
             {
                 if (progress != null) progress.Report(b);
@@ -196,8 +196,17 @@ namespace _3A_flickr_sync.FlickrNet
                 FullPath = fileName,
                 Note = "Ready to upload.",
             });
-
-            var responseArray = webClient.UploadData(uploadUri, dataBuffer);
+            byte[] responseArray = null;
+            try
+            {
+                responseArray = webClient.UploadData(uploadUri, dataBuffer);
+            }
+            catch (Exception ex)
+            {
+                
+                throw;
+            }
+            
 
             string s = System.Text.Encoding.UTF8.GetString(responseArray);
 

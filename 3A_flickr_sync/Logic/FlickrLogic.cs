@@ -151,7 +151,10 @@ namespace _3A_flickr_sync.Logic
             {
                 if (r)
                 {
-                    StartUpload();
+                    Task.Factory.StartNew(() =>
+                    {
+                        StartUpload();
+                    });
                 }
                 else
                 {
@@ -356,14 +359,14 @@ namespace _3A_flickr_sync.Logic
 
                     fLogic.Reset_ProcessingStatus();
                     //await fLogic.StartBuffer(CancellationToken);
-                    UploadFolder();
+                    await UploadFolder();
                 }
             }
         }
 
 
 
-        static void UploadFolder()
+        async static Task UploadFolder()
         {
             if (string.IsNullOrEmpty(CurrentFolderPath))
             {
@@ -371,43 +374,58 @@ namespace _3A_flickr_sync.Logic
             }
             else
             {
-                FFileLogic fFileLogic = new FFileLogic(CurrentFolderPath);
-                ParallelOptions opt = new ParallelOptions();
-                opt.MaxDegreeOfParallelism = MaxUpload;
-                opt.CancellationToken = CancellationToken;
-                opt.TaskScheduler = TaskScheduler.Default;
-
-                Task.Factory.StartNew(() =>{
-
-                var r = Parallel.ForEach(fFileLogic.TakeBuffer(), opt, file =>
+                try
+                {
+                    var task = Task.Factory.StartNew(() =>
                     {
-                        //TotalUpload++;
+                        FFileLogic fFileLogic = new FFileLogic(CurrentFolderPath);
+                        ParallelOptions opt = new ParallelOptions();
+                        opt.MaxDegreeOfParallelism = MaxUpload;
+                        opt.CancellationToken = CancellationToken;
 
-                        if (string.IsNullOrEmpty(CurrentFolderPath))
+                        try
                         {
-                        }
-                        else
-                        {
-                            FlickrLogic logic = new FlickrLogic(CurrentFolderPath);
-                            if (file == null)
+                            var r = Parallel.ForEach(fFileLogic.TakeBuffer(), opt, file =>
                             {
-                                return;
-                            }
-                            else if (file.Status == FFileStatus.New)
-                            {
-                                FlickrLogic.Log(CurrentFolderPath, NoticeType.Upload, "Waiting Upload");
-                                logic.Upload(file.Id);
-                            }
-                            else if (file.Status == FFileStatus.Existing)
-                            {
-                                FlickrLogic.Log(CurrentFolderPath, NoticeType.Upload, "Waiting HashCodeFound");
-                                logic.Processing_HashCodeFound(file.Id);
-                            }
-                        }
+                                //TotalUpload++;
 
-                        //TotalUpload--;
+                                if (string.IsNullOrEmpty(CurrentFolderPath))
+                                {
+                                }
+                                else
+                                {
+                                    FlickrLogic logic = new FlickrLogic(CurrentFolderPath);
+                                    if (file == null)
+                                    {
+                                        return;
+                                    }
+                                    else if (file.Status == FFileStatus.New)
+                                    {
+                                        logic.Upload(file.Id);
+                                    }
+                                    else if (file.Status == FFileStatus.Existing)
+                                    {
+                                        logic.Processing_HashCodeFound(file.Id);
+                                    }
+                                }
+
+                                //TotalUpload--;
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            
+                        }
+                      
+
                     });
-                });
+                    await task;
+                }
+                catch (Exception ex)
+                {
+
+
+                }
             }
         }
 

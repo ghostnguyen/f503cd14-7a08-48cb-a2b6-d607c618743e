@@ -174,10 +174,11 @@ namespace _3A_flickr_sync.Logic
 
         public IEnumerable<FFile> TakeBuffer()
         {
-            FFile r = null;
-            lock (lockForTakeUpload)
+            while (true)
             {
-                db = new FSDBContext(SyncPath);
+                FFile r = null;
+
+                FSDBContext db = new FSDBContext(SyncPath);
 
                 r = db.FFiles
                     .FirstOrDefault(r1 => true
@@ -193,10 +194,9 @@ namespace _3A_flickr_sync.Logic
                 {
                     r.ProcessingStatus = ProcessingStatus.Processing;
                     db.SaveChanges();
+                    yield return r;
                 }
             }
-
-            yield return r;
         }
         
 
