@@ -30,7 +30,7 @@ namespace _3A_flickr_sync.FlickrNet
         /// <param name="safetyLevel">The safety level of the photo, i.e. Safe, Moderate or Restricted.</param>
         /// <param name="hiddenFromSearch">Is the photo hidden from public searches.</param>
         /// <returns>The id of the photograph after successful uploading.</returns>
-        public string UploadPicture(string fullPath, IProgress<UploadProgressChangedEventArgs> progress, string title = "", string description = "", string tags = "", bool isPublic = false, bool isFamily = true, bool isFriend = false, ContentType contentType = ContentType.None, SafetyLevel safetyLevel = SafetyLevel.Restricted, HiddenFromSearch hiddenFromSearch = HiddenFromSearch.Hidden)
+        async public Task<string> UploadPicture(string fullPath, IProgress<UploadProgressChangedEventArgs> progress, string title = "", string description = "", string tags = "", bool isPublic = false, bool isFamily = true, bool isFriend = false, ContentType contentType = ContentType.None, SafetyLevel safetyLevel = SafetyLevel.Restricted, HiddenFromSearch hiddenFromSearch = HiddenFromSearch.Hidden)
         {
             CheckRequiresAuthentication();
 
@@ -79,7 +79,7 @@ namespace _3A_flickr_sync.FlickrNet
                 parameters.Add("oauth_signature", sig);
 
                 //string responseXml = UploadData(stream, fileName, uploadUri, parameters);
-                string responseXml = UploadData(stream, fullPath, uploadUri, parameters, progress);
+                string responseXml = await UploadData(stream, fullPath, uploadUri, parameters, progress);
 
                 var r = "";
                 if (string.IsNullOrEmpty(responseXml))
@@ -119,7 +119,7 @@ namespace _3A_flickr_sync.FlickrNet
             }
         }
 
-        private string UploadData(Stream imageStream, string fileName, Uri uploadUri, Dictionary<string, string> parameters, IProgress<UploadProgressChangedEventArgs> progress)
+        async private Task<string> UploadData(Stream imageStream, string fileName, Uri uploadUri, Dictionary<string, string> parameters, IProgress<UploadProgressChangedEventArgs> progress)
         {
             //string boundary = "FLICKR_MIME_" + DateTime.Now.ToString("yyyyMMddhhmmss", System.Globalization.DateTimeFormatInfo.InvariantInfo);
 
@@ -199,13 +199,13 @@ namespace _3A_flickr_sync.FlickrNet
             byte[] responseArray = null;
             try
             {
-                responseArray = webClient.UploadData(uploadUri, dataBuffer);
+                responseArray = await webClient.UploadDataTaskAsync(uploadUri, dataBuffer);
             }
             catch (Exception ex)
             {
                 responseArray = null;
             }
-            
+
 
             string s = System.Text.Encoding.UTF8.GetString(responseArray);
 
@@ -257,7 +257,7 @@ namespace _3A_flickr_sync.FlickrNet
             string sig = OAuthCalculateSignature("POST", replaceUri.AbsoluteUri, parameters, OAuthAccessTokenSecret);
             parameters.Add("oauth_signature", sig);
 
-            var responseXml = UploadData(stream, fileName, replaceUri, parameters, progress);
+            var responseXml = await UploadData(stream, fileName, replaceUri, parameters, progress);
 
             XmlReaderSettings settings = new XmlReaderSettings();
             settings.IgnoreWhitespace = true;

@@ -171,11 +171,11 @@ namespace _3A_flickr_sync.Logic
             flickr = new Flickr();
         }
 
-        public FFile Upload(int fFileID)
+        async public Task<FFile> Upload(int fFileID)
         {
             while (IsNetworkOk == false)
             {
-                Task.Delay(TimeSpan.FromSeconds(3));
+                await Task.Delay(TimeSpan.FromSeconds(3));
             }
 
             var file = fFileLogic.GetForSure(fFileID);
@@ -217,7 +217,7 @@ namespace _3A_flickr_sync.Logic
                         })
                     ;
 
-                    var photoID = flickr.UploadPicture(file.Path, tags: file.GetHashCodeTag(), progress: progress);
+                    var photoID = await flickr.UploadPicture(file.Path, tags: file.GetHashCodeTag(), progress: progress);
 
                     if (string.IsNullOrEmpty(photoID))
                     { }
@@ -385,7 +385,8 @@ namespace _3A_flickr_sync.Logic
 
                         try
                         {
-                            var r = Parallel.ForEach(fFileLogic.TakeBuffer(), opt, file =>
+                            var r = Parallel.ForEach(fFileLogic.TakeBuffer(), opt
+                                , file =>
                             {
                                 //TotalUpload++;
 
@@ -397,20 +398,34 @@ namespace _3A_flickr_sync.Logic
                                     FlickrLogic logic = new FlickrLogic(CurrentFolderPath);
                                     if (file == null)
                                     {
-                                        return;
+
                                     }
                                     else if (file.Status == FFileStatus.New)
                                     {
-                                        logic.Upload(file.Id);
+                                        var t = logic.Upload(file.Id);
+
+                                        try
+                                        {
+                                            Task.WaitAll(t);
+                                        }
+                                        catch (Exception ex1)
+                                        {
+                                            
+                                        }
+                                        
                                     }
                                     else if (file.Status == FFileStatus.Existing)
                                     {
                                         logic.Processing_HashCodeFound(file.Id);
                                     }
+
+
                                 }
 
                                 //TotalUpload--;
-                            });
+                            }
+
+                            );
                         }
                         catch (Exception ex)
                         {
