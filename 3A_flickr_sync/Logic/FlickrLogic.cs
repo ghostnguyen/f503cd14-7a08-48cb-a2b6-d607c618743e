@@ -79,7 +79,7 @@ namespace _3A_flickr_sync.Logic
         {
             ResetCancellationToken();
 
-            MaxUpload = System.Environment.ProcessorCount;
+            MaxUpload = System.Environment.ProcessorCount + 2;
             //MaxUpload = 1;
 
             var networkStatus = Observable.Interval(TimeSpan.FromSeconds(3)).Where(r => IsNetworkOk == false && IsUpload)
@@ -414,9 +414,9 @@ namespace _3A_flickr_sync.Logic
                         }
                         catch (Exception ex)
                         {
-                            
+
                         }
-                      
+
 
                     });
                     await task;

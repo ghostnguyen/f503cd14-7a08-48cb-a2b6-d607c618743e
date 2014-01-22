@@ -203,8 +203,7 @@ namespace _3A_flickr_sync.FlickrNet
             }
             catch (Exception ex)
             {
-                
-                throw;
+                responseArray = null;
             }
             
 
