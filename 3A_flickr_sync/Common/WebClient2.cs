@@ -17,7 +17,7 @@ namespace _3A_flickr_sync.Common
         {
             var objWebRequest = base.GetWebRequest(address);
             //objWebRequest.Timeout = Timeout;
-            objWebRequest.Timeout = (int)TimeSpan.FromHours(2).TotalMilliseconds;
+            objWebRequest.Timeout = (int)TimeSpan.FromHours(1).TotalMilliseconds;
             objWebRequest.ContentType = ContentType;
             objWebRequest.ContentLength = ContentLength;            
             
