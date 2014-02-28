@@ -76,6 +76,8 @@ namespace _3A_flickr_sync.Logic
             db.SaveChanges();
         }
 
+        
+
         public static async Task Scan()
         {
             var l = db.FFolders.Where(r => r.UserId == Flickr.User.UserId).ToList();

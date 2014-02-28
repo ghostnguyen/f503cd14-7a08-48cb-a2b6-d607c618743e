@@ -403,19 +403,19 @@ namespace _3A_flickr_sync.FlickrNet
         //    return GetResponse<PhotoCollection>(parameters);
         //}
 
-        ///// <summary>
-        ///// Returns the available sizes for a photo. The calling user must have permission to view the photo.
-        ///// </summary>
-        ///// <param name="photoId">The id of the photo to fetch size information for.</param>
-        ///// <returns>A list of <see cref="Size"/> objects.</returns>
-        //public SizeCollection PhotosGetSizes(string photoId)
-        //{
-        //    Dictionary<string, string> parameters = new Dictionary<string, string>();
-        //    parameters.Add("method", "flickr.photos.getSizes");
-        //    parameters.Add("photo_id", photoId);
+        /// <summary>
+        /// Returns the available sizes for a photo. The calling user must have permission to view the photo.
+        /// </summary>
+        /// <param name="photoId">The id of the photo to fetch size information for.</param>
+        /// <returns>A list of <see cref="Size"/> objects.</returns>
+        public SizeCollection PhotosGetSizes(string photoId)
+        {
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("method", "flickr.photos.getSizes");
+            parameters.Add("photo_id", photoId);
 
-        //    return GetResponse<SizeCollection>(parameters);
-        //}
+            return GetResponse<SizeCollection>(parameters);
+        }
 
         ///// <summary>
         ///// Returns a list of your photos with no tags.

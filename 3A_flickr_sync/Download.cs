@@ -72,7 +72,7 @@ namespace _3A_flickr_sync
 
         private void btnDownload_Click(object sender, EventArgs e)
         {
-
+            FlickrLogic.IsDownload = !FlickrLogic.IsDownload;
         }
 
     }

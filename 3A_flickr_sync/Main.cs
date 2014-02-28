@@ -74,7 +74,7 @@ namespace _3A_flickr_sync
                             rtbLog.InsertLineAtFirst(r1.GetNote());
                         });
 
-                    r.Where(r1 => r1.Type == NoticeType.UploadDone || r1.Type == NoticeType.AddFileDone)
+                    r.Where(r1 => r1.Type == NoticeType.UploadDone || r1.Type == NoticeType.AddFileDone || r1.Type == NoticeType.DownloadDone)
                         .ToList()
                         .ForEach(r1 =>
                         {
@@ -88,7 +88,7 @@ namespace _3A_flickr_sync
             FlickrLogic.IsUploadNotify.ObserveOn(this).Subscribe(r =>
             {
                 var menu = startUploadToolStripMenuItem;
-                
+
                 if (r)
                 {
                     menu.Image = Resources.Uploading;

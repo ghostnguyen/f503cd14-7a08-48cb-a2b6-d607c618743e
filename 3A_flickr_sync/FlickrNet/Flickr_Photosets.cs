@@ -1,4 +1,5 @@
-﻿using System;
+﻿using _3A_flickr_sync.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -151,6 +152,126 @@ namespace _3A_flickr_sync.FlickrNet
             //    photoset.OwnerId = userId;
             //}
             return photosets;
+        }
+
+        /// <summary>
+        /// Gets a collection of photos for a photoset.
+        /// </summary>
+        /// <param name="photosetId">The ID of the photoset to return photos for.</param>
+        /// <returns>A <see cref="PhotosetPhotoCollection"/> object containing the list of <see cref="Photo"/> instances.</returns>
+        public PhotosetPhotoCollection PhotosetsGetPhotos(string photosetId)
+        {
+            return PhotosetsGetPhotos(photosetId, PhotoSearchExtras.None, PrivacyFilter.None, 0, 0);
+        }
+
+        /// <summary>
+        /// Gets a collection of photos for a photoset.
+        /// </summary>
+        /// <param name="photosetId">The ID of the photoset to return photos for.</param>
+        /// <param name="page">The page to return, defaults to 1.</param>
+        /// <param name="perPage">The number of photos to return per page.</param>
+        /// <returns>A <see cref="PhotosetPhotoCollection"/> object containing the list of <see cref="Photo"/> instances.</returns>
+        public PhotosetPhotoCollection PhotosetsGetPhotos(string photosetId, int page, int perPage)
+        {
+            return PhotosetsGetPhotos(photosetId, PhotoSearchExtras.None, PrivacyFilter.None, page, perPage);
+        }
+
+        /// <summary>
+        /// Gets a collection of photos for a photoset.
+        /// </summary>
+        /// <param name="photosetId">The ID of the photoset to return photos for.</param>
+        /// <param name="privacyFilter">The privacy filter to search on.</param>
+        /// <returns>A <see cref="PhotosetPhotoCollection"/> object containing the list of <see cref="Photo"/> instances.</returns>
+        public PhotosetPhotoCollection PhotosetsGetPhotos(string photosetId, PrivacyFilter privacyFilter)
+        {
+            return PhotosetsGetPhotos(photosetId, PhotoSearchExtras.None, privacyFilter, 0, 0);
+        }
+
+        /// <summary>
+        /// Gets a collection of photos for a photoset.
+        /// </summary>
+        /// <param name="photosetId">The ID of the photoset to return photos for.</param>
+        /// <param name="privacyFilter">The privacy filter to search on.</param>
+        /// <param name="page">The page to return, defaults to 1.</param>
+        /// <param name="perPage">The number of photos to return per page.</param>
+        /// <returns>A <see cref="PhotosetPhotoCollection"/> object containing the list of <see cref="Photo"/> instances.</returns>
+        public PhotosetPhotoCollection PhotosetsGetPhotos(string photosetId, PrivacyFilter privacyFilter, int page, int perPage)
+        {
+            return PhotosetsGetPhotos(photosetId, PhotoSearchExtras.None, privacyFilter, page, perPage);
+        }
+
+        /// <summary>
+        /// Gets a collection of photos for a photoset.
+        /// </summary>
+        /// <param name="photosetId">The ID of the photoset to return photos for.</param>
+        /// <param name="extras">The extras to return for each photo.</param>
+        /// <returns>A <see cref="PhotosetPhotoCollection"/> object containing the list of <see cref="Photo"/> instances.</returns>
+        public PhotosetPhotoCollection PhotosetsGetPhotos(string photosetId, PhotoSearchExtras extras)
+        {
+            return PhotosetsGetPhotos(photosetId, extras, PrivacyFilter.None, 0, 0);
+        }
+
+        /// <summary>
+        /// Gets a collection of photos for a photoset.
+        /// </summary>
+        /// <param name="photosetId">The ID of the photoset to return photos for.</param>
+        /// <param name="extras">The extras to return for each photo.</param>
+        /// <param name="page">The page to return, defaults to 1.</param>
+        /// <param name="perPage">The number of photos to return per page.</param>
+        /// <returns>A <see cref="PhotosetPhotoCollection"/> object containing the list of <see cref="Photo"/> instances.</returns>
+        public PhotosetPhotoCollection PhotosetsGetPhotos(string photosetId, PhotoSearchExtras extras, int page, int perPage)
+        {
+            return PhotosetsGetPhotos(photosetId, extras, PrivacyFilter.None, page, perPage);
+        }
+
+        /// <summary>
+        /// Gets a collection of photos for a photoset.
+        /// </summary>
+        /// <param name="photosetId">The ID of the photoset to return photos for.</param>
+        /// <param name="extras">The extras to return for each photo.</param>
+        /// <param name="privacyFilter">The privacy filter to search on.</param>
+        /// <returns>A <see cref="PhotosetPhotoCollection"/> object containing the list of <see cref="Photo"/> instances.</returns>
+        public PhotosetPhotoCollection PhotosetsGetPhotos(string photosetId, PhotoSearchExtras extras, PrivacyFilter privacyFilter)
+        {
+            return PhotosetsGetPhotos(photosetId, extras, privacyFilter, 0, 0);
+        }
+
+        /// <summary>
+        /// Gets a collection of photos for a photoset.
+        /// </summary>
+        /// <param name="photosetId">The ID of the photoset to return photos for.</param>
+        /// <param name="extras">The extras to return for each photo.</param>
+        /// <param name="privacyFilter">The privacy filter to search on.</param>
+        /// <param name="page">The page to return, defaults to 1.</param>
+        /// <param name="perPage">The number of photos to return per page.</param>
+        /// <returns>An array of <see cref="Photo"/> instances.</returns>
+        public PhotosetPhotoCollection PhotosetsGetPhotos(string photosetId, PhotoSearchExtras extras, PrivacyFilter privacyFilter, int page, int perPage)
+        {
+            return PhotosetsGetPhotos(photosetId, extras, privacyFilter, page, perPage, MediaType.None);
+        }
+
+        /// <summary>
+        /// Gets a collection of photos for a photoset.
+        /// </summary>
+        /// <param name="photosetId">The ID of the photoset to return photos for.</param>
+        /// <param name="extras">The extras to return for each photo.</param>
+        /// <param name="privacyFilter">The privacy filter to search on.</param>
+        /// <param name="page">The page to return, defaults to 1.</param>
+        /// <param name="perPage">The number of photos to return per page.</param>
+        /// <param name="media">Filter on the type of media.</param>
+        /// <returns>An array of <see cref="Photo"/> instances.</returns>
+        public PhotosetPhotoCollection PhotosetsGetPhotos(string photosetId, PhotoSearchExtras extras, PrivacyFilter privacyFilter, int page, int perPage, MediaType media)
+        {
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("method", "flickr.photosets.getPhotos");
+            parameters.Add("photoset_id", photosetId);
+            if (extras != PhotoSearchExtras.None) parameters.Add("extras", Helper.ExtrasToString(extras));
+            if (privacyFilter != PrivacyFilter.None) parameters.Add("privacy_filter", privacyFilter.ToString("d"));
+            if (page > 0) parameters.Add("page", page.ToString(System.Globalization.NumberFormatInfo.InvariantInfo));
+            if (perPage > 0) parameters.Add("per_page", perPage.ToString(System.Globalization.NumberFormatInfo.InvariantInfo));
+            if (media != MediaType.None) parameters.Add("media", (media == MediaType.All ? "all" : (media == MediaType.Photos ? "photos" : (media == MediaType.Videos ? "videos" : String.Empty))));
+
+            return GetResponse<PhotosetPhotoCollection>(parameters);
         }
     }
 }

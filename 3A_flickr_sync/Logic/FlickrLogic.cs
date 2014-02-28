@@ -56,9 +56,39 @@ namespace _3A_flickr_sync.Logic
             }
         }
 
+        static public Subject<bool> IsDownloadNotify;
+        static bool _Download;
+        static public bool IsDownload
+        {
+            get
+            {
+                return _Download;
+            }
+            set
+            {
+                if (_Download == value)
+                { }
+                else
+                {
+                    _Download = value;
+                    if (IsDownloadNotify == null)
+                    {
+                    }
+                    else
+                    {
+                        IsDownloadNotify.OnNext(value);
+                    }
+                }
+            }
+        }
+
         static public CancellationTokenSource CancellationTokenSrc;
         static public CancellationToken CancellationToken;
         static public string CurrentFolderPath { get; set; }
+
+        static public CancellationTokenSource DownloadCancellationTokenSrc;
+        static public CancellationToken DownloadCancellationToken;
+        static public string CurrentDownloadSetId { get; set; }
 
         FFileLogic fFileLogic;
         Flickr flickr;
@@ -68,6 +98,12 @@ namespace _3A_flickr_sync.Logic
             //TotalUpload = 0;
             CancellationTokenSrc = new CancellationTokenSource();
             CancellationToken = CancellationTokenSrc.Token;
+        }
+
+        static public void ResetDownloadCancellationToken()
+        {
+            DownloadCancellationTokenSrc = new CancellationTokenSource();
+            DownloadCancellationToken = DownloadCancellationTokenSrc.Token;
         }
 
         static public void Log(string path, NoticeType type, string note)
@@ -154,6 +190,22 @@ namespace _3A_flickr_sync.Logic
                     Task.Factory.StartNew(() =>
                     {
                         StartUpload();
+                    });
+                }
+                else
+                {
+                    FlickrLogic.CancellationTokenSrc.Cancel();
+                }
+            });
+
+            IsDownloadNotify = new Subject<bool>();
+            IsDownloadNotify.Subscribe(r =>
+            {
+                if (r)
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        StartDownload();
                     });
                 }
                 else
@@ -410,16 +462,14 @@ namespace _3A_flickr_sync.Logic
                                         }
                                         catch (Exception ex1)
                                         {
-                                            
+
                                         }
-                                        
+
                                     }
                                     else if (file.Status == FFileStatus.Existing)
                                     {
                                         logic.Processing_HashCodeFound(file.Id);
                                     }
-
-
                                 }
 
                                 //TotalUpload--;
@@ -444,12 +494,106 @@ namespace _3A_flickr_sync.Logic
             }
         }
 
-        //private static async Task WaitForComplete()
-        //{
-        //    while (TotalUpload > 0)
-        //    {
-        //        await Task.Delay(TimeSpan.FromSeconds(1));
-        //    }
-        //}
+        async static Task StartDownload()
+        {
+            ResetDownloadCancellationToken();
+
+            SetLogic setLogic = new SetLogic();
+            setLogic.Reset_DownloadProcessingStatus();
+
+            while (FlickrLogic.IsDownload)
+            {
+                var set = setLogic.GetForDownload();
+                if (set == null)
+                {
+                    FlickrLogic.IsDownload = false;
+                }
+                else
+                {
+                    CurrentDownloadSetId = set.SetsID;
+
+                    await DownloadSet();
+                }
+            }
+        }
+
+        async static Task DownloadSet()
+        {
+            if (string.IsNullOrEmpty(CurrentDownloadSetId))
+            {
+
+            }
+            else
+            {
+                try
+                {
+                    var task = Task.Factory.StartNew(() =>
+                    {
+
+                        Flickr flickr = new Flickr();
+                        var list = flickr.PhotosetsGetPhotos(CurrentDownloadSetId);
+
+                        SetLogic sL = new SetLogic();
+                        string saveFolder = sL.GetDownloadFolderPath(CurrentDownloadSetId);
+
+                        if (list == null || list.Count == 0 || string.IsNullOrEmpty(saveFolder))
+                        { }
+                        else
+                        {
+                            ParallelOptions opt = new ParallelOptions();
+                            opt.MaxDegreeOfParallelism = MaxUpload;
+                            //opt.MaxDegreeOfParallelism = 1;
+                            opt.CancellationToken = DownloadCancellationToken;
+
+                            try
+                            {
+                                var r1 = Parallel.ForEach(list, opt
+                                    , photo =>
+                                    {
+                                        var sizes = flickr.PhotosGetSizes(photo.PhotoId);
+                                        if (sizes == null || sizes.Count == 0) { }
+                                        else
+                                        {
+                                            var org = sizes.FirstOrDefault(r => r.Label == "Original" && r.MediaType == MediaType.Photos);
+                                            if (org == null) { }
+                                            else
+                                            {
+                                                Uri uri = new Uri(org.Source);
+                                             
+                                                string filename = Path.GetFileName(uri.LocalPath);
+
+                                                WebClient webClient = new WebClient();
+                                                string filePath = Path.Combine(saveFolder, filename);
+
+                                                if (File.Exists(filePath))
+                                                { }
+                                                else
+                                                {
+                                                    webClient.DownloadFile(org.Source, filePath);
+                                                    FlickrLogic.Log(filePath, NoticeType.DownloadDone, "Downloaded");
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                );
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
+                        }
+
+
+                    });
+                    await task;
+                }
+                catch (Exception ex)
+                {
+
+
+                }
+            }
+        }
     }
 }

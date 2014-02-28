@@ -153,5 +153,75 @@ namespace _3A_flickr_sync.Logic
 
             return v;
         }
+
+        public void Reset_DownloadProcessingStatus()
+        {
+            var v = db.Sets.Where(r => r.ProcessingStatus != null);
+
+            foreach (var item in v)
+            {
+                item.ProcessingStatus = null;
+            }
+            db.SaveChanges();
+        }
+
+        public Set GetForDownload()
+        {
+            var v = db.Sets.FirstOrDefault(r => r.ProcessingStatus == null && r.UserID == Flickr.User.UserId);
+            if (v == null)
+            { }
+            else
+            {
+                v.ProcessingStatus = ProcessingStatus.Processing;
+                db.SaveChanges();
+            }
+            return v;
+        }
+
+        public string GetDownloadFolderPath(string setId)
+        {
+            string path = "";
+            var v = db.Sets.FirstOrDefault(r => r.SetsID == setId);
+            if (v == null)
+            { }
+            else
+            {
+                if (string.IsNullOrEmpty(v.Path))
+                {
+                    FUserLogic uL = new FUserLogic();
+                    var u = uL.GetFirst();
+                    if (u == null) { }
+                    else
+                    {
+                        if (string.IsNullOrEmpty(u.DownloadPath))
+                        { }
+                        else
+                        {
+                            if (Directory.Exists(u.DownloadPath))
+                            {
+                                path = Path.Combine(u.DownloadPath, v.Tittle);
+                                try
+                                {
+                                    Directory.CreateDirectory(path);
+
+                                    v.Path = path;
+                                    db.SaveChanges();
+                                }
+                                catch (Exception)
+                                {
+                                    path = "";
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    path = v.Path;
+                }
+                
+            }
+            return path;
+        }
     }
 }

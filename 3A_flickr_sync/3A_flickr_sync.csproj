@@ -176,11 +176,13 @@
     <Compile Include="FlickrNet\PhotoSearchOrder.cs" />
     <Compile Include="FlickrNet\Photoset.cs" />
     <Compile Include="FlickrNet\PhotoSetCollection.cs" />
+    <Compile Include="FlickrNet\PhotosetPhotoCollection.cs" />
     <Compile Include="FlickrNet\Place.cs" />
     <Compile Include="FlickrNet\PlaceInfo.cs" />
     <Compile Include="FlickrNet\PlaceType.cs" />
     <Compile Include="FlickrNet\PopularitySort.cs" />
     <Compile Include="FlickrNet\ShapeData.cs" />
+    <Compile Include="FlickrNet\Sizes.cs" />
     <Compile Include="FlickrNet\UnknownResponse.cs" />
     <Compile Include="FlickrNet\UploadProgressEvent.cs" />
     <Compile Include="FlickrNet\User.cs" />
@@ -204,6 +206,7 @@
     <Compile Include="Logic\FFileLogic.cs" />
     <Compile Include="Logic\FFolderLogic.cs" />
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Set.partial.cs" />
     <Compile Include="Models\FFolder.partial.cs" />
     <Compile Include="Models\FSMasterDBContext.partial.cs" />
     <Compile Include="Models\Set.cs" />

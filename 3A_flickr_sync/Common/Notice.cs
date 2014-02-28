@@ -15,6 +15,7 @@ namespace _3A_flickr_sync.Common
         AddFileDone,
         UploadException,
         Exception,
+        DownloadDone,
     }
 
     public class Notice
@@ -59,6 +60,11 @@ namespace _3A_flickr_sync.Common
             if (Type == NoticeType.AddFile)
             {
                 s = string.Format("{0}: {1} files", FullPath, JobDone);
+            }
+
+            if (Type == NoticeType.DownloadDone)
+            {
+                s = string.Format("{0}: {1}", FullPath, Note);
             }
 
             s = Datetime.ToString() + " " + s;
