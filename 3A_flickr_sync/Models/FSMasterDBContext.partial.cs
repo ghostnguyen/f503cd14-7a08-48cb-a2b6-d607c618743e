@@ -16,7 +16,7 @@ namespace _3A_flickr_sync.Models
         {
         }
 
-        private static string GetConnectionString()
+        public static string GetConnectionString()
         {
             string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string userFilePath = Path.Combine(localAppData, "3A-Software");

@@ -136,5 +136,22 @@ namespace _3A_flickr_sync.Logic
 
             return set.SetsID;
         }
+
+        public Set UpdateIsDownload(string setID, bool isDownload)
+        {
+            var v = db.Sets.FirstOrDefault(r => r.UserID == Flickr.User.UserId && r.SetsID == setID);
+
+            if (v == null)
+            {
+                //db.Sets.Add(new Set() { UserID = Flickr.User.UserId, SetsID = set.PhotosetId, Tittle = set.Title });
+            }
+            else
+            {
+                v.IsDownload = isDownload;
+                db.SaveChanges();
+            }
+
+            return v;
+        }
     }
 }

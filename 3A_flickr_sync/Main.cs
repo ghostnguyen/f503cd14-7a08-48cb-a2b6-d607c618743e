@@ -112,6 +112,7 @@ namespace _3A_flickr_sync
             startUploadToolStripMenuItem.Image = Resources.Flickr;
 
             clearLogToolStripMenuItem.Visible = hasUser;
+            downloadToolStripMenuItem.Visible = hasUser;
 
             Clear();
 
@@ -214,24 +215,13 @@ namespace _3A_flickr_sync
         }
         void dataGridViewNote_ShowNote()
         {
-            //if (noteToDisplay.Count == 0)
-            //{
-            //    //Can not set datasource has zero item to dataGridView. It should to be set to null
-            //    dataGridViewNote.ClearSelection();
-            //    //dataGridViewNote.DataSource = new List<Notice>();
-            //    dataGridViewNote.DataSource = null;
-            //    dataGridViewNote.Refresh();
-            //}
-            //else
-            //{
-            //    dataGridViewNote.ClearSelection();
-            //    dataGridViewNote.DataSource = noteToDisplay;
-            //    dataGridViewNote.AutoResizeColumns();
-            //    dataGridViewNote.Refresh();
-            //}
-
             rtbNote.Lines = noteToDisplay.Select(r => r.GetNote()).ToArray();
+        }
 
+        private void downloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Download frm = new Download();
+            frm.ShowDialog();
         }
 
     }

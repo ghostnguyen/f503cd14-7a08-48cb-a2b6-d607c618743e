@@ -35,9 +35,10 @@
             this.startUploadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.rtbNote = new System.Windows.Forms.RichTextBox();
             this.rtbLog = new System.Windows.Forms.RichTextBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.rtbNote = new System.Windows.Forms.RichTextBox();
+            this.downloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -51,7 +52,8 @@
             this.loginToolStripMenuItem,
             this.selectFoldersToolStripMenuItem,
             this.startUploadToolStripMenuItem,
-            this.clearLogToolStripMenuItem});
+            this.clearLogToolStripMenuItem,
+            this.downloadToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(744, 24);
@@ -61,7 +63,7 @@
             // loginToolStripMenuItem
             // 
             this.loginToolStripMenuItem.Name = "loginToolStripMenuItem";
-            this.loginToolStripMenuItem.Size = new System.Drawing.Size(49, 20);
+            this.loginToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.loginToolStripMenuItem.Text = "Login";
             this.loginToolStripMenuItem.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
             // 
@@ -69,7 +71,7 @@
             // 
             this.selectFoldersToolStripMenuItem.Image = global::_3A_flickr_sync.Properties.Resources.Folder;
             this.selectFoldersToolStripMenuItem.Name = "selectFoldersToolStripMenuItem";
-            this.selectFoldersToolStripMenuItem.Size = new System.Drawing.Size(107, 20);
+            this.selectFoldersToolStripMenuItem.Size = new System.Drawing.Size(102, 20);
             this.selectFoldersToolStripMenuItem.Text = "Select Folders";
             this.selectFoldersToolStripMenuItem.Visible = false;
             this.selectFoldersToolStripMenuItem.Click += new System.EventHandler(this.selectFoldersToolStripMenuItem_Click);
@@ -79,7 +81,7 @@
             this.startUploadToolStripMenuItem.Image = global::_3A_flickr_sync.Properties.Resources.Flickr;
             this.startUploadToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.startUploadToolStripMenuItem.Name = "startUploadToolStripMenuItem";
-            this.startUploadToolStripMenuItem.Size = new System.Drawing.Size(116, 20);
+            this.startUploadToolStripMenuItem.Size = new System.Drawing.Size(111, 20);
             this.startUploadToolStripMenuItem.Text = "Start Upload";
             this.startUploadToolStripMenuItem.Visible = false;
             this.startUploadToolStripMenuItem.Click += new System.EventHandler(this.startUploadToolStripMenuItem_Click);
@@ -88,7 +90,7 @@
             // 
             this.clearLogToolStripMenuItem.Image = global::_3A_flickr_sync.Properties.Resources.delete;
             this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
-            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(85, 20);
+            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
             this.clearLogToolStripMenuItem.Text = "Clear Log";
             this.clearLogToolStripMenuItem.Visible = false;
             this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
@@ -113,6 +115,16 @@
             this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 3;
             // 
+            // rtbNote
+            // 
+            this.rtbNote.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtbNote.Location = new System.Drawing.Point(0, 0);
+            this.rtbNote.Name = "rtbNote";
+            this.rtbNote.ReadOnly = true;
+            this.rtbNote.Size = new System.Drawing.Size(744, 196);
+            this.rtbNote.TabIndex = 1;
+            this.rtbNote.Text = "";
+            // 
             // rtbLog
             // 
             this.rtbLog.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -124,15 +136,13 @@
             this.rtbLog.TabIndex = 0;
             this.rtbLog.Text = "";
             // 
-            // rtbNote
+            // downloadToolStripMenuItem
             // 
-            this.rtbNote.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtbNote.Location = new System.Drawing.Point(0, 0);
-            this.rtbNote.Name = "rtbNote";
-            this.rtbNote.ReadOnly = true;
-            this.rtbNote.Size = new System.Drawing.Size(744, 196);
-            this.rtbNote.TabIndex = 1;
-            this.rtbNote.Text = "";
+            this.downloadToolStripMenuItem.Name = "downloadToolStripMenuItem";
+            this.downloadToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
+            this.downloadToolStripMenuItem.Text = "Download";
+            this.downloadToolStripMenuItem.Visible = false;
+            this.downloadToolStripMenuItem.Click += new System.EventHandler(this.downloadToolStripMenuItem_Click);
             // 
             // Main
             // 
@@ -168,6 +178,7 @@
         private System.Windows.Forms.RichTextBox rtbLog;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.RichTextBox rtbNote;
+        private System.Windows.Forms.ToolStripMenuItem downloadToolStripMenuItem;
     }
 }
 

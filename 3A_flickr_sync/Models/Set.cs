@@ -10,5 +10,7 @@ namespace _3A_flickr_sync.Models
         public string SetsID { get; set; }
         public string UserID { get; set; }
         public string Tittle { get; set; }
+        public string Path { get; set; }
+        public bool IsDownload { get; set; }
     }
 }

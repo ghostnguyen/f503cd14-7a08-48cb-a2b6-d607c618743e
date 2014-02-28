@@ -128,6 +128,12 @@
     <Compile Include="Common\WebClient2.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Download.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Download.Designer.cs">
+      <DependentUpon>Download.cs</DependentUpon>
+    </Compile>
     <Compile Include="Enter_Oauth_Verifier.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -198,7 +204,6 @@
     <Compile Include="Logic\FFileLogic.cs" />
     <Compile Include="Logic\FFolderLogic.cs" />
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Migrations\ConfigurationMaster.cs" />
     <Compile Include="Models\FFolder.partial.cs" />
     <Compile Include="Models\FSMasterDBContext.partial.cs" />
     <Compile Include="Models\Set.cs" />
@@ -211,6 +216,18 @@
     <Compile Include="Models\FSMasterDBContext.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="_3A_Flickr_Sync_Master_DBDataSet.cs">
+      <DependentUpon>_3A_Flickr_Sync_Master_DBDataSet.xsd</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="_3A_Flickr_Sync_Master_DBDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>_3A_Flickr_Sync_Master_DBDataSet.xsd</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Download.resx">
+      <DependentUpon>Download.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Enter_Oauth_Verifier.resx">
       <DependentUpon>Enter_Oauth_Verifier.cs</DependentUpon>
     </EmbeddedResource>
@@ -242,6 +259,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="_3A_Flickr_Sync_Master_DBDataSet.xsc">
+      <DependentUpon>_3A_Flickr_Sync_Master_DBDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="_3A_Flickr_Sync_Master_DBDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>_3A_Flickr_Sync_Master_DBDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="_3A_Flickr_Sync_Master_DBDataSet.xss">
+      <DependentUpon>_3A_Flickr_Sync_Master_DBDataSet.xsd</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

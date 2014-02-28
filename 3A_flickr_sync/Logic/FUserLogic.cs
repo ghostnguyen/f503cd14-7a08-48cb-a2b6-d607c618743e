@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using _3A_flickr_sync.Common;
 using _3A_flickr_sync.Models;
+using _3A_flickr_sync.FlickrNet;
 
 namespace _3A_flickr_sync.Logic
 {
@@ -34,6 +35,23 @@ namespace _3A_flickr_sync.Logic
         public FUser GetFirst()
         {
             FUser v = db.FUsers.FirstOrDefault();
+            return v;
+        }
+
+        public FUser Update(string downloadPath)
+        {
+            FUser v = db.FUsers.FirstOrDefault(r => r.UserId == Flickr.User.UserId);
+
+            if (v == null)
+            {
+
+            }
+            else
+            {
+                v.DownloadPath = downloadPath;
+                db.SaveChanges();
+            }
+
             return v;
         }
     }

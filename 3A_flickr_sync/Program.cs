@@ -8,6 +8,9 @@ using _3A_flickr_sync.Common;
 using _3A_flickr_sync.FlickrNet;
 using _3A_flickr_sync.Logic;
 using _3A_flickr_sync.Models;
+using System.Data.Entity;
+using _3A_flickr_sync.Migrations;
+using System.Data.Entity.Migrations;
 
 namespace _3A_flickr_sync
 {
@@ -19,8 +22,14 @@ namespace _3A_flickr_sync
         [STAThread]
         static void Main()
         {
-            FSMasterDBContext c = new FSMasterDBContext();
-            c.Database.CreateIfNotExists();
+            //Database.SetInitializer(new MigrateDatabaseToLatestVersion<FSMasterDBContext, Configuration>());
+
+            var dbMigrator = new DbMigrator(new Configuration());
+            dbMigrator.Update();
+
+            //FSMasterDBContext c = new FSMasterDBContext();
+            //c.Database.CreateIfNotExists();
+
             System.Net.ServicePointManager.DefaultConnectionLimit = 10;
 
             Flickr.ResetOAuth();
