@@ -409,7 +409,16 @@ namespace _3A_flickr_sync.Logic
                                     }
                                     else if (file.Status == FFileStatus.Existing)
                                     {
-                                        logic.Processing_HashCodeFound(file.Id);
+                                        //logic.Processing_HashCodeFound(file.Id);
+
+                                        try
+                                        {
+                                            logic.Processing_HashCodeFound(file.Id);
+                                        }
+                                        catch (Exception)
+                                        {
+                                        }
+                                        
                                     }
                                 }
                             }
