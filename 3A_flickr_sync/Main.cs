@@ -181,21 +181,6 @@ namespace _3A_flickr_sync
         private void startUploadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FlickrLogic.IsUpload = !FlickrLogic.IsUpload;
-
-            //var menu = sender as ToolStripMenuItem;
-
-            //if (FlickrLogic.IsUpload)
-            //{
-            //    menu.Image = Resources.Flickr;
-            //    menu.Text = "Start upload";
-            //    FlickrLogic.StopUpload();
-            //}
-            //else
-            //{
-            //    menu.Image = Resources.Uploading;
-            //    menu.Text = "Stop";
-            //    Task.Run(() => FlickrLogic.StartUpload());
-            //}
         }
 
         private void clearLogToolStripMenuItem_Click(object sender, EventArgs e)

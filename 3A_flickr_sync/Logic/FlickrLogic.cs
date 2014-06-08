@@ -125,63 +125,6 @@ namespace _3A_flickr_sync.Logic
                     }
                     );
 
-            //var interval = Observable.Interval(TimeSpan.FromSeconds(0.5));
-
-            //var v13 =
-            //    interval
-            //    .Where(r => IsUpload && TotalUpload < MaxUpload
-            //    )
-            //    .Subscribe(r =>
-            //    {
-            //        Task.Run(async () =>
-            //        {
-            //            TotalUpload++;
-
-            //            if (string.IsNullOrEmpty(CurrentFolderPath))
-            //            {
-            //                await Task.Delay(TimeSpan.FromSeconds(1));
-            //            }
-            //            else
-            //            {
-            //                FFileLogic fFileLogic = new FFileLogic(CurrentFolderPath);
-            //                FlickrLogic logic = new FlickrLogic(CurrentFolderPath);
-            //                var file = fFileLogic.TakeBuffer();
-            //                if (file == null) 
-            //                {
-            //                    return;
-            //                }
-            //                else if (file.Status == FFileStatus.New)
-            //                {
-            //                    FlickrLogic.Log(CurrentFolderPath, NoticeType.Upload, "Waiting Upload");
-            //                    await logic.Upload(file.Id);
-            //                }
-            //                else if (file.Status == FFileStatus.Existing)
-            //                {
-            //                    FlickrLogic.Log(CurrentFolderPath, NoticeType.Upload, "Waiting HashCodeFound");
-            //                    logic.Processing_HashCodeFound(file.Id);
-            //                }
-
-            //                //var file = FFileLogic.DequeueForUpload();
-            //                //if (file == null) { }
-            //                //else if (file.Item2.Status == FFileStatus.New)
-            //                //{
-            //                //    FlickrLogic.Log(file.Item2.Path, NoticeType.Upload, "Waiting Upload");
-            //                //    FlickrLogic logic = new FlickrLogic(file.Item1);
-            //                //    await logic.Upload(file.Item2.Id);
-            //                //}
-            //                //else if (file.Item2.Status == FFileStatus.Existing)
-            //                //{
-            //                //    FlickrLogic.Log(file.Item2.Path, NoticeType.Upload, "Waiting HashCodeFound");
-            //                //    FlickrLogic logic = new FlickrLogic(file.Item1);
-            //                //    logic.Processing_HashCodeFound(file.Item2.Id);
-            //                //}
-            //            }
-
-            //            TotalUpload--;
-            //        });
-            //    });
-
-
             IsUploadNotify = new Subject<bool>();
             IsUploadNotify.Subscribe(r =>
             {
@@ -440,8 +383,6 @@ namespace _3A_flickr_sync.Logic
                             var r = Parallel.ForEach(fFileLogic.TakeBuffer(), opt
                                 , file =>
                             {
-                                //TotalUpload++;
-
                                 if (string.IsNullOrEmpty(CurrentFolderPath))
                                 {
                                 }
@@ -471,8 +412,6 @@ namespace _3A_flickr_sync.Logic
                                         logic.Processing_HashCodeFound(file.Id);
                                     }
                                 }
-
-                                //TotalUpload--;
                             }
 
                             );
@@ -542,7 +481,7 @@ namespace _3A_flickr_sync.Logic
                         {
                             ParallelOptions opt = new ParallelOptions();
                             opt.MaxDegreeOfParallelism = MaxUpload;
-                            //opt.MaxDegreeOfParallelism = 1;
+                            
                             opt.CancellationToken = DownloadCancellationToken;
 
                             try
