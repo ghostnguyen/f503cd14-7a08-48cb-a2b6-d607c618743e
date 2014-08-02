@@ -27,8 +27,7 @@ namespace _3A_flickr_sync.Logic
 
 
         static public bool IsNetworkOk { get; set; }
-        static public int MaxUpload { get; set; }
-        //static public int TotalUpload { get; set; }
+        static public int MaxUpload { get; set; }        
 
         static public Subject<bool> IsUploadNotify;
         static bool _IsUpload;
@@ -94,8 +93,7 @@ namespace _3A_flickr_sync.Logic
         Flickr flickr;
 
         static public void ResetCancellationToken()
-        {
-            //TotalUpload = 0;
+        {            
             CancellationTokenSrc = new CancellationTokenSource();
             CancellationToken = CancellationTokenSrc.Token;
         }
@@ -115,8 +113,8 @@ namespace _3A_flickr_sync.Logic
         {
             ResetCancellationToken();
 
-            MaxUpload = System.Environment.ProcessorCount + 2;
-            //MaxUpload = 1;
+            //MaxUpload = System.Environment.ProcessorCount + 2;
+            MaxUpload = 2;
 
             var networkStatus = Observable.Interval(TimeSpan.FromSeconds(3)).Where(r => IsNetworkOk == false && IsUpload)
                 .Subscribe(r =>
@@ -176,7 +174,12 @@ namespace _3A_flickr_sync.Logic
             var file = fFileLogic.GetForSure(fFileID);
 
             if (file == null)
-            { }
+            {
+                fFileLogic.DoUpdate(fFileID, f =>
+                {
+                    f.Status = FFileStatus.NonExisting;
+                });
+            }
             else
             {
                 var isExisted = fFileLogic.CheckExistHashCode(ExistFile, fFileID);
@@ -343,8 +346,6 @@ namespace _3A_flickr_sync.Logic
                 var folder = FFolderLogic.GetForUpload();
                 if (folder == null)
                 {
-                    //await WaitForComplete();
-
                     FlickrLogic.IsUpload = false;
                 }
                 else
@@ -353,7 +354,6 @@ namespace _3A_flickr_sync.Logic
                     FFileLogic fLogic = new FFileLogic(folder);
 
                     fLogic.Reset_ProcessingStatus();
-                    //await fLogic.StartBuffer(CancellationToken);
                     await UploadFolder();
                 }
             }

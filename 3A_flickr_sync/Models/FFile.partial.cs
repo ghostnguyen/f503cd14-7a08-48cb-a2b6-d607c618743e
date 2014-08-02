@@ -8,6 +8,7 @@ namespace _3A_flickr_sync.Models
     {
         New = 0,
         Existing = 20,
+        NonExisting = 21,
         Uploaded_SyncSet = 11,
         Uploaded_NoSet = 10,
         Uploaded_InSet = 13,
